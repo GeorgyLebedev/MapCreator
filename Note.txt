@@ -1,0 +1,6 @@
+var circlePath = new Path.Circle(new Point(0, 0), 5);
+circlePath.fillColor = 'transparent'
+circlePath.strokeColor = "black"
+function onMouseMove(event) {
+	circlePath.position = event.point;
+}

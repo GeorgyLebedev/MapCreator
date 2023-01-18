@@ -1,26 +1,35 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <router-view/>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
+
 }
 </script>
-
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+
+input[type=radio] + label{
+  font-weight: bolder;
+}
+
+.radio-icon label {
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+}
+.radio-icon-group input[type=radio]:checked + label {
+  border-radius: 3px;
+  background: #232323;
+  color:white;
+}
+.radio-icon > label{
+  height: inherit;
+}
+.radio-icon-group input[type=radio]:checked + label > img {
+  filter: invert(1);
+}
+.radio-icon-group input[type=radio] {
+  display: none;
 }
 </style>
