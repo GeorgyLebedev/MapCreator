@@ -49,18 +49,21 @@
               </div>
               <hr>
               <div class="mb-3">
-                <input id="colorsTab" checked type="radio" name="brushType" value="col">
+                <input id="colorsTab" checked type="radio" name="brushType" value="color"  v-model="brushOpt.brushType">
                 <label for="colorsTab">Цвета</label>
-                <input id="texturesTab" type="radio" name="brushType" value="tex">
+                <input id="texturesTab" type="radio" name="brushType" value="texture" v-model="brushOpt.brushType">
                 <label for="texturesTab" class="ms-1">Текстуры</label>
               </div>
-              <div id="brushColors">
+              <div id="brushColors" v-if="brushOpt.brushType=='color'">
                 <input type="color" v-model="brushOpt.color"><br>
                 <div class="mb-3">
                   Последние цвета:
                   <table id="lastColors" class="colorTable">
                     <tr>
-                      <td v-for="i in 8" :key="i"></td>
+                      <td v-for="(color, index) in recentColors" :key="index"
+                          :style="{ 'background-color': color}"
+                          @click="brushOpt.color=color">
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -79,7 +82,7 @@
                   </table>
                 </div>
               </div>
-              <div id="brushTextures" style="display: none">
+              <div id="brushTextures" v-if="brushOpt.brushType=='texture'">
                 Это раздел настройки текстур
               </div>
               <hr>
@@ -197,16 +200,19 @@
 <script>
 export default {
   name: "ToolsPanel",
+  props:{
+    recentColors: Array()
+  },
   data() {
     return {
       tool: "cursor",
       optionVisible: false,
-      brushSize: 1,
       brushOpt:{
         size: 1,
         opacity: 1,
-        color: "#000000"
-      }
+        color: "#000000",
+        brushType: "color"
+      },
     }
   },
   watch:{
@@ -294,10 +300,10 @@ hr{
   border: 1px solid gainsboro;
 }
 td {
-  max-height: 25px;
-  height: 25px;
-  width: 25px;
-  min-width: 25px;
+  max-height: 30px;
+  height: 30px;
+  width: 30px;
+  min-width: 30px;
   border: 1px solid gainsboro !important;
   cursor: pointer;
 }

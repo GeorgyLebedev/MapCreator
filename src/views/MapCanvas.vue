@@ -4,7 +4,8 @@
     <Accordion/>
     <ToolsPanel
         @toolChange="setTool"
-        @optChange="setOpt"/>
+        @optChange="setOpt"
+    :recent-colors="brushOpt.recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
       <canvas id="map" width="1560" height="680" :class="{cursorNone: withoutCursor}"></canvas>
@@ -34,11 +35,13 @@ export default {
       withoutCursor: false,
       cursorTool: new paper.Tool(),
       brushTool: new paper.Tool(),
-      brushOpt:
-          { size: 100,
+      brushOpt: {
+            size: 1,
             opacity:1,
-            color: "#000000",
-            cursor:  null
+            color: "",
+            cursor:  null,
+            colorChanged: false,
+            recentColors: Array(8).fill("#ffffff"),
           },
       stampTool: new paper.Tool(),
       pathTool: new paper.Tool(),
@@ -54,9 +57,12 @@ export default {
       this.currentTool=tool
     },
     setOpt(opt){
-      Object.assign(this.brushOpt,opt)
-      if(this.currentTool=="brush")
-      this.setBrush(this.brushTool,this.brushOpt)
+      if(this.currentTool=="brush"){
+        if (this.brushOpt.color!=opt.color)
+          this.brushOpt.colorChanged=true
+        Object.assign(this.brushOpt,opt)
+        this.setBrush(this.brushTool,this.brushOpt)
+      }
     },
     setBrush(brush, options){
       let path
@@ -69,6 +75,16 @@ export default {
         path.insertBelow(options.cursor)
         path.strokeWidth=options.size*2
         path.strokeCap="round"
+        if(options.colorChanged){
+          if(options.recentColors.length<8)
+          options.recentColors.unshift(options.color)
+          else {
+            options.recentColors=options.recentColors.slice(0,7)
+            options.recentColors.unshift(options.color)
+          }
+          console.log(options.recentColors)
+          options.colorChanged=false
+        }
         path.strokeColor = options.color;
         path.opacity=options.opacity
         path.add(event.point);
@@ -150,8 +166,8 @@ export default {
 }
 input[type=color] {
   border: none;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   background-color: transparent;
   padding: 0;
   margin: 0
