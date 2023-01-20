@@ -55,7 +55,7 @@
                 <label for="texturesTab" class="ms-1">Текстуры</label>
               </div>
               <div id="brushColors">
-                <input type="color" v-model="brushColor"><br>
+                <input type="color" v-model="brushOpt.color"><br>
                 <div class="mb-3">
                   Последние цвета:
                   <table id="lastColors" class="colorTable">
@@ -85,14 +85,14 @@
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер кисти">
                 <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                <input type="range" step="1" min="1" max="50"  v-model="brushSize">
-                <input type="number" step="1" min="1"  max="50" class="input-number-style" v-model="brushSize">
+                <input type="range" step="1" min="1" max="50"  v-model="brushOpt.size">
+                <input type="number" step="1" min="1"  max="50" class="input-number-style" v-model="brushOpt.size">
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность кисти">
                 <img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
-                <input type="range" step="0.01" min="0" max="1" v-model="brushOp">
-                <input type="number" step="0.01" min="0" max="1"  v-model="brushOp" class="input-number-style">
+                <input type="range" step="0.01" min="0" max="1" v-model="brushOpt.opacity">
+                <input type="number" step="0.01" min="0" max="1"  v-model="brushOpt.opacity" class="input-number-style">
               </div>
             </div>
           </Transition>
@@ -202,21 +202,36 @@ export default {
       tool: "cursor",
       optionVisible: false,
       brushSize: 1,
-      brushOp: 1,
-      brushColor:"#000000",
       brushOpt:{
-        size:this.brushSize,
-        opacity:this.brushOp,
-        color: this.brushColor,
+        size: 1,
+        opacity: 1,
+        color: "#000000"
       }
     }
   },
   watch:{
     tool(tool){
-    alert(tool)
+      switch (tool){
+        case "cursor":
+          this.$emit('toolChange', this.tool)
+            //!!!!
+          this.$emit('optChange', this.brushOpt)
+            //!!!!
+          break
+        case "brush":
+          this.$emit('toolChange', this.tool)
+          this.$emit('optChange', this.brushOpt)
+          break
+        default:
+          return
+      }
+    },
+    brushOpt:{
+      handler(){
+      this.$emit('optChange', this.brushOpt)}, deep:true
+    },
     }
   }
-}
 </script>
 <style>
 hr{

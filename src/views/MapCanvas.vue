@@ -2,10 +2,12 @@
   <div class="MainContainer">
     <TopMenu/>
     <Accordion/>
-    <ToolsPanel/>
+    <ToolsPanel
+        @toolChange="setTool"
+        @optChange="setOpt"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" v-on:click="Draw()"></canvas>
+      <canvas id="map" width="1560" height="680" :class="{cursorNone: withoutCursor}"></canvas>
     </div>
   </div>
 </template>
@@ -27,27 +29,90 @@ export default {
   },
   data (){
     return {
-      scale: 100
+      scale: 100,
+      currentTool: "cursor",
+      withoutCursor: false,
+      cursorTool: new paper.Tool(),
+      brushTool: new paper.Tool(),
+      brushOpt:
+          { size: 100,
+            opacity:1,
+            color: "#000000",
+            cursor:  null
+          },
+      stampTool: new paper.Tool(),
+      pathTool: new paper.Tool(),
+      textTool: new paper.Tool(),
+      zoomTool: new paper.Tool(),
     }
   },
   methods:{
-    Draw(){
-      let path = new paper.Path();
-      path.strokeColor = 'black';
-
-      var start = new paper.Point(100, 100);
-      path.moveTo(start);
-      path.lineTo(start.add([ 200, -50 ]));
-
-      path.closed = true;
-    },
     updateScale(data){
      this.scale=data.newScale
+    },
+    setTool(tool){
+      this.currentTool=tool
+    },
+    setOpt(opt){
+      Object.assign(this.brushOpt,opt)
+      if(this.currentTool=="brush")
+      this.setBrush(this.brushTool,this.brushOpt)
+    },
+    setBrush(brush, options){
+      let path
+      options.cursor.radius=options.size
+      brush.onMouseMove = (event)=>{
+        options.cursor.position = event.point;
+      }
+      brush.onMouseDown = function(event) {
+        path = new paper.Path();
+        path.insertBelow(options.cursor)
+        path.strokeWidth=options.size*2
+        path.strokeCap="round"
+        path.strokeColor = options.color;
+        path.opacity=options.opacity
+        path.add(event.point);
+      }
+      brush.onMouseDrag = function(event) {
+        path.add(event.point);
+        path.smooth();
+        options.cursor.position = event.point;
+      }
+      brush.onMouseUp = function(event) {
+        path.add(event.point);
+        path.smooth();
+      }
     }
   },
   mounted() {
     let canvas=document.getElementById("map")
     paper.setup(canvas)
+   //initCursor....
+
+    this.brushOpt.cursor=new paper.Shape.Circle(new paper.Point(0, 0),1)
+    this.brushOpt.cursor.fillColor = 'transparent'
+    this.brushOpt.cursor.strokeColor = "black"
+    this.brushOpt.cursor.visible=false
+    this.setBrush(this.brushTool, this.brushOpt)
+    ////......
+    this.cursorTool.activate()
+  },
+  watch:{
+    currentTool(val){
+      if(val!="brush")
+        this.brushOpt.cursor.visible=false
+      switch (val){
+        case "cursor":
+          this.withoutCursor=false
+          this.cursorTool.activate()
+          break;
+        case "brush":
+          this.withoutCursor=true
+          this.brushOpt.cursor.visible=true
+          this.brushTool.activate()
+          break;
+      }
+    }
   }
 }
 </script>
@@ -91,7 +156,9 @@ input[type=color] {
   padding: 0;
   margin: 0
 }
-
+.cursorNone{
+  cursor: none;
+}
 input[type=color]::-webkit-color-swatch {
   border-radius: 0;
   border: 1px solid gray;
