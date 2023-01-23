@@ -285,7 +285,6 @@ hr{
 
 #toolsPanel {
   grid-area: ToolsPanel;
-  border-right: 1px solid gainsboro;
 }
 
 .closeOpt {

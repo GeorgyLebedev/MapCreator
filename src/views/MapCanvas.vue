@@ -1,5 +1,5 @@
 <template>
-  <div class="MainContainer">
+  <div class="MainContainer" @contextmenu.prevent>
     <TopMenu/>
     <Accordion/>
     <ToolsPanel
@@ -154,6 +154,7 @@ export default {
   z-index: 1;
   justify-content: center;
   align-items: center;
+  border-left: 1px solid gainsboro;
 }
 * {
   z-index: 3;
