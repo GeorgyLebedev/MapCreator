@@ -1,8 +1,8 @@
 <template>
-  <div class="d-flex content">
-    <div class="d-flex h-100 bg-white " id="toolsPanel">
-      <div class="radio-icon-group mb-auto text-center">
-        <div class="radio-icon card text-center ">
+  <div>
+    <div class="h-100 bg-white " id="toolsPanel">
+      <div class="radio-icon-group tools-group mb-auto text-center">
+        <div class="tool-radio card text-center ">
           <input id="tool1" type="radio" name="tool" value="cursor" checked
                  v-model="tool"
                  v-on:click="optionVisible=!optionVisible"
@@ -32,7 +32,7 @@
             </div>
           </Transition>
         </div>
-        <div class="radio-icon card text-center">
+        <div class="tool-radio card text-center">
           <input id="tool2" type="radio" name="tool" value="brush"
                  v-model="tool"
                  v-on:click="optionVisible=!optionVisible"
@@ -50,15 +50,16 @@
               <hr>
               <div class="mb-3">
                 <input id="colorsTab" checked type="radio" name="brushType" value="color"  v-model="brushOpt.brushType">
-                <label for="colorsTab">Цвета</label>
+                <label for="colorsTab" class="radio-text">Цвета</label>
                 <input id="texturesTab" type="radio" name="brushType" value="texture" v-model="brushOpt.brushType">
-                <label for="texturesTab" class="ms-1">Текстуры</label>
+                <label for="texturesTab" class="ms-1 radio-text">Текстуры</label>
               </div>
               <div id="brushColors" v-if="brushOpt.brushType=='color'">
-                <input type="color" v-model="brushOpt.color"><br>
+                Цвет кисти: <br>
+                <input type="color" v-model="brushOpt.color">
                 <div class="mb-3">
                   Последние цвета:
-                  <table id="lastColors" class="colorTable">
+                  <table class="colorTable">
                     <tr>
                       <td v-for="(color, index) in recentColors" :key="index"
                           :style="{ 'background-color': color}"
@@ -100,7 +101,7 @@
             </div>
           </Transition>
         </div>
-        <div class="radio-icon card text-center">
+        <div class="tool-radio card text-center">
           <input id="tool3" type="radio" name="tool" value="stamp"
                  v-model="tool"
                  v-on:click="optionVisible=!optionVisible"
@@ -130,7 +131,7 @@
             </div>
           </Transition>
         </div>
-        <div class="radio-icon card text-center">
+        <div class="tool-radio card text-center">
           <input id="tool4" type="radio" name="tool" value="path"
                  v-model="tool"
                  v-on:click="optionVisible=!optionVisible"
@@ -146,11 +147,95 @@
                    v-on:click="optionVisible=false">
             </div>
             <hr>
-            Опции
+            Тип линии:
+            <div class="d-flex">
+              <div class="card radio-icon me-2">
+                <input id="pathLineId" type="radio" checked value="line" name="pathTypeRadio" v-model="pathOpt.pathType">
+                <label for="pathLineId" title="Прямая">
+                  <img src="@/assets/images/Tools/Options/line.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+              <div class="card radio-icon mx-2">
+                <input id="pathPolyId" type="radio"  value="poly" name="pathTypeRadio" v-model="pathOpt.pathType">
+                <label for="pathPolyId" title="Ломаная">
+                  <img src="@/assets/images/Tools/Options/polyLine.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+              <div class="card radio-icon mx-2">
+                <input id="pathCurveId" type="radio"  value="curve" name="pathTypeRadio" v-model="pathOpt.pathType">
+                <label for="pathCurveId" title="Кривая">
+                  <img src="@/assets/images/Tools/Options/curve.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+            </div>
+            <hr>
+            Стиль линии:
+            <div class="d-flex">
+              <div class="card radio-icon me-2">
+                <input id="pathStyleDefaultId" type="radio" checked value="default" name="pathStyleRadio" v-model="pathOpt.style">
+                <label for="pathStyleDefaultId" title="Без стилей">
+                  <img src="@/assets/images/Tools/Options/line.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+              <div class="card radio-icon mx-2">
+                <input id="pathStyleDashedId" type="radio"  value="dashed" name="pathStyleRadio" v-model="pathOpt.style">
+                <label for="pathStyleDashedId" title="Пунктирная">
+                  <img src="@/assets/images/Tools/Options/dashed.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+              <div class="card radio-icon mx-2">
+                <input id="pathStyleDottedId" type="radio"  value="dotted" name="pathStyleRadio" v-model="pathOpt.style">
+                <label for="pathCurveId" title="Точечная">
+                  <img src="@/assets/images/Tools/Options/dotted.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+            </div>
+            <hr>
+            Концы линии:
+            <div class="d-flex">
+              <div class="card radio-icon me-2">
+                <input id="pathCapRoundId" type="radio" checked value="round" name="pathCapRadio" v-model="pathOpt.cap">
+                <label for="pathCapRoundId" title="Скруглённые">
+                  <img src="@/assets/images/Tools/Options/round.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+              <div class="card radio-icon mx-2">
+                <input id="pathCapSquareId" type="radio" value="square" name="pathCapRadio" v-model="pathOpt.cap">
+                <label for="pathCapSquareId" title="Без скругления">
+                  <img src="@/assets/images/Tools/Options/square.png" class="card-img-top p-1 icon-sm" alt="">
+                </label>
+              </div>
+            </div>
+            <hr>
+            Цвет линии: <br>
+            <input type="color" v-model="pathOpt.color">
+            <div class="mb-3">
+              Последние цвета:
+              <table class="colorTable">
+                <tr>
+                  <td v-for="(color, index) in recentColors" :key="index"
+                      :style="{ 'background-color': color}"
+                      @click="pathOpt.color=color">
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <hr>
+            <div data-bs-toggle="tooltip" data-bs-placement="top" title="Толщина линии">
+              <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+              <input type="range" step="1" min="1" max="50"  v-model="pathOpt.size">
+              <input type="number" step="1" min="1"  max="50" class="input-number-style" v-model="pathOpt.size">
+            </div>
+            <hr>
+            <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность линии">
+              <img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
+              <input type="range" step="0.01" min="0" max="1" v-model="pathOpt.opacity">
+              <input type="number" step="0.01" min="0" max="1"  v-model="pathOpt.opacity" class="input-number-style">
+            </div>
           </div>
           </Transition>
         </div>
-        <div class="radio-icon card text-center">
+        <div class="tool-radio card text-center">
           <input id="tool5" type="radio" name="tool" value="text"
                  v-model="tool"
                  v-on:click="optionVisible=!optionVisible"
@@ -187,7 +272,7 @@
             </div>
           </Transition>
         </div>
-        <div class="radio-icon card text-center">
+        <div class="tool-radio card text-center">
           <input id="tool6" type="radio" name="tool" value="zoom" v-model="tool">
           <label for="tool6" data-bs-toggle="tooltip" data-bs-placement="right" title="Масштабировать">
             <img src="@/assets/images/Tools/zoom.png" class="card-img-top p-1 icon-mid" alt="...">
@@ -213,6 +298,14 @@ export default {
         color: "#000000",
         brushType: "color"
       },
+      pathOpt:{
+        size: 1,
+        opacity: 1,
+        color: "#000000",
+        pathType: "line",
+        cap:"round",
+        style:"default"
+      }
     }
   },
   watch:{
@@ -227,6 +320,10 @@ export default {
         case "brush":
           this.$emit('toolChange', this.tool)
           this.$emit('optChange', this.brushOpt)
+          break;
+        case "path":
+          this.$emit('toolChange', this.tool)
+          this.$emit('optChange', this.brushOpt)
           break
         default:
           return
@@ -235,6 +332,10 @@ export default {
     brushOpt:{
       handler(){
       this.$emit('optChange', this.brushOpt)}, deep:true
+    },
+    pathOpt:{
+      handler(){
+        this.$emit('optChange', this.pathOpt)}, deep:true
     },
     }
   }
@@ -257,34 +358,43 @@ hr{
   top: -1px;
   white-space: nowrap;
   text-align: left;
+  z-index: 1;
 }
 
-.tools-options input[type=radio]:checked + label {
+.tools-options input[type=radio]:checked + .radio-text {
   color: #232323;
   border-bottom: 2px solid #232323;
   border-radius: 0;
   background: transparent;
 }
-
+.radio-text {
+  cursor: pointer;
+}
 .icon-mid {
   object-fit: contain;
   width: 40px;
   height: 40px
 }
-
-.radio-icon-group > .card {
+.icon-sm {
+  object-fit: contain;
+  width: 30px;
+  height: 30px
+}
+.tools-group > .card {
   border-radius: 0;
   border-right: none;
   border-left: none;
   border-top: none;
 }
 
-.radio-icon > label {
+.tool-radio > label {
   border-radius: 0 !important;
+  cursor: pointer;
 }
 
 #toolsPanel {
   grid-area: ToolsPanel;
+  position: relative;
 }
 
 .closeOpt {
