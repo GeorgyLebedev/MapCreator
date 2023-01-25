@@ -185,24 +185,8 @@
               </div>
               <div class="card radio-icon mx-2">
                 <input id="pathStyleDottedId" type="radio"  value="dotted" name="pathStyleRadio" v-model="pathOpt.style">
-                <label for="pathCurveId" title="Точечная">
+                <label for="pathStyleDottedId" title="Точечная">
                   <img src="@/assets/images/Tools/Options/dotted.png" class="card-img-top p-1 icon-sm" alt="">
-                </label>
-              </div>
-            </div>
-            <hr>
-            Концы линии:
-            <div class="d-flex">
-              <div class="card radio-icon me-2">
-                <input id="pathCapRoundId" type="radio" checked value="round" name="pathCapRadio" v-model="pathOpt.cap">
-                <label for="pathCapRoundId" title="Скруглённые">
-                  <img src="@/assets/images/Tools/Options/round.png" class="card-img-top p-1 icon-sm" alt="">
-                </label>
-              </div>
-              <div class="card radio-icon mx-2">
-                <input id="pathCapSquareId" type="radio" value="square" name="pathCapRadio" v-model="pathOpt.cap">
-                <label for="pathCapSquareId" title="Без скругления">
-                  <img src="@/assets/images/Tools/Options/square.png" class="card-img-top p-1 icon-sm" alt="">
                 </label>
               </div>
             </div>
@@ -219,6 +203,13 @@
                   </td>
                 </tr>
               </table>
+            </div>
+            <hr>
+            <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="roundCapChbxId" v-model="pathOpt.roundCap" checked>
+            <label for="roundCapChbxId">
+              Скругленные концы
+            </label>
             </div>
             <hr>
             <div data-bs-toggle="tooltip" data-bs-placement="top" title="Толщина линии">
@@ -303,7 +294,7 @@ export default {
         opacity: 1,
         color: "#000000",
         pathType: "line",
-        cap:"round",
+        roundCap:true,
         style:"default"
       }
     }

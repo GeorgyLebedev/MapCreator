@@ -53,7 +53,10 @@ export default {
         color: "",
         cursor: null,
         pathType: "line",
-        cap: "round"
+        roundCap: true,
+        style: "default",
+        dashArray: [10,5],
+        dotArray:[1,5]
       },
       textTool: new paper.Tool(),
       zoomTool: new paper.Tool(),
@@ -141,12 +144,20 @@ export default {
             if (path)
               path.remove()
             if (initPoint) {
-              path = new paper.Path.Line(initPoint, event.point)
+              path = new paper.Path.Line({
+                from: initPoint,
+                to: event.point,
+                strokeWidth: options.size * 2,
+                strokeCap: options.roundCap ? "round":"square",
+                strokeColor: options.color,
+                opacity: options.opacity
+              })
+              if(options.style=="dashed")
+                path.dashArray=options.dashArray.map((x)=>(x*options.size))
+              else if (options.style=="dotted")
+                path.dashArray=options.dotArray.map((x)=>(x*options.size))
+              else path.dashArray=null
               path.insertBelow(options.cursor)
-              path.strokeWidth = options.size * 2
-              path.strokeCap = options.cap
-              path.strokeColor = options.color;
-              path.opacity = options.opacity
             }
           }
           pathTool.onMouseDown = (event) => {
@@ -169,12 +180,20 @@ export default {
             if (path)
               path.remove()
             if (initPoint) {
-              path = new paper.Path.Line(initPoint, event.point)
+              path = new paper.Path.Line({
+                from: initPoint,
+                to: event.point,
+                strokeWidth: options.size * 2,
+                strokeCap: options.roundCap ? "round":"square",
+                strokeColor: options.color,
+                opacity: options.opacity
+              })
+              if(options.style=="dashed")
+                path.dashArray=options.dashArray.map((x)=>(x*options.size))
+              else if (options.style=="dotted")
+                path.dashArray=options.dotArray.map((x)=>(x*options.size))
+              else path.dashArray=null
               path.insertBelow(options.cursor)
-              path.strokeWidth = options.size * 2
-              path.strokeCap =  options.cap
-              path.strokeColor = options.color;
-              path.opacity = options.opacity
             }
           }
           pathTool.onMouseDown = (event) => {
@@ -206,7 +225,7 @@ export default {
               })
               path.insertBelow(options.cursor)
               path.strokeWidth = options.size * 2
-              path.strokeCap = options.cap
+              path.strokeCap = options.roundCap ? "round":"square",
               path.strokeColor = options.color;
               path.opacity = options.opacity
             }
