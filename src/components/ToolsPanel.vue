@@ -72,13 +72,13 @@
                   Палитра:
                   <table id="palette" class="colorTable">
                     <tr>
-                      <td v-for="i in 8" :key="i"></td>
+                      <td class="colorCell" v-for="i in 8" :key="i"></td>
                     </tr>
                     <tr>
-                      <td v-for="i in 8" :key="i"></td>
+                      <td class="colorCell" v-for="i in 8" :key="i"></td>
                     </tr>
                     <tr>
-                      <td v-for="i in 8" :key="i"></td>
+                      <td class="colorCell" v-for="i in 8" :key="i"></td>
                     </tr>
                   </table>
                 </div>
@@ -132,11 +132,116 @@
           </Transition>
         </div>
         <div class="tool-radio card text-center">
-          <input id="tool4" type="radio" name="tool" value="path"
+          <input id="tool4" type="radio" name="tool" value="shape"
                  v-model="tool"
                  v-on:click="optionVisible=!optionVisible"
                  v-on:change="optionVisible=true">
-          <label for="tool4" data-bs-toggle="tooltip" data-bs-placement="right" title="Построить путь">
+          <label for="tool4" data-bs-toggle="tooltip" data-bs-placement="right" title="Фигуры">
+            <img src="@/assets/images/Tools/shapes.png" class="card-img-top p-1 icon-mid" alt="...">
+          </label>
+          <Transition>
+            <div id="shapesOpt" class="tools-options" v-if="tool=='shape' && optionVisible">
+              <div class="d-flex justify-content-between">
+                <b> Фигуры </b>
+                <img src="@/assets/images/arrow-left.png" class="closeOpt" height="20" alt=""
+                     v-on:click="optionVisible=false">
+              </div>
+              <hr>
+              <p> Вид фигуры:</p>
+              <div class="d-flex" >
+                <div class="card radio-icon me-2">
+                  <input id="shapeRectId" type="radio"  value="rectangle" name="shapeTypeRadio"
+                         :disabled="shapeOpt.isArbitrary"
+                         v-model="shapeOpt.shapeType">
+                  <label for="shapeRectId" title="Прямоугольник">
+                    <img src="@/assets/images/Tools/Options/rectangle.png" class="card-img-top p-1 icon-sm" alt="">
+                  </label>
+                </div>
+                <div class="card radio-icon mx-2">
+                  <input id="shapeTriaId" type="radio"  value="triangle" name="shapeTypeRadio"
+                         :disabled="shapeOpt.isArbitrary"
+                         v-model="shapeOpt.shapeType">
+                  <label for="shapeTriaId" title="Треугольник">
+                    <img src="@/assets/images/Tools/Options/triangle.png" class="card-img-top p-1 icon-sm" alt="">
+                  </label>
+                </div>
+                <div class="card radio-icon mx-2">
+                  <input id="shapeCircId" type="radio"  value="circle" name="shapeTypeRadio"
+                         :disabled="shapeOpt.isArbitrary"
+                         v-model="shapeOpt.shapeType">
+                  <label for="shapeCircId" title="Круг">
+                    <img src="@/assets/images/Tools/Options/circle.png" class="card-img-top p-1 icon-sm" alt="">
+                  </label>
+                </div>
+                <div class="card radio-icon mx-2">
+                  <input id="polygonId" type="radio"  value="polygon" name="shapeTypeRadio"
+                         :disabled="shapeOpt.isArbitrary"
+                         v-model="shapeOpt.shapeType">
+                  <label for="polygonId" title="Многоугольник">
+                    <img src="@/assets/images/Tools/Options/polygon.png" class="card-img-top p-1 icon-sm" alt="">
+                  </label>
+                </div>
+              </div>
+              <div class="d-flex mt-3">
+                <input type="checkbox" class="form-check-input me-2"  id="arbitraryShapeChbx" v-model="shapeOpt.isArbitrary" @change="setArbitraryShape(shapeOpt.isArbitrary)">
+                <label for="arbitraryShapeChbx">Произвольная</label>
+              </div>
+              <div v-if="shapeOpt.shapeType=='polygon'">
+                <hr>
+                Число сторон: <br>
+                <input type="range" step="1" min="5" max="20" v-model="shapeOpt.sides">
+                <input type="number" step="1" min="5" max="20"  v-model="shapeOpt.sides" class="input-number-style">
+              </div>
+              <hr>
+              Цвета:
+              <table class="table table-borderless">
+                <tr>
+                  <td>Заливка</td>
+                  <td><input type="color" v-model="shapeOpt.fillColor"></td>
+                </tr>
+                <tr>
+                  <td>Контур</td>
+                  <td><input type="color" v-model="shapeOpt.borderColor"></td>
+                </tr>
+              </table>
+              Последние цвета:
+              <table class="colorTable">
+                <tr>
+                  <td v-for="(color, index) in recentColors" :key="index"
+                      class="colorCell"
+                      :style="{ 'background-color': color}"
+                      @click="shapeOpt.fillColor=color"
+                      @contextmenu="shapeOpt.borderColor=color">
+                  </td>
+                </tr>
+              </table>
+              <hr>
+              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Толщина контура">
+                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                <input type="range" step="1" min="1" max="50"  v-model="shapeOpt.borderWidth">
+                <input type="number" step="1" min="1"  max="50" class="input-number-style" v-model="shapeOpt.borderWidth">
+              </div>
+              <hr>
+              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность фигуры">
+                <img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
+                <input type="range" step="0.01" min="0" max="1" v-model="shapeOpt.opacity">
+                <input type="number" step="0.01" min="0" max="1"  v-model="shapeOpt.opacity" class="input-number-style">
+              </div>
+              <hr>
+              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Поворот фигуры">
+                <img src="@/assets/images/Tools/reset.png" alt="" height="20">
+                <input type="range" step="1" min="0" max="360" v-model="shapeOpt.rotation">
+                <input type="number" step="1" min="0" max="360"  v-model="shapeOpt.rotation" class="input-number-style">
+              </div>
+            </div>
+          </Transition>
+        </div>
+        <div class="tool-radio card text-center">
+          <input id="tool5" type="radio" name="tool" value="path"
+                 v-model="tool"
+                 v-on:click="optionVisible=!optionVisible"
+                 v-on:change="optionVisible=true">
+          <label for="tool5" data-bs-toggle="tooltip" data-bs-placement="right" title="Построить путь">
             <img src="@/assets/images/Tools/path.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition>
@@ -190,6 +295,21 @@
                 </label>
               </div>
             </div>
+            <div class="my-3" title="Расстояние между точками" v-if=" pathOpt.style=='dotted'">
+              <img src="@/assets/images/Tools/Options/gapDot.png" alt="" height="20">
+              <input type="range" step="1" min="5" max="50"  v-model="pathOpt.dotArray[1]">
+              <input type="number" step="1" min="5"  max="50" class="input-number-style" v-model="pathOpt.dotArray[1]">
+            </div>
+            <div class="my-3" title="Расстояние между штрихами" v-if="pathOpt.style=='dashed'">
+              <img src="@/assets/images/Tools/Options/gapDash.png" alt="" height="30">
+              <input type="range" step="1" min="5" max="50"  v-model="pathOpt.dashArray[1]">
+              <input type="number" step="1" min="5"  max="50" class="input-number-style" v-model="pathOpt.dashArray[1]">
+            </div>
+            <div class="my-3" title="Длина штриха" v-if="pathOpt.style=='dashed'">
+              <img src="@/assets/images/Tools/Options/dash.png" alt="" height="30">
+              <input type="range" step="1" min="10" max="50"  v-model="pathOpt.dashArray[0]">
+              <input type="number" step="1" min="10"  max="50" class="input-number-style" v-model="pathOpt.dashArray[0]">
+            </div>
             <hr>
             Цвет линии: <br>
             <input type="color" v-model="pathOpt.color">
@@ -198,6 +318,7 @@
               <table class="colorTable">
                 <tr>
                   <td v-for="(color, index) in recentColors" :key="index"
+                      class="colorCell"
                       :style="{ 'background-color': color}"
                       @click="pathOpt.color=color">
                   </td>
@@ -208,7 +329,7 @@
             <div class="form-check">
             <input class="form-check-input" type="checkbox" id="roundCapChbxId" v-model="pathOpt.roundCap" checked>
             <label for="roundCapChbxId">
-              Скругленные концы
+              Скруглённые концы
             </label>
             </div>
             <hr>
@@ -227,11 +348,11 @@
           </Transition>
         </div>
         <div class="tool-radio card text-center">
-          <input id="tool5" type="radio" name="tool" value="text"
+          <input id="tool6" type="radio" name="tool" value="text"
                  v-model="tool"
                  v-on:click="optionVisible=!optionVisible"
                  v-on:change="optionVisible=true">
-          <label for="tool5" data-bs-toggle="tooltip" data-bs-placement="right" title="Создать надпись">
+          <label for="tool6" data-bs-toggle="tooltip" data-bs-placement="right" title="Создать надпись">
             <img src="@/assets/images/Tools/text.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition>
@@ -264,8 +385,8 @@
           </Transition>
         </div>
         <div class="tool-radio card text-center">
-          <input id="tool6" type="radio" name="tool" value="zoom" v-model="tool">
-          <label for="tool6" data-bs-toggle="tooltip" data-bs-placement="right" title="Масштабировать">
+          <input id="tool7" type="radio" name="tool" value="zoom" v-model="tool">
+          <label for="tool7" data-bs-toggle="tooltip" data-bs-placement="right" title="Масштабировать">
             <img src="@/assets/images/Tools/zoom.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
         </div>
@@ -295,26 +416,48 @@ export default {
         color: "#000000",
         pathType: "line",
         roundCap:true,
-        style:"default"
+        style:"default",
+        dashArray: [10,5],
+        dotArray:[1,5]
+      },
+      shapeOpt:{
+        shapeType: "rectangle",
+        borderWidth: 1,
+        borderColor: "#000000",
+        fillColor: "#ffffff",
+        borderRadius: 0,
+        opacity:1,
+        rotation: 0,
+        sides: 5,
+        isArbitrary: false
       }
+    }
+  },
+  methods:{
+    setArbitraryShape(flag){
+      if(flag)
+        this.shapeOpt.shapeType="arbitrary"
+      else
+        this.shapeOpt.shapeType="rectangle"
     }
   },
   watch:{
     tool(tool){
+      this.$emit('toolChange', this.tool)
       switch (tool){
         case "cursor":
-          this.$emit('toolChange', this.tool)
             //!!!!
-          this.$emit('optChange', this.brushOpt)
+          //this.$emit('optChange', this.brushOpt)
             //!!!!
           break
         case "brush":
-          this.$emit('toolChange', this.tool)
           this.$emit('optChange', this.brushOpt)
           break;
+        case "shape":
+          this.$emit('optChange', this.shapeOpt)
+          break
         case "path":
-          this.$emit('toolChange', this.tool)
-          this.$emit('optChange', this.brushOpt)
+          this.$emit('optChange', this.pathOpt)
           break
         default:
           return
@@ -323,6 +466,10 @@ export default {
     brushOpt:{
       handler(){
       this.$emit('optChange', this.brushOpt)}, deep:true
+    },
+    shapeOpt:{
+      handler(){
+        this.$emit('optChange', this.shapeOpt)}, deep:true
     },
     pathOpt:{
       handler(){
@@ -382,7 +529,7 @@ hr{
   border-radius: 0 !important;
   cursor: pointer;
 }
-
+.card-img-top{width: auto!important;}
 #toolsPanel {
   grid-area: ToolsPanel;
   position: relative;
@@ -399,7 +546,7 @@ hr{
 .colorTable > tr{
   border: 1px solid gainsboro;
 }
-td {
+.colorCell {
   max-height: 30px;
   height: 30px;
   width: 30px;

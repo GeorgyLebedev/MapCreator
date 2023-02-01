@@ -58,6 +58,15 @@ export default {
         dashArray: [10,5],
         dotArray:[1,5]
       },
+      shapeTool: new paper.Tool(),
+      shapeOpt:{
+        shapeType: "rectangle",
+        borderWidth: 1,
+        borderColor: "#000000",
+        fillColor: "#ffffff",
+        borderRadius: 0,
+        opacity:1
+      },
       textTool: new paper.Tool(),
       zoomTool: new paper.Tool(),
     }
@@ -76,6 +85,14 @@ export default {
           this.colorChanged = true
         Object.assign(this.brushOpt, opt)
         this.setBrush(this.brushTool, this.brushOpt)
+      }
+      if (this.currentTool == "shape") {
+        if (this.shapeOpt.fillColor != opt.fillColor)
+          this.colorChanged = "fill"
+        if (this.shapeOpt.borderColor != opt.borderColor)
+          this.colorChanged = "border"
+        Object.assign(this.shapeOpt, opt)
+        this.setShapeTool(this.shapeTool, this.shapeOpt)
       }
       if (this.currentTool == "path") {
         if (this.pathOpt.color != opt.color)
@@ -122,11 +139,186 @@ export default {
         path.smooth();
       }
     },
+    setShapeTool(shapeTool, options){
+      let rectangle
+      let path
+      let exLine
+      let triangle, center, radius
+      let sides
+      let ref=this
+      let initPoint=undefined
+      if (options.shapeType !== "arbitrary")
+        this.activeLayer.onDoubleClick = undefined
+      else
+      {
+        this.activeLayer.onDoubleClick = () => {
+          path.closed=true
+          path.fillColor=options.fillColor
+          initPoint = undefined
+        }
+      }
+        switch (options.shapeType) {
+          case "rectangle":
+            shapeTool.onMouseDown = (event) =>{
+              if (!initPoint)
+                initPoint=event.point
+              else {
+                rectangle = new paper.Path.Rectangle(initPoint, event.point)
+                rectangle.strokeColor=options.borderColor
+                rectangle.fillColor=options.fillColor
+                rectangle.strokeWidth=options.borderWidth
+                rectangle.opacity=options.opacity
+                initPoint = undefined
+              }
+              if (ref.colorChanged=="fill") {
+                ref.updateRecentColors(options.fillColor)
+                ref.colorChanged = false
+              }
+              if (ref.colorChanged=="border") {
+                ref.updateRecentColors(options.borderColor)
+                ref.colorChanged = false
+              }
+            }
+            shapeTool.onMouseMove = (event) =>{
+              if(rectangle)
+                rectangle.remove()
+              if(initPoint){
+                rectangle=new paper.Path.Rectangle(initPoint, event.point)
+                rectangle.strokeColor=options.borderColor
+                rectangle.fillColor=options.fillColor
+                rectangle.strokeWidth=options.borderWidth
+                rectangle.opacity=options.opacity
+              }
+            }
+            break
+          case "triangle":
+          case "polygon":
+            if(options.shapeType=="triangle")
+            sides=3
+              else
+                sides=options.sides
+            shapeTool.onMouseDown = (event) =>{
+              if (!initPoint)
+                initPoint=event.point
+              else {
+                center=new paper.Point(event.point)
+                center.x=(event.point.x+initPoint.x)/2
+                center.y=(event.point.y+initPoint.y)/2
+                radius=Math.sqrt(Math.pow((initPoint.x-center.x),2)+Math.pow((initPoint.y-center.y),2))
+                triangle = new paper.Path.RegularPolygon(center, sides, radius)
+                triangle.strokeColor=options.borderColor
+                triangle.fillColor=options.fillColor
+                triangle.strokeWidth=options.borderWidth
+                triangle.opacity=options.opacity
+                initPoint = undefined
+              }
+              if (ref.colorChanged=="fill") {
+                ref.updateRecentColors(options.fillColor)
+                ref.colorChanged = false
+              }
+              if (ref.colorChanged=="border") {
+                ref.updateRecentColors(options.borderColor)
+                ref.colorChanged = false
+              }
+            }
+            shapeTool.onMouseMove = (event) =>{
+              if(triangle)
+                triangle.remove()
+              if(initPoint){
+                center=new paper.Point(event.point)
+                center.x=(event.point.x+initPoint.x)/2
+                center.y=(event.point.y+initPoint.y)/2
+                radius=Math.sqrt(Math.pow((initPoint.x-center.x),2)+Math.pow((initPoint.y-center.y),2))
+                triangle = new paper.Path.RegularPolygon(center, sides, radius)
+                triangle.strokeColor=options.borderColor
+                triangle.fillColor=options.fillColor
+                triangle.strokeWidth=options.borderWidth
+                triangle.opacity=options.opacity
+              }
+            }
+            break
+          case "circle":
+            shapeTool.onMouseDown = (event) =>{
+              if (!initPoint)
+                initPoint=event.point
+              else {
+                rectangle = new paper.Rectangle(initPoint, event.point)
+                path = new paper.Path.Ellipse(rectangle)
+                path.strokeColor=options.borderColor
+                path.fillColor=options.fillColor
+                path.strokeWidth=options.borderWidth
+                path.opacity=options.opacity
+                initPoint = undefined
+              }
+              if (ref.colorChanged=="fill") {
+                ref.updateRecentColors(options.fillColor)
+                ref.colorChanged = false
+              }
+              if (ref.colorChanged=="border") {
+                ref.updateRecentColors(options.borderColor)
+                ref.colorChanged = false
+              }
+            }
+            shapeTool.onMouseMove = (event) =>{
+              if(path)
+                path.remove()
+              if(initPoint){
+                rectangle=new paper.Rectangle(initPoint, event.point)
+                path = new paper.Path.Ellipse(rectangle)
+                path.strokeColor=options.borderColor
+                path.fillColor=options.fillColor
+                path.strokeWidth=options.borderWidth
+                path.opacity=options.opacity
+              }
+            }
+            break
+          case "arbitrary":
+            shapeTool.onMouseMove = (event) => {
+              if (exLine)
+                exLine.remove()
+              if (initPoint) {
+                exLine = new paper.Path.Line({
+                  from: initPoint,
+                  to: event.point,
+                  strokeWidth: options.borderWidth,
+                  strokeColor: options.borderColor,
+                  opacity: options.opacity,
+                  strokeCap:"round"
+                })
+              }
+            }
+            shapeTool.onMouseDown = (event) => {
+              if (!initPoint) {
+                path=new paper.Path()
+                path.strokeWidth=options.borderWidth
+                path.strokeColor=options.borderColor
+                path.opacity=options.opacity
+                path.strokeCap="round"
+                initPoint = event.point
+                path.add(initPoint)
+              }
+              else {
+                initPoint = event.point
+                path.add(initPoint)
+              }
+              if (ref.colorChanged=="fill") {
+                ref.updateRecentColors(options.fillColor)
+                ref.colorChanged = false
+              }
+              if (ref.colorChanged=="border") {
+                ref.updateRecentColors(options.borderColor)
+                ref.colorChanged = false
+              }
+            }
+              break
+        }
+    },
     setPathTool(pathTool, options) {
       let path = new paper.Path
       let ref = this
       let initPoint = undefined
       let firstSegment, lastSegment
+      let hIn, hOut
       let segments=[]
       options.cursor.radius = options.size
       if (options.pathType !== "poly" && options.pathType !== "curve")
@@ -216,13 +408,17 @@ export default {
             if (path)
               path.remove()
             if (initPoint) {
-              lastSegment=new paper.Segment({
-                point:event.point,
-                handleIn: [10,10]
-              })
+              hIn=firstSegment.point-event.point
+              hOut=event.point
+              lastSegment=new paper.Segment(
+                event.point,
+                hIn,
+                hOut
+              )
               path = new paper.Path({
                 segments: segments.concat(lastSegment)
               })
+
               path.insertBelow(options.cursor)
               path.strokeWidth = options.size * 2
               path.strokeCap = options.roundCap ? "round":"square",
@@ -231,10 +427,21 @@ export default {
             }
           }
           pathTool.onMouseDown = (event) => {
-            firstSegment=new paper.Segment({
-              point:event.point,
-              handleIn: [10,10]
-            })
+            //console.log(paper.view.center)
+            if(!initPoint) {
+              segments = []
+              firstSegment = new paper.Segment(
+                  event.point,
+                  null,
+                  null
+              )
+            }
+            else
+              firstSegment = new paper.Segment(
+                  event.point,
+                  hIn,
+                  hOut
+              )
             segments.push(firstSegment)
             initPoint=event.point
             if (ref.colorChanged) {
@@ -257,6 +464,8 @@ export default {
     this.brushOpt.cursor.strokeColor = "black"
     this.brushOpt.cursor.visible = false
     this.setBrush(this.brushTool, this.brushOpt)
+    //-----SHAPE-------------------------
+    this.setShapeTool(this.shapeTool,this.shapeOpt)
     //-----PATH--------------------------
     this.pathOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
     this.pathOpt.cursor.fillColor = 'transparent'
@@ -281,6 +490,10 @@ export default {
           this.withoutCursor = true
           this.brushOpt.cursor.visible = true
           this.brushTool.activate()
+          break
+        case "shape":
+          this.withoutCursor = false
+          this.shapeTool.activate()
           break
         case "path":
           this.withoutCursor = true

@@ -23,6 +23,10 @@ input[type=radio] + label{
   background: #232323;
   color:white;
 }
+.radio-icon-group input[type=radio]:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+}
 .radio-icon > label{
   height: inherit;
 }
