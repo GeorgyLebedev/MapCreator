@@ -102,6 +102,7 @@ export default {
       }
     },
     updateRecentColors(newColor) {
+      if (newColor=="transparent") return
       if (this.recentColors.length < 8)
         this.recentColors.unshift(newColor)
       else {
@@ -318,8 +319,9 @@ export default {
       let exLine
       let ref = this
       let initPoint = undefined
+      let vector
       let firstSegment, lastSegment
-      let hIn, hOut
+      let hIn
       let segments=[]
       options.cursor.radius = options.size
       if (options.pathType !== "poly" && options.pathType !== "curve")
@@ -416,14 +418,24 @@ export default {
             options.cursor.position = event.point;
             if (path)
               path.remove()
-            if (initPoint) {
-              hIn=firstSegment.point-event.point
-              hOut=event.point
+            if(initPoint) {
+              if (segments.length > 1) {
+                 vector = new paper.Point({
+                  angle: event.point.getAngle(firstSegment.point),
+                  length: event.point.getDistance(firstSegment.point)
+                });
+                hIn = null
+                segments[segments.length-1].handleOut=vector
+              }
+              else hIn = null
+            }
               lastSegment=new paper.Segment(
                 event.point,
                 hIn,
-                hOut
+                null
               )
+              lastSegment.selected=true
+              segments[segments.length-1].selected=true
               path = new paper.Path({
                 segments: segments.concat(lastSegment)
               })
@@ -433,24 +445,17 @@ export default {
               path.strokeCap = options.roundCap ? "round":"square"
               path.strokeColor = options.color;
               path.opacity = options.opacity
-            }
           }
           pathTool.onMouseDown = (event) => {
             //console.log(paper.view.center)
             if(!initPoint) {
               segments = []
-              firstSegment = new paper.Segment(
-                  event.point,
-                  null,
-                  null
-              )
             }
-            else
-              firstSegment = new paper.Segment(
-                  event.point,
-                  hIn,
-                  hOut
-              )
+            firstSegment = new paper.Segment(
+                event.point,
+                null,
+                null
+            )
             segments.push(firstSegment)
             initPoint=event.point
             if (ref.colorChanged) {

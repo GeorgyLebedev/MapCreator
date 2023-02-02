@@ -5,7 +5,9 @@
     <button type="button" id="btnsave" class="radio-icon card bg-white me-2 p-0">
       <img src="@/assets/images/Tools/save.png" alt="" class="card-img-top p-1 icon-mid hoverinv" height="40">
     </button>
-    &lt;Изменений: 11&gt; Не сохранено
+    <span class="me-2">
+    <u><b>Изменений: 11</b></u></span>
+    <span class="text-muted">Не сохранено</span>
   </div>
   <div class="d-flex align-items-center pe-2">
     <button type="button" id="resetscale" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip" data-bs-placement="top" title="Сбросить" v-on:click="scale=100">

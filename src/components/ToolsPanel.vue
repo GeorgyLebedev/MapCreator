@@ -194,14 +194,19 @@
               </div>
               <hr>
               Цвета:
-              <table class="table table-borderless">
+              <table class=" options-table">
                 <tr>
-                  <td>Заливка</td>
-                  <td><input type="color" v-model="shapeOpt.fillColor"></td>
+                  <td><input type="checkbox" class="form-check-input me-2"  id="shapeFillChbx" checked v-model="shapeOpt.withFill" @change="setShapeFill(shapeOpt.withFill)">
+                    <label for="shapeFillChbx">Заливка</label>
+                  </td>
+                  <td><input type="color" v-model="shapeOpt.fillColor" v-if="shapeOpt.withFill"></td>
                 </tr>
                 <tr>
-                  <td>Контур</td>
-                  <td><input type="color" v-model="shapeOpt.borderColor"></td>
+                  <td>
+                    <input type="checkbox" class="form-check-input me-2 "  id="shapeBorderChbx" checked v-model="shapeOpt.withBorder" @change="setShapeBorder(shapeOpt.withBorder)">
+                    <label for="shapeBorderChbx">Контур</label>
+                  </td>
+                  <td><input type="color" v-model="shapeOpt.borderColor" v-if="shapeOpt.withBorder"></td>
                 </tr>
               </table>
               Последние цвета:
@@ -210,8 +215,8 @@
                   <td v-for="(color, index) in recentColors" :key="index"
                       class="colorCell"
                       :style="{ 'background-color': color}"
-                      @click="shapeOpt.fillColor=color"
-                      @contextmenu="shapeOpt.borderColor=color">
+                      @click="shapeOpt.fillColor=color; shapeOpt.withFill=true"
+                      @contextmenu="shapeOpt.borderColor=color; shapeOpt.withBorder=true">
                   </td>
                 </tr>
               </table>
@@ -429,16 +434,21 @@ export default {
         opacity:1,
         rotation: 0,
         sides: 5,
-        isArbitrary: false
+        isArbitrary: false,
+        withFill: true,
+        withBorder: true
       }
     }
   },
   methods:{
-    setArbitraryShape(flag){
-      if(flag)
-        this.shapeOpt.shapeType="arbitrary"
-      else
-        this.shapeOpt.shapeType="rectangle"
+    setArbitraryShape(isArbitrary){
+      this.shapeOpt.shapeType=isArbitrary ? "arbitrary" : "rectangle"
+    },
+    setShapeFill(isFill){
+      this.shapeOpt.fillColor= isFill ? "#ffffff":"transparent"
+    },
+    setShapeBorder(isBorder){
+      this.shapeOpt.borderColor= isBorder ? "#000000":"transparent"
     }
   },
   watch:{
@@ -479,12 +489,18 @@ export default {
   }
 </script>
 <style>
+#toolsPanel {
+  grid-area: ToolsPanel;
+  position: relative;
+}
+
 hr{
   border: 1px solid gainsboro !important;
   border-bottom-width: 0 !important;
   opacity: 1 !important;
   margin:10px 0 !important;
 }
+
 .tools-options {
   position: absolute;
   border: 1px solid gainsboro;
@@ -498,7 +514,12 @@ hr{
   text-align: left;
   z-index: 1;
 }
-
+.options-table tr{
+  height: 40px;
+}
+.options-table{
+  width: 100%;
+}
 .tools-options input[type=radio]:checked + .radio-text {
   color: #232323;
   border-bottom: 2px solid #232323;
@@ -530,10 +551,6 @@ hr{
   cursor: pointer;
 }
 .card-img-top{width: auto!important;}
-#toolsPanel {
-  grid-area: ToolsPanel;
-  position: relative;
-}
 
 .closeOpt {
   cursor: pointer;
