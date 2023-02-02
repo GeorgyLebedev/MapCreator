@@ -315,6 +315,7 @@ export default {
     },
     setPathTool(pathTool, options) {
       let path = new paper.Path
+      let exLine
       let ref = this
       let initPoint = undefined
       let firstSegment, lastSegment
@@ -325,7 +326,7 @@ export default {
         this.activeLayer.onDoubleClick = undefined
       else {
         this.activeLayer.onDoubleClick = (event) => {
-          path = new paper.Path.Line(initPoint, event.point)
+          path.add(event.point)
           initPoint = undefined
         }
       }
@@ -339,7 +340,7 @@ export default {
               path = new paper.Path.Line({
                 from: initPoint,
                 to: event.point,
-                strokeWidth: options.size * 2,
+                strokeWidth: options.size,
                 strokeCap: options.roundCap ? "round":"square",
                 strokeColor: options.color,
                 opacity: options.opacity
@@ -369,13 +370,13 @@ export default {
         case "poly":
           pathTool.onMouseMove = (event) => {
             options.cursor.position = event.point;
-            if (path)
-              path.remove()
+            if (exLine)
+              exLine.remove()
             if (initPoint) {
-              path = new paper.Path.Line({
+              exLine = new paper.Path.Line({
                 from: initPoint,
                 to: event.point,
-                strokeWidth: options.size * 2,
+                strokeWidth: options.size,
                 strokeCap: options.roundCap ? "round":"square",
                 strokeColor: options.color,
                 opacity: options.opacity
@@ -389,12 +390,20 @@ export default {
             }
           }
           pathTool.onMouseDown = (event) => {
-            if (!initPoint)
+            if (!initPoint) {
               initPoint = event.point
-            else {
-              path = new paper.Path.Line(initPoint, event.point)
+              path = new paper.Path({
+                strokeWidth: options.size,
+                strokeCap: options.roundCap ? "round":"square",
+                strokeColor: options.color,
+                opacity: options.opacity
+              })
               path.insertBelow(options.cursor)
+              path.add(initPoint)
+            }
+            else {
               initPoint = event.point
+              path.add(initPoint)
             }
             if (ref.colorChanged) {
               ref.updateRecentColors(options.color)
@@ -420,8 +429,8 @@ export default {
               })
 
               path.insertBelow(options.cursor)
-              path.strokeWidth = options.size * 2
-              path.strokeCap = options.roundCap ? "round":"square",
+              path.strokeWidth = options.size
+              path.strokeCap = options.roundCap ? "round":"square"
               path.strokeColor = options.color;
               path.opacity = options.opacity
             }
