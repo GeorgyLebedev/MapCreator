@@ -164,11 +164,8 @@ export default {
               if (!initPoint)
                 initPoint=event.point
               else {
-                rectangle = new paper.Path.Rectangle(initPoint, event.point)
-                rectangle.strokeColor=options.borderColor
-                rectangle.fillColor=options.fillColor
-                rectangle.strokeWidth=options.borderWidth
-                rectangle.opacity=options.opacity
+                rectangle.clone()
+                rectangle.remove()
                 initPoint = undefined
               }
               if (ref.colorChanged=="fill") {
@@ -206,11 +203,8 @@ export default {
                 center.x=(event.point.x+initPoint.x)/2
                 center.y=(event.point.y+initPoint.y)/2
                 radius=Math.sqrt(Math.pow((initPoint.x-center.x),2)+Math.pow((initPoint.y-center.y),2))
-                triangle = new paper.Path.RegularPolygon(center, sides, radius)
-                triangle.strokeColor=options.borderColor
-                triangle.fillColor=options.fillColor
-                triangle.strokeWidth=options.borderWidth
-                triangle.opacity=options.opacity
+                triangle.clone()
+                triangle.remove()
                 initPoint = undefined
               }
               if (ref.colorChanged=="fill") {
@@ -243,12 +237,8 @@ export default {
               if (!initPoint)
                 initPoint=event.point
               else {
-                rectangle = new paper.Rectangle(initPoint, event.point)
-                path = new paper.Path.Ellipse(rectangle)
-                path.strokeColor=options.borderColor
-                path.fillColor=options.fillColor
-                path.strokeWidth=options.borderWidth
-                path.opacity=options.opacity
+                path.clone()
+                path.remove()
                 initPoint = undefined
               }
               if (ref.colorChanged=="fill") {
