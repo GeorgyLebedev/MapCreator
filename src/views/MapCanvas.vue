@@ -68,6 +68,16 @@ export default {
         opacity:1
       },
       textTool: new paper.Tool(),
+      textOpt:{
+        text: "Текст",
+        font: "Cambria",
+        fontWeight: "normal",
+        fontSize: 10,
+        textAlign: "left",
+        fillColor: "#ffffff",
+        strokeColor: "#000000",
+        opacity:1,
+      },
       zoomTool: new paper.Tool(),
     }
   },
