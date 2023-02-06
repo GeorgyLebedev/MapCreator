@@ -8,7 +8,7 @@
         :recent-colors="recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" :class="{cursorNone: withoutCursor}"></canvas>
+      <canvas id="map" width="1560" height="680" :style="{'cursor': styleCursor}"></canvas>
     </div>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
     return {
       scale: 100,
       currentTool: "cursor",
-      withoutCursor: false,
+      styleCursor: "default",
       recentColors: Array(8).fill("#ffffff"),
       colorChanged: false,
       activeLayer: null,
@@ -76,7 +76,15 @@ export default {
         textAlign: "left",
         fillColor: "#ffffff",
         strokeColor: "#000000",
-        opacity:1,
+        strokeWidth: 1,
+        shadowColor: "#000000",
+        shOffsetX: 0,
+        shOffsetY: 0,
+        opacity: 1,
+        rotation: 0,
+        isBorder: true,
+        isFill: true,
+        isShadow: false
       },
       zoomTool: new paper.Tool(),
     }
@@ -109,6 +117,10 @@ export default {
           this.colorChanged = true
         Object.assign(this.pathOpt, opt)
         this.setPathTool(this.pathTool, this.pathOpt)
+      }
+      if (this.currentTool == "text") {
+        Object.assign(this.textOpt, opt)
+        this.setTextTool(this.textTool, this.textOpt)
       }
     },
     updateRecentColors(newColor) {
@@ -465,6 +477,32 @@ export default {
           }
           break;
       }
+    },
+    setTextTool(textTool,options){
+      let text
+      textTool.onMouseMove= (event)=>{
+          if(text)
+            text.remove()
+          text=new paper.PointText({
+            point: event.point,
+            content: options.text,
+            fillColor: options.isFill ? options.fillColor : undefined,
+            fontFamily: options.font,
+            fontWeight: options.fontWeight,
+            fontSize: options.fontSize,
+            opacity: options.opacity,
+            strokeColor: options.isBorder ? options.strokeColor : undefined,
+            strokeWidth: options.isBorder ? options.strokeWidth : 0,
+            shadowColor: options.isShadow ? options.shadowColor : undefined,
+            shadowBlur: options.isShadow ? options.shadowBlur : 0,
+            shadowOffset: options.isShadow ? new paper.Point(Number(options.shOffsetX),Number(options.shOffsetY)) : undefined
+          })
+        console.log(options.shOffsetX)
+        console.log(options.shOffsetY)
+      }
+      textTool.onMouseDown= ()=>{
+          text.clone()
+      }
     }
   },
   mounted() {
@@ -486,6 +524,8 @@ export default {
     this.pathOpt.cursor.strokeColor = "black"
     this.pathOpt.cursor.visible = false
     this.setPathTool(this.pathTool, this.pathOpt)
+    //-----TEXT--------------------------
+    this.setTextTool(this.textTool, this.textOpt)
     ////......
     this.cursorTool.activate()
   },
@@ -497,23 +537,26 @@ export default {
         this.pathOpt.cursor.visible = false
       switch (val) {
         case "cursor":
-          this.withoutCursor = false
+          this.styleCursor = "default"
           this.cursorTool.activate()
           break
         case "brush":
-          this.withoutCursor = true
+          this.styleCursor = "none"
           this.brushOpt.cursor.visible = true
           this.brushTool.activate()
           break
         case "shape":
-          this.withoutCursor = false
+          this.styleCursor = "crosshair"
           this.shapeTool.activate()
           break
         case "path":
-          this.withoutCursor = true
+          this.styleCursor = "none"
           this.pathOpt.cursor.visible = true
           this.pathTool.activate()
           break
+        case "text":
+          this.styleCursor="none"
+          this.textTool.activate()
       }
     }
   }

@@ -409,20 +409,16 @@
                 </div>
               </div>
               <hr>
-              <table class=" options-table">
-                <tr>
-                  <td>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex">
                     <input type="checkbox" class="form-check-input me-2" id="textFillChbx" checked
                            v-model="textOpt.isFill" @change="setFill(textOpt)">
                     <label for="textFillChbx">Цвет текста</label>
-                  </td>
-                  <td>
+                </div>
                     <input type="color" v-model="textOpt.fillColor" v-if="textOpt.isFill">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!textOpt.isFill">
-                  </td>
-                </tr>
-              </table>
+              </div>
               <hr>
               <div title="Размер шрифта">
                 <img src="@/assets/images/Tools/Options/font-size.png" height="20" alt="">
@@ -442,32 +438,47 @@
                 <input type="number" step="1" min="0" max="360" v-model="textOpt.rotation" class="input-number-style">
               </div>
               <hr>
-              <table class=" options-table">
-                <tr>
-                  <td>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex">
                     <input type="checkbox" class="form-check-input me-2" id="textBorderChbx" checked
                            v-model="textOpt.isBorder" @change="setBorder(textOpt)">
                     <label for="shapeFillChbx">Обводка</label>
-                  </td>
-                  <td>
-                    <input type="color" v-model="textOpt.borderColor" v-if="textOpt.isBorder">
+                </div>
+                    <input type="color" v-model="textOpt.strokeColor" v-if="textOpt.isBorder">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!textOpt.isBorder">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
+              </div>
+              <div title="Толщина обводки" class="mt-3" v-if="textOpt.isBorder">
+                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                <input type="range" step="1" min="1" max="10" v-model="textOpt.strokeWidth">
+                <input type="number" step="1" min="1" max="10" v-model="textOpt.strokeWidth" class="input-number-style">
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex">
                     <input type="checkbox" class="form-check-input me-2 " id="textShadowChbx" v-model="textOpt.isShadow"
                            @change="setShadow(textOpt)">
                     <label for="shapeBorderChbx">Тень</label>
-                  </td>
-                  <td>
+                </div>
                     <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!textOpt.isShadow">
-                  </td>
-                </tr>
-              </table>
+              </div>
+              <div title="Смещение тени по Х" class="mt-3" v-if="textOpt.isShadow">
+                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetX">
+                <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetX" class="input-number-style">
+              </div>
+              <div title="Смещение тени по Y" class="mt-3" v-if="textOpt.isShadow">
+                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetY">
+                <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetY" class="input-number-style">
+              </div>
+              <div title="Размытие тени" class="mt-3" v-if="textOpt.isShadow">
+                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                <input type="range" step="1" min="1" max="10" v-model="textOpt.shadowBlur">
+                <input type="number" step="1" min="1" max="10" v-model="textOpt.shadowBlur" class="input-number-style">
+              </div>
             </div>
           </Transition>
         </div>
@@ -529,7 +540,11 @@ export default {
         textAlign: "left",
         fillColor: "#ffffff",
         strokeColor: "#000000",
+        strokeWidth: 1,
         shadowColor: "#000000",
+        shadowBlur: 1,
+        shOffsetX: 0,
+        shOffsetY: 0,
         opacity: 1,
         rotation: 0,
         isBorder: true,
@@ -587,6 +602,11 @@ export default {
     pathOpt: {
       handler() {
         this.$emit('optChange', this.pathOpt)
+      }, deep: true
+    },
+    textOpt: {
+      handler() {
+        this.$emit('optChange', this.textOpt)
       }, deep: true
     },
   }
