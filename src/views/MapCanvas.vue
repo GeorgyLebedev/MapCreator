@@ -8,7 +8,7 @@
         :recent-colors="recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" :style="{'cursor': styleCursor}"></canvas>
+      <canvas id="map" width="1560" height="680" :style="{'cursor': styleCursor}" @mouseleave="MyMethod"></canvas>
     </div>
   </div>
 </template>
@@ -92,6 +92,9 @@ export default {
   methods: {
     updateScale(data) {
       this.scale = data.newScale
+    },
+    MyMethod(){
+      
     },
     setTool(tool) {
       this.currentTool = tool
@@ -497,8 +500,6 @@ export default {
             shadowBlur: options.isShadow ? options.shadowBlur : 0,
             shadowOffset: options.isShadow ? new paper.Point(Number(options.shOffsetX),Number(options.shOffsetY)) : undefined
           })
-        console.log(options.shOffsetX)
-        console.log(options.shOffsetY)
       }
       textTool.onMouseDown= ()=>{
           text.clone()
