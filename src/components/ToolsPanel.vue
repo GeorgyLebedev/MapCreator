@@ -62,8 +62,9 @@
                   <table class="colorTable">
                     <tr>
                       <td v-for="(color, index) in recentColors" :key="index"
+                          class="colorCell"
                           :style="{ 'background-color': color}"
-                          @click="brushOpt.color=color">
+                          @click="brushOpt.color=color ">
                       </td>
                     </tr>
                   </table>
@@ -440,7 +441,7 @@
               <hr>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
-                    <input type="checkbox" class="form-check-input me-2" id="textBorderChbx" checked
+                    <input type="checkbox" class="form-check-input me-2" id="textBorderChbx"
                            v-model="textOpt.isBorder" @change="setBorder(textOpt)">
                     <label for="shapeFillChbx">Обводка</label>
                 </div>
@@ -496,7 +497,9 @@
 export default {
   name: "ToolsPanel",
   props: {
-    recentColors: Array()
+    recentColors: {
+    type: Array,
+    }
   },
   data() {
     return {
@@ -535,10 +538,9 @@ export default {
       textOpt: {
         text: "Текст",
         font: "Cambria",
-        fontWeight: "normal",
         fontSize: 10,
         textAlign: "left",
-        fillColor: "#ffffff",
+        fillColor: "#000000",
         strokeColor: "#000000",
         strokeWidth: 1,
         shadowColor: "#000000",
@@ -547,7 +549,7 @@ export default {
         shOffsetY: 0,
         opacity: 1,
         rotation: 0,
-        isBorder: true,
+        isBorder: false,
         isFill: true,
         isShadow: false
       },

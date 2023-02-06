@@ -8,7 +8,7 @@
         :recent-colors="recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" :style="{'cursor': styleCursor}" @mouseleave="MyMethod"></canvas>
+      <canvas id="map" width="1560" height="680" :style="{'cursor': styleCursor}" @mouseout="toolSwitch('off')" @mouseover="toolSwitch('on')"></canvas>
     </div>
   </div>
 </template>
@@ -32,7 +32,11 @@ export default {
   data() {
     return {
       scale: 100,
-      currentTool: "cursor",
+      currentTool: {
+        name: "cursor",
+        toolRef: null
+      },
+      currentItem: null,
       styleCursor: "default",
       recentColors: Array(8).fill("#ffffff"),
       colorChanged: false,
@@ -71,7 +75,6 @@ export default {
       textOpt:{
         text: "Текст",
         font: "Cambria",
-        fontWeight: "normal",
         fontSize: 10,
         textAlign: "left",
         fillColor: "#ffffff",
@@ -87,27 +90,32 @@ export default {
         isShadow: false
       },
       zoomTool: new paper.Tool(),
+      nullTool: new paper.Tool()
     }
   },
   methods: {
     updateScale(data) {
       this.scale = data.newScale
     },
-    MyMethod(){
-      
+    toolSwitch(mode){
+    if(mode=="on" && this.currentTool.toolRef) {
+      this.currentTool.toolRef.activate()
+    }
+    else
+      this.nullTool.activate()
     },
     setTool(tool) {
-      this.currentTool = tool
+      this.currentTool.name = tool
       this.activeLayer.onDoubleClick = undefined
     },
     setOpt(opt) {
-      if (this.currentTool == "brush") {
+      if (this.currentTool.name == "brush") {
         if (this.brushOpt.color != opt.color)
           this.colorChanged = true
         Object.assign(this.brushOpt, opt)
         this.setBrush(this.brushTool, this.brushOpt)
       }
-      if (this.currentTool == "shape") {
+      if (this.currentTool.name == "shape") {
         if (this.shapeOpt.fillColor != opt.fillColor)
           this.colorChanged = "fill"
         if (this.shapeOpt.borderColor != opt.borderColor)
@@ -115,13 +123,13 @@ export default {
         Object.assign(this.shapeOpt, opt)
         this.setShapeTool(this.shapeTool, this.shapeOpt)
       }
-      if (this.currentTool == "path") {
+      if (this.currentTool.name == "path") {
         if (this.pathOpt.color != opt.color)
           this.colorChanged = true
         Object.assign(this.pathOpt, opt)
         this.setPathTool(this.pathTool, this.pathOpt)
       }
-      if (this.currentTool == "text") {
+      if (this.currentTool.name == "text") {
         Object.assign(this.textOpt, opt)
         this.setTextTool(this.textTool, this.textOpt)
       }
@@ -166,10 +174,8 @@ export default {
       }
     },
     setShapeTool(shapeTool, options){
-      let rectangle
-      let path
       let exLine
-      let triangle, center, radius
+      let center, radius
       let sides
       let ref=this
       let initPoint=undefined
@@ -178,8 +184,8 @@ export default {
       else
       {
         this.activeLayer.onDoubleClick = () => {
-          path.closed=true
-          path.fillColor=options.fillColor
+          this.currentItem.closed=true
+          this.currentItem.fillColor=options.fillColor
           initPoint = undefined
         }
       }
@@ -189,8 +195,8 @@ export default {
               if (!initPoint)
                 initPoint=event.point
               else {
-                rectangle.clone()
-                rectangle.remove()
+                this.currentItem.clone()
+                this.currentItem.remove()
                 initPoint = undefined
               }
               if (ref.colorChanged=="fill") {
@@ -203,14 +209,17 @@ export default {
               }
             }
             shapeTool.onMouseMove = (event) =>{
-              if(rectangle)
-                rectangle.remove()
+              if(this.currentItem)
+                this.currentItem.remove()
               if(initPoint){
-                rectangle=new paper.Path.Rectangle(initPoint, event.point)
-                rectangle.strokeColor=options.borderColor
-                rectangle.fillColor=options.fillColor
-                rectangle.strokeWidth=options.borderWidth
-                rectangle.opacity=options.opacity
+                this.currentItem=new paper.Path.Rectangle({
+                  from: initPoint,
+                  to: event.point,
+                  strokeColor:options.borderColor,
+                  fillColor: options.fillColor,
+                  strokeWidth: options.borderWidth,
+                  opacity:options.opacity
+                })
               }
             }
             break
@@ -228,8 +237,8 @@ export default {
                 center.x=(event.point.x+initPoint.x)/2
                 center.y=(event.point.y+initPoint.y)/2
                 radius=Math.sqrt(Math.pow((initPoint.x-center.x),2)+Math.pow((initPoint.y-center.y),2))
-                triangle.clone()
-                triangle.remove()
+                this.currentItem.clone()
+                this.currentItem.remove()
                 initPoint = undefined
               }
               if (ref.colorChanged=="fill") {
@@ -242,18 +251,22 @@ export default {
               }
             }
             shapeTool.onMouseMove = (event) =>{
-              if(triangle)
-                triangle.remove()
+              if(this.currentItem)
+                this.currentItem.remove()
               if(initPoint){
                 center=new paper.Point(event.point)
                 center.x=(event.point.x+initPoint.x)/2
                 center.y=(event.point.y+initPoint.y)/2
                 radius=Math.sqrt(Math.pow((initPoint.x-center.x),2)+Math.pow((initPoint.y-center.y),2))
-                triangle = new paper.Path.RegularPolygon(center, sides, radius)
-                triangle.strokeColor=options.borderColor
-                triangle.fillColor=options.fillColor
-                triangle.strokeWidth=options.borderWidth
-                triangle.opacity=options.opacity
+                this.currentItem = new paper.Path.RegularPolygon({
+                  center: center,
+                  sides: sides,
+                  radius: radius,
+                  strokeColor: options.borderColor,
+                  fillColor: options.fillColor,
+                  strokeWidth: options.borderWidth,
+                  opacity:options.opacity
+                })
               }
             }
             break
@@ -262,8 +275,8 @@ export default {
               if (!initPoint)
                 initPoint=event.point
               else {
-                path.clone()
-                path.remove()
+                this.currentItem.clone()
+                this.currentItem.remove()
                 initPoint = undefined
               }
               if (ref.colorChanged=="fill") {
@@ -276,15 +289,17 @@ export default {
               }
             }
             shapeTool.onMouseMove = (event) =>{
-              if(path)
-                path.remove()
+              if(this.currentItem)
+                this.currentItem.remove()
               if(initPoint){
-                rectangle=new paper.Rectangle(initPoint, event.point)
-                path = new paper.Path.Ellipse(rectangle)
-                path.strokeColor=options.borderColor
-                path.fillColor=options.fillColor
-                path.strokeWidth=options.borderWidth
-                path.opacity=options.opacity
+                this.currentItem = new paper.Path.Ellipse({
+                  point: initPoint,
+                  size: event.point,
+                  strokeColor: options.borderColor,
+                  fillColor: options.fillColor,
+                  strokeWidth: options.borderWidth,
+                  opacity: options.opacity
+                })
               }
             }
             break
@@ -305,17 +320,18 @@ export default {
             }
             shapeTool.onMouseDown = (event) => {
               if (!initPoint) {
-                path=new paper.Path()
-                path.strokeWidth=options.borderWidth
-                path.strokeColor=options.borderColor
-                path.opacity=options.opacity
-                path.strokeCap="round"
+                this.currentItem=new paper.Path({
+                  strokeWidth: options.borderWidth,
+                  strokeColor: options.borderColor,
+                  opacity: options.opacity,
+                  strokeCap:"round"
+                })
                 initPoint = event.point
-                path.add(initPoint)
+                this.currentItem.add(initPoint)
               }
               else {
                 initPoint = event.point
-                path.add(initPoint)
+                this.currentItem.add(initPoint)
               }
               if (ref.colorChanged=="fill") {
                 ref.updateRecentColors(options.fillColor)
@@ -330,7 +346,6 @@ export default {
         }
     },
     setPathTool(pathTool, options) {
-      let path = new paper.Path
       let exLine
       let ref = this
       let initPoint = undefined
@@ -343,7 +358,7 @@ export default {
         this.activeLayer.onDoubleClick = undefined
       else {
         this.activeLayer.onDoubleClick = (event) => {
-          path.add(event.point)
+          this.currentItem.add(event.point)
           initPoint = undefined
         }
       }
@@ -351,10 +366,10 @@ export default {
         case "line":
           pathTool.onMouseMove = (event) => {
             options.cursor.position = event.point;
-            if (path)
-              path.remove()
+            if (this.currentItem)
+              this.currentItem.remove()
             if (initPoint) {
-              path = new paper.Path.Line({
+              this.currentItem = new paper.Path.Line({
                 from: initPoint,
                 to: event.point,
                 strokeWidth: options.size,
@@ -363,19 +378,19 @@ export default {
                 opacity: options.opacity
               })
               if(options.style=="dashed")
-                path.dashArray=options.dashArray.map((x)=>(x*options.size))
+                this.currentItem.dashArray=options.dashArray.map((x)=>(x*options.size))
               else if (options.style=="dotted")
-                path.dashArray=options.dotArray.map((x)=>(x*options.size))
-              else path.dashArray=null
-              path.insertBelow(options.cursor)
+                this.currentItem.dashArray=options.dotArray.map((x)=>(x*options.size))
+              else this.currentItem.dashArray=null
+              this.currentItem.insertBelow(options.cursor)
             }
           }
           pathTool.onMouseDown = (event) => {
             if (!initPoint)
               initPoint = event.point
             else {
-              path = new paper.Path.Line(initPoint, event.point)
-              path.insertBelow(options.cursor)
+              this.currentItem = new paper.Path.Line(initPoint, event.point)
+              this.currentItem.insertBelow(options.cursor)
               initPoint = undefined
             }
             if (ref.colorChanged) {
@@ -399,28 +414,28 @@ export default {
                 opacity: options.opacity
               })
               if(options.style=="dashed")
-                path.dashArray=options.dashArray.map((x)=>(x*options.size))
+                this.currentItem.dashArray=options.dashArray.map((x)=>(x*options.size))
               else if (options.style=="dotted")
-                path.dashArray=options.dotArray.map((x)=>(x*options.size))
-              else path.dashArray=null
-              path.insertBelow(options.cursor)
+                this.currentItem.dashArray=options.dotArray.map((x)=>(x*options.size))
+              else this.currentItem.dashArray=null
+              this.currentItem.insertBelow(options.cursor)
             }
           }
           pathTool.onMouseDown = (event) => {
             if (!initPoint) {
               initPoint = event.point
-              path = new paper.Path({
+              this.currentItem = new paper.Path({
                 strokeWidth: options.size,
                 strokeCap: options.roundCap ? "round":"square",
                 strokeColor: options.color,
                 opacity: options.opacity
               })
-              path.insertBelow(options.cursor)
-              path.add(initPoint)
+              this.currentItem.insertBelow(options.cursor)
+              this.currentItem.add(initPoint)
             }
             else {
               initPoint = event.point
-              path.add(initPoint)
+              this.currentItem.add(initPoint)
             }
             if (ref.colorChanged) {
               ref.updateRecentColors(options.color)
@@ -431,8 +446,8 @@ export default {
         case "curve":
           pathTool.onMouseMove = (event) => {
             options.cursor.position = event.point;
-            if (path)
-              path.remove()
+            if (this.currentItem)
+              this.currentItem.remove()
             if(initPoint) {
               if (segments.length > 1) {
                  vector = new paper.Point({
@@ -451,15 +466,15 @@ export default {
               )
               lastSegment.selected=true
               segments[segments.length-1].selected=true
-              path = new paper.Path({
+              this.currentItem = new paper.Path({
                 segments: segments.concat(lastSegment)
               })
 
-              path.insertBelow(options.cursor)
-              path.strokeWidth = options.size
-              path.strokeCap = options.roundCap ? "round":"square"
-              path.strokeColor = options.color;
-              path.opacity = options.opacity
+              this.currentItem.insertBelow(options.cursor)
+              this.currentItem.strokeWidth = options.size
+              this.currentItem.strokeCap = options.roundCap ? "round":"square"
+              this.currentItem.strokeColor = options.color;
+              this.currentItem.opacity = options.opacity
           }
           pathTool.onMouseDown = (event) => {
             //console.log(paper.view.center)
@@ -482,11 +497,10 @@ export default {
       }
     },
     setTextTool(textTool,options){
-      let text
       textTool.onMouseMove= (event)=>{
-          if(text)
-            text.remove()
-          text=new paper.PointText({
+          if(this.currentItem)
+            this.currentItem.remove()
+          this.currentItem=new paper.PointText({
             point: event.point,
             content: options.text,
             fillColor: options.isFill ? options.fillColor : undefined,
@@ -502,7 +516,7 @@ export default {
           })
       }
       textTool.onMouseDown= ()=>{
-          text.clone()
+          this.currentItem.clone()
       }
     }
   },
@@ -531,31 +545,38 @@ export default {
     this.cursorTool.activate()
   },
   watch: {
-    currentTool(val) {
+    'currentTool.name'(val) {
+      if(this.currentItem)
+        this.currentItem.remove()
       if (val != "brush")
         this.brushOpt.cursor.visible = false
       if (val != "path")
         this.pathOpt.cursor.visible = false
       switch (val) {
         case "cursor":
+          this.currentTool.toolRef=this.cursorTool
           this.styleCursor = "default"
           this.cursorTool.activate()
           break
         case "brush":
+          this.currentTool.toolRef=this.brushTool
           this.styleCursor = "none"
           this.brushOpt.cursor.visible = true
           this.brushTool.activate()
           break
         case "shape":
+          this.currentTool.toolRef=this.shapeTool
           this.styleCursor = "crosshair"
           this.shapeTool.activate()
           break
         case "path":
+          this.currentTool.toolRef=this.pathTool
           this.styleCursor = "none"
           this.pathOpt.cursor.visible = true
           this.pathTool.activate()
           break
         case "text":
+          this.currentTool.toolRef=this.textTool
           this.styleCursor="none"
           this.textTool.activate()
       }
@@ -612,7 +633,7 @@ input[type=color] {
 input[type=color]::-webkit-color-swatch {
   border-radius: 0;
   border: 1px solid gray;
-  cursor: pointer
+  cursor: toolRef
 }
 
 *:hover > .hoverinv {
@@ -657,7 +678,7 @@ input[type=range]::-webkit-slider-thumb {
 
   border: 1px solid #232323;
   border-radius: 10px;
-  cursor: pointer;
+  cursor: toolRef;
   box-shadow: -180px 0 0 173px #232323;
 }
 
@@ -668,7 +689,7 @@ input[type=range]::-moz-range-thumb {
   height: 12px;
   border: 1px solid #232323;
   border-radius: 10px;
-  cursor: pointer;
+  cursor: toolRef;
   box-shadow: -180px 0 0 173px #232323;
 }
 </style>
