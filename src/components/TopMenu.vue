@@ -77,6 +77,8 @@ export default {
 .topMenu{
   grid-area: TopMenu;
   background-color: white;
+  position: relative;
+  z-index: 2;
 }
 .dropdown-item:active{
   background:#232323;

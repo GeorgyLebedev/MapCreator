@@ -42,6 +42,8 @@ export default {
 .botMenu{
   background-color: white;
   grid-area: BotMenu;
+  position: relative;
+  z-index: 2;
 }
 #btnsave{
   border-radius: 0;

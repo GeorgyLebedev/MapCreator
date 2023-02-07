@@ -587,6 +587,9 @@ export default {
         case "path":
           this.$emit('optChange', this.pathOpt)
           break
+        case "text":
+          this.$emit('optChange', this.textOpt)
+          break
         default:
           return
       }
@@ -618,6 +621,7 @@ export default {
 #toolsPanel {
   grid-area: ToolsPanel;
   position: relative;
+  z-index: 3;
 }
 #text{
   width:235px;
@@ -641,7 +645,7 @@ hr {
   top: -1px;
   white-space: nowrap;
   text-align: left;
-  z-index: 1;
+  z-index: 2;
 }
 
 .options-table tr {

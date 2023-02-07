@@ -590,6 +590,8 @@ export default {
   width: 100vw;
   height: 100vh;
   overflow-y: hidden;
+  z-index:1;
+  position: relative;
   grid-template-columns: 40px 1fr;
   grid-template-rows: 40px 1fr 40px;
   gap: 0px 0px;
@@ -604,11 +606,11 @@ export default {
 .CanvasArea {
   grid-area: CanvasArea;
   z-index: 1;
+  position: relative;
   justify-content: center;
   align-items: center;
   border-left: 1px solid gainsboro;
 }
-
 
 #map {
   background-color: white;
