@@ -10,7 +10,7 @@
           <label for="tool1" data-bs-toggle="tooltip" data-bs-placement="right" title="Курсор">
             <img src="@/assets/images/Tools/cursor.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
-          <Transition>
+          <Transition name="show">
             <div id="cursorOpt" class="tools-options" v-if="tool=='cursor' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Курсор </b>
@@ -40,7 +40,7 @@
           <label for="tool2" data-bs-toggle="tooltip" data-bs-placement="right" title="Кисть">
             <img src="@/assets/images/Tools/brush.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
-          <Transition>
+          <Transition name="show">
             <div id="brushOpt" class="tools-options" v-if="tool=='brush' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Кисть </b>
@@ -110,7 +110,7 @@
           <label for="tool3" data-bs-toggle="tooltip" data-bs-placement="right" title="Штамп">
             <img src="@/assets/images/Tools/stamp.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
-          <Transition>
+          <Transition name="show">
             <div id="stampOpt" class="tools-options" v-if="tool=='stamp' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Штамп </b>
@@ -140,7 +140,7 @@
           <label for="tool4" data-bs-toggle="tooltip" data-bs-placement="right" title="Фигуры">
             <img src="@/assets/images/Tools/shapes.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
-          <Transition>
+          <Transition name="show">
             <div id="shapesOpt" class="tools-options" v-if="tool=='shape' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Фигуры </b>
@@ -262,7 +262,7 @@
           <label for="tool5" data-bs-toggle="tooltip" data-bs-placement="right" title="Построить путь">
             <img src="@/assets/images/Tools/path.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
-          <Transition>
+          <Transition name="show">
             <div id="pathOpt" class="tools-options" v-if="tool=='path' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Пути/кривые </b>
@@ -317,23 +317,30 @@
                   </label>
                 </div>
               </div>
-              <div class="my-3" title="Расстояние между точками" v-if=" pathOpt.style=='dotted'">
-                <img src="@/assets/images/Tools/Options/gapDot.png" alt="" height="20">
-                <input type="range" step="1" min="5" max="50" v-model="pathOpt.dotArray[1]">
-                <input type="number" step="1" min="5" max="50" class="input-number-style" v-model="pathOpt.dotArray[1]">
-              </div>
-              <div class="my-3" title="Расстояние между штрихами" v-if="pathOpt.style=='dashed'">
-                <img src="@/assets/images/Tools/Options/gapDash.png" alt="" height="30">
-                <input type="range" step="1" min="5" max="50" v-model="pathOpt.dashArray[1]">
-                <input type="number" step="1" min="5" max="50" class="input-number-style"
-                       v-model="pathOpt.dashArray[1]">
-              </div>
-              <div class="my-3" title="Длина штриха" v-if="pathOpt.style=='dashed'">
-                <img src="@/assets/images/Tools/Options/dash.png" alt="" height="30">
-                <input type="range" step="1" min="10" max="50" v-model="pathOpt.dashArray[0]">
-                <input type="number" step="1" min="10" max="50" class="input-number-style"
-                       v-model="pathOpt.dashArray[0]">
-              </div>
+              <Transition name="stretch" mode="out-in">
+                <div class="my-3" title="Расстояние между точками" v-if=" pathOpt.style=='dotted'">
+                  <img src="@/assets/images/Tools/Options/gapDot.png" alt="" height="20">
+                  <input type="range" step="1" min="5" max="50" v-model="pathOpt.dotArray[1]">
+                  <input type="number" step="1" min="5" max="50" class="input-number-style"
+                         v-model="pathOpt.dotArray[1]">
+                </div>
+              </Transition>
+              <Transition name="stretch" mode="out-in">
+                <div v-if="pathOpt.style=='dashed'">
+                  <div class="my-3" title="Расстояние между штрихами">
+                    <img src="@/assets/images/Tools/Options/gapDash.png" alt="" height="20">
+                    <input type="range" step="1" min="5" max="50" v-model="pathOpt.dashArray[1]">
+                    <input type="number" step="1" min="5" max="50" class="input-number-style"
+                           v-model="pathOpt.dashArray[1]">
+                  </div>
+                  <div class="my-3" title="Длина штриха">
+                    <img src="@/assets/images/Tools/Options/dash.png" alt="" height="20">
+                    <input type="range" step="1" min="10" max="50" v-model="pathOpt.dashArray[0]">
+                    <input type="number" step="1" min="10" max="50" class="input-number-style"
+                           v-model="pathOpt.dashArray[0]">
+                  </div>
+                </div>
+              </Transition>
               <hr>
               Цвет линии: <br>
               <input type="color" v-model="pathOpt.color">
@@ -379,7 +386,7 @@
           <label for="tool6" title="Создать надпись">
             <img src="@/assets/images/Tools/text.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
-          <Transition>
+          <Transition name="show">
             <div id="textOpt" class="tools-options" v-if="tool=='text' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Надпись </b>
@@ -387,7 +394,8 @@
                      v-on:click="optionVisible=false">
               </div>
               <hr>
-              <textarea id="text" cols="24" rows="3" v-model="textOpt.text" :style="{'font-family':textOpt.font}"></textarea>
+              <textarea id="text" cols="24" rows="3" v-model="textOpt.text"
+                        :style="{'font-family':textOpt.font}"></textarea>
               <hr>
               <div class="d-flex align-items-center justify-content-between">
                 Шрифт
@@ -412,13 +420,13 @@
               <hr>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
-                    <input type="checkbox" class="form-check-input me-2" id="textFillChbx" checked
-                           v-model="textOpt.isFill" @change="setFill(textOpt)">
-                    <label for="textFillChbx">Цвет текста</label>
+                  <input type="checkbox" class="form-check-input me-2" id="textFillChbx" checked
+                         v-model="textOpt.isFill" @change="setFill(textOpt)">
+                  <label for="textFillChbx">Цвет текста</label>
                 </div>
-                    <input type="color" v-model="textOpt.fillColor" v-if="textOpt.isFill">
-                    <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
-                         v-if="!textOpt.isFill">
+                <input type="color" v-model="textOpt.fillColor" v-if="textOpt.isFill">
+                <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
+                     v-if="!textOpt.isFill">
               </div>
               <hr>
               <div title="Размер шрифта">
@@ -441,45 +449,55 @@
               <hr>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
-                    <input type="checkbox" class="form-check-input me-2" id="textBorderChbx"
-                           v-model="textOpt.isBorder" @change="setBorder(textOpt)">
-                    <label for="shapeFillChbx">Обводка</label>
+                  <input type="checkbox" class="form-check-input me-2" id="textBorderChbx"
+                         v-model="textOpt.isBorder" @change="setBorder(textOpt)">
+                  <label for="shapeFillChbx">Обводка</label>
                 </div>
-                    <input type="color" v-model="textOpt.strokeColor" v-if="textOpt.isBorder">
-                    <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
-                         v-if="!textOpt.isBorder">
+                <input type="color" v-model="textOpt.strokeColor" v-if="textOpt.isBorder">
+                <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
+                     v-if="!textOpt.isBorder">
               </div>
-              <div title="Толщина обводки" class="mt-3" v-if="textOpt.isBorder">
-                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                <input type="range" step="1" min="1" max="10" v-model="textOpt.strokeWidth">
-                <input type="number" step="1" min="1" max="10" v-model="textOpt.strokeWidth" class="input-number-style">
-              </div>
+              <Transition name="stretch" mode="out-in">
+                <div title="Толщина обводки" class="mt-3" v-if="textOpt.isBorder">
+                  <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                  <input type="range" step="1" min="1" max="10" v-model="textOpt.strokeWidth">
+                  <input type="number" step="1" min="1" max="10" v-model="textOpt.strokeWidth"
+                         class="input-number-style">
+                </div>
+              </Transition>
               <hr>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
-                    <input type="checkbox" class="form-check-input me-2 " id="textShadowChbx" v-model="textOpt.isShadow"
-                           @change="setShadow(textOpt)">
-                    <label for="shapeBorderChbx">Тень</label>
+                  <input type="checkbox" class="form-check-input me-2 " id="textShadowChbx" v-model="textOpt.isShadow"
+                         @change="setShadow(textOpt)">
+                  <label for="shapeBorderChbx">Тень</label>
                 </div>
-                    <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow">
-                    <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
-                         v-if="!textOpt.isShadow">
+                <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow">
+                <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
+                     v-if="!textOpt.isShadow">
               </div>
-              <div title="Смещение тени по Х" class="mt-3" v-if="textOpt.isShadow">
-                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetX">
-                <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetX" class="input-number-style">
-              </div>
-              <div title="Смещение тени по Y" class="mt-3" v-if="textOpt.isShadow">
-                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetY">
-                <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetY" class="input-number-style">
-              </div>
-              <div title="Размытие тени" class="mt-3" v-if="textOpt.isShadow">
-                <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                <input type="range" step="1" min="1" max="10" v-model="textOpt.shadowBlur">
-                <input type="number" step="1" min="1" max="10" v-model="textOpt.shadowBlur" class="input-number-style">
-              </div>
+              <Transition name="stretch" mode="out-in">
+                <div v-if="textOpt.isShadow">
+                <div title="Смещение тени по Х" class="mt-3">
+                  <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                  <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetX">
+                  <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetX"
+                         class="input-number-style">
+                </div>
+                <div title="Смещение тени по Y" class="mt-3">
+                  <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                  <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetY">
+                  <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetY"
+                         class="input-number-style">
+                </div>
+                <div title="Размытие тени" class="mt-3">
+                  <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                  <input type="range" step="1" min="1" max="10" v-model="textOpt.shadowBlur">
+                  <input type="number" step="1" min="1" max="10" v-model="textOpt.shadowBlur"
+                         class="input-number-style">
+                </div>
+                </div>
+              </Transition>
             </div>
           </Transition>
         </div>
@@ -498,7 +516,7 @@ export default {
   name: "ToolsPanel",
   props: {
     recentColors: {
-    type: Array,
+      type: Array,
     }
   },
   data() {
@@ -623,10 +641,12 @@ export default {
   position: relative;
   z-index: 3;
 }
-#text{
-  width:235px;
+
+#text {
+  width: 235px;
   height: 75px;
 }
+
 hr {
   border: 1px solid gainsboro !important;
   border-bottom-width: 0 !important;
@@ -758,14 +778,25 @@ hr {
   content: none !important;
 }
 
-.v-enter-active,
-.v-leave-active {
+.show-enter-active,
+.show-leave-active {
   transition: all 0.3s ease;
 }
 
-.v-enter-from,
-.v-leave-to {
+.show-enter-from,
+.show-leave-to {
   opacity: 0;
-  transform: translateX(-400px);
+  transform: translateX(-400px) scaleX(0);
+}
+
+.stretch-enter-from,
+.stretch-leave-to {
+  transform: scaleY(0);
+  opacity: 0;
+}
+
+.stretch-enter-active,
+.stretch-leave-active {
+  transition: all 0.3s ease;
 }
 </style>

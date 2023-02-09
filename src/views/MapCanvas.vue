@@ -294,7 +294,7 @@ export default {
               if(initPoint){
                 this.currentItem = new paper.Path.Ellipse({
                   point: initPoint,
-                  size: event.point,
+                  size: new paper.Point(event.point.x-initPoint.x,event.point.y-initPoint.y),
                   strokeColor: options.borderColor,
                   fillColor: options.fillColor,
                   strokeWidth: options.borderWidth,
@@ -624,6 +624,7 @@ input[type=color] {
   width: 30px;
   height: 30px;
   background-color: transparent;
+  cursor: pointer;
   padding: 0;
   margin: 0
 }
