@@ -7,7 +7,6 @@
         @optChange="setOpt"
         :recent-colors="recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
-    <input type="text" style="font-size: 10pt" v-model="pathOpt.vector">
     <div class="CanvasArea">
       <canvas id="map" width="1560" height="680" :style="{'cursor': styleCursor}" @mouseout="toolSwitch('off')"
               @mouseover="toolSwitch('on')"></canvas>
@@ -64,7 +63,6 @@ export default {
         style: "default",
         dashArray: [10, 5],
         dotArray: [1, 5],
-        vector: 0,
       },
       shapeTool: new paper.Tool(),
       shapeOpt: {
@@ -409,6 +407,7 @@ export default {
                 from: initPoint,
                 to: event.point,
                 strokeWidth: options.size,
+                strokeJoin: "round",
                 strokeCap: options.roundCap ? "round" : "square",
                 strokeColor: options.color,
                 opacity: options.opacity
@@ -427,6 +426,7 @@ export default {
               this.currentItem = new paper.Path({
                 strokeWidth: options.size,
                 strokeCap: options.roundCap ? "round" : "square",
+                strokeJoin: "round",
                 strokeColor: options.color,
                 opacity: options.opacity
               })
@@ -444,6 +444,7 @@ export default {
           break
         case "curve":
           pathTool.onMouseMove = (event) => {
+            let hIn, hOut, firstVector, angle
             options.cursor.position = event.point;
             if (this.currentItem)
               this.currentItem.remove()
@@ -453,17 +454,40 @@ export default {
                   x: event.point.x - firstSegment.point.x,
                   y: event.point.y - firstSegment.point.y
                 });
-                /* if(vector.angle<0)
-                   vector.angle=Math.abs(vector.angle)*/
-                if (vector.length < 15)
-                  vector.length = 15
-                else if (vector.length > 100)
-                  vector.length = 100
-                segments[segments.length - 1].handleIn = vector.rotate(180)
-                /* segments[segments.length-1].handleOut=vector.normalize(1)*/
+                firstVector = new paper.Point({
+                  x: segments[segments.length - 1].point.x - segments[segments.length - 2].point.x,
+                  y: segments[segments.length - 1].point.y - segments[segments.length - 2].point.y
+                });
+                angle = vector.getDirectedAngle(firstVector) > 0 ?
+                    180 - vector.getDirectedAngle(firstVector) :
+                    -180 + Math.abs(vector.getDirectedAngle(firstVector))
+                hIn = vector.rotate(180)
+                hOut = vector
+                hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2
+                hOut.length=vector.length*0.4
+
+                if (angle < 90 && angle > 0) {
+                  hIn.angle += 2 * (90 - angle)
+                  hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
+                  if(hOut.getDirectedAngle(hIn)>0)  hOut=hIn.rotate(180)
+                }
+                else if (angle > -90 && angle < 0) {
+                  hIn.angle -= 2 * (90 + angle)
+                  hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
+                  if(hOut.getDirectedAngle(hIn)<0)  hOut=hIn.rotate(180)
+                }
+                else{
+                  /*hOut.angle=hIn.angle-180+15*/
+                }
+
+                segments[segments.length - 1].handleIn = hIn
+                segments[segments.length - 1].handleOut = hOut
               }
             }
-            ref.pathOpt.vector = vector.angle
+
+            console.log("hIn:"+hIn.getDirectedAngle(firstVector))
+            console.log("hOut:"+hOut.getDirectedAngle(hIn))
+
             lastSegment = new paper.Segment(
                 event.point,
                 null,
@@ -474,10 +498,16 @@ export default {
             this.currentItem = new paper.Path({
               segments: segments.concat(lastSegment),
               strokeWidth: options.size,
+              strokeJoin: "round",
               strokeCap: options.roundCap ? "round" : "square",
               strokeColor: options.color,
               opacity: options.opacity
             })
+            if (options.style == "dashed")
+              this.currentItem.dashArray = options.dashArray.map((x) => (x * options.size))
+            else if (options.style == "dotted")
+              this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
+            else this.currentItem.dashArray = null
             this.currentItem.insertBelow(options.cursor)
           }
           pathTool.onMouseDown = (event) => {

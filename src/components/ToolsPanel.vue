@@ -118,16 +118,29 @@
                      v-on:click="optionVisible=false">
               </div>
               <hr>
-              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок">
+              <table class="stamps-table">
+                <tr>
+                  <td class="stampCell" v-for="i in 8" :key="i">fd</td>
+                </tr>
+                <tr>
+                  <td class="stampCell"  v-for="i in 8" :key="i">fdsdf</td>
+                </tr>
+                <tr>
+                  <td class="stampCell" v-for="i in 8" :key="i">as</td>
+                </tr>
+              </table>
+              <button class="btn btn-outline-dark w-100">Открыть каталог</button>
+              <hr>
+              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок" >
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
-                <input type="range" step="1" min="1" value="1" max="50">
-                <input type="number" step="1" min="1" value="1" max="50" class="input-number-style">
+                <input type="range" step="1" min="10" max="300" v-model="stampOpt.size">
+                <input type="number" step="1" min="10" max="30" class="input-number-style" v-model="stampOpt.size">
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность иконок">
                 <img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
-                <input type="range" step="0.1" min="0" value="1" max="1">
-                <input type="number" step="0.1" min="0" value="1" max="1" class="input-number-style">
+                <input type="range" step="0.1" min="0" max="1" v-model="stampOpt.opacity">
+                <input type="number" step="0.1" min="0" max="1" class="input-number-style" v-model="stampOpt.opacity">
               </div>
             </div>
           </Transition>
@@ -530,6 +543,12 @@ export default {
         color: "#000000",
         brushType: "color"
       },
+      stampOpt:{
+        size: 30,
+        opacity: 1,
+        rotation: 0,
+        revert: "none"
+      },
       pathOpt: {
         size: 1,
         opacity: 1,
@@ -676,6 +695,17 @@ hr {
   width: 100%;
 }
 
+.stamps-table{
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid gainsboro;
+}
+.stampCell{
+  min-height: 40px;
+  max-height: 40px;
+  min-width: 33%;
+  max-width: 33%;
+}
 .dropdown-item:active {
   background: #232323;
   color: white;
