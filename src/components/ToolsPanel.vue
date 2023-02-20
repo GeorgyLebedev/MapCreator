@@ -14,7 +14,7 @@
             <div id="cursorOpt" class="tools-options" v-if="tool=='cursor' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Курсор </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="optionVisible=false">
               </div>
               <hr>
@@ -44,15 +44,15 @@
             <div id="brushOpt" class="tools-options" v-if="tool=='brush' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Кисть </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="optionVisible=false">
               </div>
               <hr>
               <div class="mb-3">
                 <input id="colorsTab" checked type="radio" name="brushType" value="color" v-model="brushOpt.brushType">
-                <label for="colorsTab" class="radio-text">Цвета</label>
+                <label for="colorsTab" class="radio-text interactive">Цвета</label>
                 <input id="texturesTab" type="radio" name="brushType" value="texture" v-model="brushOpt.brushType">
-                <label for="texturesTab" class="ms-1 radio-text">Текстуры</label>
+                <label for="texturesTab" class="ms-1 radio-text interactive">Текстуры</label>
               </div>
               <div id="brushColors" v-if="brushOpt.brushType=='color'">
                 Цвет кисти: <br>
@@ -62,7 +62,7 @@
                   <table class="colorTable">
                     <tr>
                       <td v-for="(color, index) in recentColors" :key="index"
-                          class="colorCell"
+                          class="colorCell interactive"
                           :style="{ 'background-color': color}"
                           @click="brushOpt.color=color ">
                       </td>
@@ -73,13 +73,13 @@
                   Палитра:
                   <table id="palette" class="colorTable">
                     <tr>
-                      <td class="colorCell" v-for="i in 8" :key="i"></td>
+                      <td class="colorCell interactive" v-for="i in 8" :key="i"></td>
                     </tr>
                     <tr>
-                      <td class="colorCell" v-for="i in 8" :key="i"></td>
+                      <td class="colorCell interactive" v-for="i in 8" :key="i"></td>
                     </tr>
                     <tr>
-                      <td class="colorCell" v-for="i in 8" :key="i"></td>
+                      <td class="colorCell interactive" v-for="i in 8" :key="i"></td>
                     </tr>
                   </table>
                 </div>
@@ -114,21 +114,27 @@
             <div id="stampOpt" class="tools-options" v-if="tool=='stamp' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Штамп </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="optionVisible=false">
               </div>
               <hr>
-              <table class="stamps-table">
-                <tr>
-                  <td class="stampCell" v-for="i in 8" :key="i">fd</td>
-                </tr>
-                <tr>
-                  <td class="stampCell"  v-for="i in 8" :key="i">fdsdf</td>
-                </tr>
-                <tr>
-                  <td class="stampCell" v-for="i in 8" :key="i">as</td>
-                </tr>
-              </table>
+              <div class="stampsContainer d-flex mb-2">
+                <div class="bigStampContainer">
+                <div class="bigStamp interactive">
+                  <img :src="require('../assets/images/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp)" alt="">
+                </div>
+                <div class="switch d-flex justify-content-between">
+                  <img src="@/assets/images/leftArrow.png" class="interactive" height="20">
+                  <p>12/10</p>
+                  <img src="@/assets/images/rightArrow.png" class="interactive" height="20">
+                </div>
+                </div>
+                <div class="stampsTable ms-1 d-flex flex-wrap">
+                  <div class="smallStamp mb-1 me-1 interactive" v-for="i in 8" :key="i">
+                    <img :src="require('../assets/images/Stamps/'+ stampOpt.currentSet + '/' + stampOpt.currentStamp)" alt="" >
+                  </div>
+                </div>
+              </div>
               <button class="btn btn-outline-dark w-100">Открыть каталог</button>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок" >
@@ -157,7 +163,7 @@
             <div id="shapesOpt" class="tools-options" v-if="tool=='shape' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Фигуры </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="optionVisible=false">
               </div>
               <hr>
@@ -238,7 +244,7 @@
               <table class="colorTable">
                 <tr>
                   <td v-for="(color, index) in recentColors" :key="index"
-                      class="colorCell"
+                      class="colorCell interactive"
                       :style="{ 'background-color': color}"
                       @click="shapeOpt.fillColor=color; shapeOpt.isFill=true"
                       @contextmenu="shapeOpt.borderColor=color; shapeOpt.isBorder=true">
@@ -279,7 +285,7 @@
             <div id="pathOpt" class="tools-options" v-if="tool=='path' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Пути/кривые </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="optionVisible=false">
               </div>
               <hr>
@@ -362,7 +368,7 @@
                 <table class="colorTable">
                   <tr>
                     <td v-for="(color, index) in recentColors" :key="index"
-                        class="colorCell"
+                        class="colorCell interactive"
                         :style="{ 'background-color': color}"
                         @click="pathOpt.color=color">
                     </td>
@@ -403,7 +409,7 @@
             <div id="textOpt" class="tools-options" v-if="tool=='text' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Надпись </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="optionVisible=false">
               </div>
               <hr>
@@ -547,7 +553,11 @@ export default {
         size: 30,
         opacity: 1,
         rotation: 0,
-        revert: "none"
+        revert: "none",
+        currentSet: "firstSet",
+        currentStamp: "stampEx.png",
+        currentStampPath: undefined,
+        stampSetArray: []
       },
       pathOpt: {
         size: 1,
@@ -618,6 +628,11 @@ export default {
         case "brush":
           this.$emit('optChange', this.brushOpt)
           break;
+        case "stamp":
+          this.stampOpt.currentStampPath='../assets/images/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
+          console.log(this.stampOpt.currentStampPath)
+          this.$emit('optChange', this.stampOpt)
+          break
         case "shape":
           this.$emit('optChange', this.shapeOpt)
           break
@@ -634,6 +649,13 @@ export default {
     brushOpt: {
       handler() {
         this.$emit('optChange', this.brushOpt)
+      }, deep: true
+    },
+    stampOpt: {
+      handler() {
+     /*   this.stampOpt.currentStampPath='../assets/images/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
+        console.log(this.stampOpt.currentStampPath)*/
+        this.$emit('optChange', this.stampOpt)
       }, deep: true
     },
     shapeOpt: {
@@ -694,21 +716,47 @@ hr {
 .options-table {
   width: 100%;
 }
-
-.stamps-table{
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid gainsboro;
+.stampsContainer{
+  max-width:240px;
+  max-height: 120px;
 }
-.stampCell{
-  min-height: 40px;
-  max-height: 40px;
-  min-width: 33%;
-  max-width: 33%;
+.bigStamp{
+  border: 1px solid gainsboro;
+  border-radius: 5px;
+}
+.bigStampContainer{
+  width: 45%;
+  height: 100%;
+}
+.bigStamp img{
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+.smallStamp{
+  width: 30%;
+  height: 30%;
+  border: 1px solid gainsboro;
+  border-radius: 5px;
+}
+.smallStamp img{
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+.stampsTable{
+  width: 55%;
+  max-width: 60%;
+  max-height: 100%;
+  height: 100%;
 }
 .dropdown-item:active {
   background: #232323;
   color: white;
+}
+
+.interactive{
+  cursor: pointer;
 }
 
 .dropdown-item:hover {
@@ -720,10 +768,6 @@ hr {
   border-bottom: 2px solid #232323;
   border-radius: 0;
   background: transparent;
-}
-
-.radio-text {
-  cursor: pointer;
 }
 
 .icon-mid {
@@ -755,7 +799,6 @@ hr {
 }
 
 .closeOpt {
-  cursor: pointer;
   margin-left: 10px;
 }
 
@@ -774,7 +817,6 @@ hr {
   width: 30px;
   min-width: 30px;
   border: 1px solid gainsboro !important;
-  cursor: pointer;
 }
 
 .colorPlaceholder {

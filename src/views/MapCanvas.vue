@@ -52,6 +52,16 @@ export default {
         cursor: null,
       },
       stampTool: new paper.Tool(),
+      stampOpt:{
+        size: 30,
+        opacity: 1,
+        rotation: 0,
+        revert: "none",
+        currentSet: "firstSet",
+        currentStamp: "stampEx.png",
+        currentStampPath: undefined,
+        stampSetArray: []
+      },
       pathTool: new paper.Tool(),
       pathOpt: {
         size: 1,
@@ -134,6 +144,10 @@ export default {
         Object.assign(this.textOpt, opt)
         this.setTextTool(this.textTool, this.textOpt)
       }
+      if (this.currentTool.name == "stamp") {
+        Object.assign(this.stampOpt, opt)
+        this.setStampTool(this.stampTool, this.stampOpt)
+      }
     },
     updateRecentColors(newColor) {
       if (newColor == "transparent") return
@@ -172,6 +186,22 @@ export default {
       brush.onMouseUp = function (event) {
         path.add(event.point);
         path.smooth();
+      }
+    },
+    setStampTool(stampTool,options){
+      stampTool.onMouseMove = (event) => {
+        if (this.currentItem)
+          this.currentItem.remove()
+        this.currentItem = new paper.Raster({
+          source: "https://cdn3.iconfinder.com/data/icons/camping-icons/440/Mountains-1024.png",
+          position: event.point,
+          size: options.size,
+          opacity: options.opacity,
+
+        })
+      }
+      stampTool.onMouseDown = () => {
+        this.OBJECT_STORAGE.push(this.currentItem.clone())
       }
     },
     setShapeTool(shapeTool, options) {
@@ -462,19 +492,21 @@ export default {
                     180 - vector.getDirectedAngle(firstVector) :
                     -180 + Math.abs(vector.getDirectedAngle(firstVector))
                 hIn = vector.rotate(180)
-                hOut = vector
+                hOut = vector.rotate(30)
                 hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2
-                hOut.length=vector.length*0.4
+                hOut.length=vector.length*0.2
 
                 if (angle < 90 && angle > 0) {
-                  hIn.angle += 2 * (90 - angle)
-                  hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
-                  if(hOut.getDirectedAngle(hIn)>0)  hOut=hIn.rotate(180)
+                  /*if(!((hIn.getDirectedAngle(firstVector)+180)>30))*/
+                    hIn.angle += 2 * (90 - angle)
+                  if(!(hOut.getDirectedAngle(vector)<30))
+                    hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
+                  if(hOut.getDirectedAngle(hIn)>0)  hOut.angle=hIn.angle-180
                 }
                 else if (angle > -90 && angle < 0) {
                   hIn.angle -= 2 * (90 + angle)
                   hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
-                  if(hOut.getDirectedAngle(hIn)<0)  hOut=hIn.rotate(180)
+                  if(hOut.getDirectedAngle(hIn)<0)  hOut.angle=hIn.angle-180
                 }
                 else{
                   /*hOut.angle=hIn.angle-180+15*/
@@ -485,8 +517,8 @@ export default {
               }
             }
 
-            console.log("hIn:"+hIn.getDirectedAngle(firstVector))
-            console.log("hOut:"+hOut.getDirectedAngle(hIn))
+            console.log("hIn:"+(hIn.getDirectedAngle(firstVector)+180))
+            console.log("hOut:"+hOut.angle)
 
             lastSegment = new paper.Segment(
                 event.point,
@@ -564,6 +596,8 @@ export default {
     this.brushOpt.cursor.strokeColor = "black"
     this.brushOpt.cursor.visible = false
     this.setBrush(this.brushTool, this.brushOpt)
+    //-----STAMP-------------------------
+    this.setStampTool(this.stampTool, this.stampOpt)
     //-----SHAPE-------------------------
     this.setShapeTool(this.shapeTool, this.shapeOpt)
     //-----PATH--------------------------
@@ -596,6 +630,11 @@ export default {
           this.styleCursor = "none"
           this.brushOpt.cursor.visible = true
           this.brushTool.activate()
+          break
+        case "stamp":
+          this.currentTool.toolRef = this.stampTool
+          this.styleCursor = "none"
+          this.stampTool.activate()
           break
         case "shape":
           this.currentTool.toolRef = this.shapeTool
