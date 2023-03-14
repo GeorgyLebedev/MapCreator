@@ -140,7 +140,7 @@
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок" >
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
                 <input type="range" step="1" min="10" max="300" v-model="stampOpt.size">
-                <input type="number" step="1" min="10" max="30" class="input-number-style" v-model="stampOpt.size">
+                <input type="number" step="1" min="10" max="300" class="input-number-style" v-model="stampOpt.size">
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность иконок">

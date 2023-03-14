@@ -21,7 +21,6 @@ import ToolsPanel from "@/components/ToolsPanel";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
-
 export default {
   name: "MapCanvas",
   components: {
@@ -108,6 +107,50 @@ export default {
   methods: {
     updateScale(data) {
       this.scale = data.newScale
+    },
+    setSelectedBound(item){
+      let currentCursor=this.styleCursor
+      let boundRect= new paper.Path.Rectangle({
+        rectangle: item.strokeBounds,
+        strokeColor: '#42aaff',
+        strokeWidth: 1
+      })
+      let unvisRect=item.strokeBounds
+      let boundCircle= new paper.Path.Circle({
+        center: unvisRect.center,
+        radius: Math.sqrt((unvisRect.width*unvisRect.width+unvisRect.height*unvisRect.height))/2,
+        strokeColor: "#828282",
+        strokeWidth: 1
+      })
+      let boundGroup = new paper.Group()
+      boundGroup.addChild(boundRect)
+      boundGroup.addChild(boundCircle)
+      let corners=['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
+      let sqArray=[]
+      corners.forEach(corner =>{
+        let boundSq=new paper.Path.Rectangle({
+          width:8,
+          height:8,
+          position: item.bounds[corner],
+          fillColor: "#42aaff"
+        })
+        boundSq.onMouseLeave=()=>{
+          this.styleCursor=currentCursor
+        }
+        if(corner=='topLeft' || corner=='bottomRight'){
+          boundSq.onMouseEnter=()=>{
+            this.styleCursor='nwse-resize'
+          }
+        }
+        else{
+          boundSq.onMouseEnter=()=>{
+            this.styleCursor='nesw-resize'
+          }
+        }
+        boundGroup.addChild(boundSq)
+        sqArray.push(boundSq)
+      })
+      return boundGroup
     },
     toolSwitch(mode) {
       if (mode == "on" && this.currentTool.toolRef) {
@@ -492,34 +535,44 @@ export default {
                     180 - vector.getDirectedAngle(firstVector) :
                     -180 + Math.abs(vector.getDirectedAngle(firstVector))
                 hIn = vector.rotate(180)
-                hOut = vector.rotate(30)
-                hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2
+                hOut = vector
                 hOut.length=vector.length*0.2
 
+                hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2
                 if (angle < 90 && angle > 0) {
-                  /*if(!((hIn.getDirectedAngle(firstVector)+180)>30))*/
                     hIn.angle += 2 * (90 - angle)
-                  if(!(hOut.getDirectedAngle(vector)<30))
+                  if(hIn.getDirectedAngle(hOut)>90){
+                    hOut.angle=hIn.angle+180
+                  }
+                  else {
+                    console.log(hIn.getDirectedAngle(hOut))
+                    hOut.angle+=2*angle
+                  }
+                 /* if(!(hOut.getDirectedAngle(vector)<30))
                     hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
-                  if(hOut.getDirectedAngle(hIn)>0)  hOut.angle=hIn.angle-180
+                  if(hOut.getDirectedAngle(hIn)>0)  hOut.angle=hIn.angle-180*/
                 }
                 else if (angle > -90 && angle < 0) {
                   hIn.angle -= 2 * (90 + angle)
-                  hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
-                  if(hOut.getDirectedAngle(hIn)<0)  hOut.angle=hIn.angle-180
+                  if(hIn.getDirectedAngle(hOut)<-90){
+                    hOut.angle=hIn.angle+180
+                  }
+                  else {
+                    console.log(hIn.getDirectedAngle(hOut))
+                    hOut.angle+=2*angle
+                  }
+                  /*hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
+                  if(hOut.getDirectedAngle(hIn)<0)  hOut.angle=hIn.angle-180*/
                 }
-                else{
-                  /*hOut.angle=hIn.angle-180+15*/
-                }
-
                 segments[segments.length - 1].handleIn = hIn
                 segments[segments.length - 1].handleOut = hOut
               }
             }
 
-            console.log("hIn:"+(hIn.getDirectedAngle(firstVector)+180))
-            console.log("hOut:"+hOut.angle)
-
+            console.log("hIn:"+(hIn.getDirectedAngle(firstVector)))
+            console.log("hOut:"+(hOut.getDirectedAngle(firstVector)))
+            console.log("hIn-hOut:"+hIn.getDirectedAngle(hOut))
+            console.log("fV-vector:"+angle)
             lastSegment = new paper.Segment(
                 event.point,
                 null,
@@ -656,6 +709,11 @@ export default {
     'OBJECT_STORAGE.length'(val) {
       let obj = this.OBJECT_STORAGE[val - 1]
       this.activeLayer.addChild(obj)
+      if(val>=2) {
+        this.OBJECT_STORAGE[val - 2].selectedGroup.removeChildren()
+        this.OBJECT_STORAGE[val - 2].selectedGroup.remove()
+      }
+      this.OBJECT_STORAGE[val - 1].selectedGroup=this.setSelectedBound(this.OBJECT_STORAGE[val - 1])
       console.log(paper.project.layers)
       console.log(this.OBJECT_STORAGE)
     }
