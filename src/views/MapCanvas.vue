@@ -536,50 +536,41 @@ export default {
                     -180 + Math.abs(vector.getDirectedAngle(firstVector))
                 hIn = vector.rotate(180)
                 hOut = vector
-                hOut.length=vector.length*0.2
-
-                hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2
-                if (angle < 90 && angle > 0) {
-                    hIn.angle += 2 * (90 - angle)
-                  if(hIn.getDirectedAngle(hOut)>90){
-                    hOut.angle=hIn.angle+180
-                  }
-                  else {
-                    console.log(hIn.getDirectedAngle(hOut))
-                    hOut.angle+=2*angle
-                  }
-                 /* if(!(hOut.getDirectedAngle(vector)<30))
-                    hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
-                  if(hOut.getDirectedAngle(hIn)>0)  hOut.angle=hIn.angle-180*/
+                hOut.length=hIn.length=vector.length*0.3
+                if(angle>0) {
+                  hIn.angle = firstVector.angle - (90 - angle / 2) - 180
+                  hOut.angle = hIn.angle +180
                 }
-                else if (angle > -90 && angle < 0) {
-                  hIn.angle -= 2 * (90 + angle)
-                  if(hIn.getDirectedAngle(hOut)<-90){
-                    hOut.angle=hIn.angle+180
-                  }
-                  else {
-                    console.log(hIn.getDirectedAngle(hOut))
-                    hOut.angle+=2*angle
-                  }
-                  /*hOut.angle-=(180-hIn.getDirectedAngle(firstVector))
-                  if(hOut.getDirectedAngle(hIn)<0)  hOut.angle=hIn.angle-180*/
+                else if(angle<0) {
+                  hIn.angle = firstVector.angle - (-90 - angle / 2) - 180
+                  hOut.angle = hIn.angle+180
+                }
+                else {
+                  hIn.angle=firstVector.angle - angle / 2 - 180
+                  hOut.angle=vector.angle-(180-(hIn.getDirectedAngle(firstVector)))
+                }
+                hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2 + vector.length*0.2
+                if(Math.abs(angle)/40 < 1) {
+                  hIn.length *= (Math.abs(angle) / 40)
+                  hOut.length *= (Math.abs(angle) / 40)
                 }
                 segments[segments.length - 1].handleIn = hIn
                 segments[segments.length - 1].handleOut = hOut
               }
             }
-
+            /*console.log('chIn:'+hIn.angle)
+            console.log('fv:'+firstVector.angle)
             console.log("hIn:"+(hIn.getDirectedAngle(firstVector)))
             console.log("hOut:"+(hOut.getDirectedAngle(firstVector)))
             console.log("hIn-hOut:"+hIn.getDirectedAngle(hOut))
-            console.log("fV-vector:"+angle)
+            console.log("fV-vector:"+angle)*/
             lastSegment = new paper.Segment(
                 event.point,
                 null,
                 null
             )
-            lastSegment.selected = true
-            segments[segments.length - 1].selected = true
+            /*lastSegment.selected = true
+            segments[segments.length - 1].selected = true*/
             this.currentItem = new paper.Path({
               segments: segments.concat(lastSegment),
               strokeWidth: options.size,
