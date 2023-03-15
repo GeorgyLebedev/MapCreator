@@ -418,7 +418,6 @@ export default {
       }
     },
     setPathTool(pathTool, options) {
-      let exLine
       let ref = this
       let initPoint = undefined
       let vector
@@ -474,38 +473,41 @@ export default {
         case "poly":
           pathTool.onMouseMove = (event) => {
             options.cursor.position = event.point;
-            if (exLine)
-              exLine.remove()
+            if (this.currentItem)
+              this.currentItem.remove()
             if (initPoint) {
-              exLine = new paper.Path.Line({
-                from: initPoint,
-                to: event.point,
-                strokeWidth: options.size,
-                strokeJoin: "round",
-                strokeCap: options.roundCap ? "round" : "square",
-                strokeColor: options.color,
-                opacity: options.opacity
-              })
-              if (options.style == "dashed")
-                this.currentItem.dashArray = options.dashArray.map((x) => (x * options.size))
-              else if (options.style == "dotted")
-                this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
-              else this.currentItem.dashArray = null
-              this.currentItem.insertBelow(options.cursor)
+                lastSegment = new paper.Segment(
+                    event.point,
+                    null,
+                    null
+                )
+                this.currentItem = new paper.Path({
+                  segments: segments.concat(lastSegment),
+                  strokeWidth: options.size,
+                  strokeJoin: "round",
+                  strokeCap: options.roundCap ? "round" : "square",
+                  strokeColor: options.color,
+                  opacity: options.opacity
+                })
+                if (options.style == "dashed")
+                  this.currentItem.dashArray = options.dashArray.map((x) => (x * options.size))
+                else if (options.style == "dotted")
+                  this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
+                else this.currentItem.dashArray = null
+                this.currentItem.insertBelow(options.cursor)
+
             }
           }
           pathTool.onMouseDown = (event) => {
             if (!initPoint) {
-              this.currentItem = new paper.Path({
-                strokeWidth: options.size,
-                strokeCap: options.roundCap ? "round" : "square",
-                strokeJoin: "round",
-                strokeColor: options.color,
-                opacity: options.opacity
-              })
+              segments = []
             }
-            this.currentItem.add(event.point)
-            this.currentItem.insertBelow(options.cursor)
+            firstSegment = new paper.Segment(
+                event.point,
+                null,
+                null
+            )
+            segments.push(firstSegment)
             initPoint = event.point
             if (ref.colorChanged) {
               ref.updateRecentColors(options.color)
