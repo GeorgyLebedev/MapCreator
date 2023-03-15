@@ -428,9 +428,10 @@ export default {
       if (options.pathType !== "poly" && options.pathType !== "curve")
         this.activeLayer.onDoubleClick = undefined
       else {
-        this.activeLayer.onDoubleClick = (event) => {
-          this.currentItem.add(event.point)
+        this.activeLayer.onDoubleClick = () => {
           initPoint = undefined
+          this.currentItem.clone()
+          this.currentItem.remove()
         }
       }
       switch (options.pathType) {
@@ -495,7 +496,6 @@ export default {
           }
           pathTool.onMouseDown = (event) => {
             if (!initPoint) {
-              initPoint = event.point
               this.currentItem = new paper.Path({
                 strokeWidth: options.size,
                 strokeCap: options.roundCap ? "round" : "square",
@@ -503,12 +503,10 @@ export default {
                 strokeColor: options.color,
                 opacity: options.opacity
               })
-              this.currentItem.insertBelow(options.cursor)
-              this.currentItem.add(initPoint)
-            } else {
-              initPoint = event.point
-              this.currentItem.add(initPoint)
             }
+            this.currentItem.add(event.point)
+            this.currentItem.insertBelow(options.cursor)
+            initPoint = event.point
             if (ref.colorChanged) {
               ref.updateRecentColors(options.color)
               ref.colorChanged = false
@@ -557,7 +555,7 @@ export default {
                 segments[segments.length - 1].handleIn = hIn
                 segments[segments.length - 1].handleOut = hOut
               }
-            }
+
             /*console.log('chIn:'+hIn.angle)
             console.log('fv:'+firstVector.angle)
             console.log("hIn:"+(hIn.getDirectedAngle(firstVector)))
@@ -585,7 +583,7 @@ export default {
               this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
             else this.currentItem.dashArray = null
             this.currentItem.insertBelow(options.cursor)
-          }
+          }}
           pathTool.onMouseDown = (event) => {
             if (!initPoint) {
               segments = []
@@ -602,7 +600,7 @@ export default {
               ref.colorChanged = false
             }
           }
-          break;
+          break
       }
     },
     setTextTool(textTool, options) {
