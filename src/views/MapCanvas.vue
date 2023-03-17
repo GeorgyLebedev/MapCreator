@@ -44,6 +44,10 @@ export default {
       activeLayer: null,
       cursorTool: new paper.Tool(),
       brushTool: new paper.Tool(),
+      cursorOpt:{
+        selectedObj: null,
+        selectionGroup: null
+      },
       brushOpt: {
         size: 1,
         opacity: 1,
@@ -108,8 +112,8 @@ export default {
     updateScale(data) {
       this.scale = data.newScale
     },
-    setSelectedBound(item){
-      let currentCursor=this.styleCursor
+    setSelected(item){
+      let rotateStart, rotateEnd
       let boundRect= new paper.Path.Rectangle({
         rectangle: item.strokeBounds,
         strokeColor: '#42aaff',
@@ -119,37 +123,70 @@ export default {
       let boundCircle= new paper.Path.Circle({
         center: unvisRect.center,
         radius: Math.sqrt((unvisRect.width*unvisRect.width+unvisRect.height*unvisRect.height))/2,
-        strokeColor: "#828282",
-        strokeWidth: 1
+        strokeColor: "#000000",
+        fillColor: "#000000",
+        strokeWidth: (unvisRect.width+unvisRect.height)/20,
+        opacity:0.000001
       })
+      boundCircle.onMouseLeave=()=>{
+        this.styleCursor="default"
+      }
+      boundCircle.onMouseEnter=()=>{
+        this.styleCursor="pointer"
+      }
+      boundCircle.onMouseDown=(event)=>{
+         rotateStart=new paper.Point({
+          x:event.point.x - boundCircle.position.x,
+          y:event.point.y - boundCircle.position.y
+        })
+      }
       let boundGroup = new paper.Group()
       boundGroup.addChild(boundRect)
       boundGroup.addChild(boundCircle)
+      boundGroup.insertBelow(item)
       let corners=['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
       let sqArray=[]
       corners.forEach(corner =>{
         let boundSq=new paper.Path.Rectangle({
-          width:8,
-          height:8,
+          width:10,
+          height:10,
           position: item.bounds[corner],
           fillColor: "#42aaff"
         })
         boundSq.onMouseLeave=()=>{
-          this.styleCursor=currentCursor
+          this.styleCursor="default"
         }
         if(corner=='topLeft' || corner=='bottomRight'){
           boundSq.onMouseEnter=()=>{
             this.styleCursor='nwse-resize'
-          }
-        }
+          }}
         else{
           boundSq.onMouseEnter=()=>{
             this.styleCursor='nesw-resize'
-          }
-        }
+          }}
         boundGroup.addChild(boundSq)
         sqArray.push(boundSq)
       })
+      let angle
+      boundCircle.onMouseDrag=(event)=>{
+        if(angle) {
+          item.rotate(-angle)
+          boundGroup.rotate(-angle)
+        }
+        rotateEnd=new paper.Point({
+          x:event.point.x - boundCircle.position.x,
+          y:event.point.y - boundCircle.position.y
+        })
+        angle=rotateStart.getDirectedAngle(rotateEnd)
+        item.rotate(angle)
+        boundGroup.rotate(angle)
+      }
+      item.onMouseDrag=(event)=>{
+          item.position.x += event.delta.x
+          item.position.y += event.delta.y
+          boundGroup.position.x += event.delta.x
+          boundGroup.position.y += event.delta.y
+      }
       return boundGroup
     },
     toolSwitch(mode) {
@@ -199,6 +236,23 @@ export default {
       else {
         this.recentColors = this.recentColors.slice(0, 7)
         this.recentColors.unshift(newColor)
+      }
+    },
+    setCursor(cursor, options){
+      cursor.onMouseDown=(event)=>{
+       let obj=event.item
+        if(options.selectedObj && obj.id==options.selectionGroup.id) return
+        if(options.selectedObj && obj!=options.selectedObj) {
+          options.selectionGroup.removeChildren()
+          options.selectionGroup.remove()
+          options.selectionGroup=null
+          options.selectedObj=null
+        }
+        if(!obj || this.OBJECT_STORAGE.indexOf(obj) == -1) return
+        if(!options.selectedObj) {
+          options.selectedObj = obj
+          options.selectionGroup=this.setSelected(obj)
+        }
       }
     },
     setBrush(brush, options) {
@@ -653,6 +707,7 @@ export default {
     //-----TEXT--------------------------
     this.setTextTool(this.textTool, this.textOpt)
     ////......
+    this.setCursor(this.cursorTool, this.cursorOpt)
     this.cursorTool.activate()
   },
   watch: {
@@ -663,6 +718,12 @@ export default {
         this.brushOpt.cursor.visible = false
       if (val != "path")
         this.pathOpt.cursor.visible = false
+      if (val !="cursor" && this.cursorOpt.selectedObj){
+        this.cursorOpt.selectionGroup.removeChildren()
+        this.cursorOpt.selectionGroup.remove()
+        this.cursorOpt.selectionGroup=null
+        this.cursorOpt.selectedObj=null
+      }
       switch (val) {
         case "cursor":
           this.currentTool.toolRef = this.cursorTool
@@ -700,11 +761,6 @@ export default {
     'OBJECT_STORAGE.length'(val) {
       let obj = this.OBJECT_STORAGE[val - 1]
       this.activeLayer.addChild(obj)
-      if(val>=2) {
-        this.OBJECT_STORAGE[val - 2].selectedGroup.removeChildren()
-        this.OBJECT_STORAGE[val - 2].selectedGroup.remove()
-      }
-      this.OBJECT_STORAGE[val - 1].selectedGroup=this.setSelectedBound(this.OBJECT_STORAGE[val - 1])
       console.log(paper.project.layers)
       console.log(this.OBJECT_STORAGE)
     }
