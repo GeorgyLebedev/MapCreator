@@ -112,47 +112,34 @@ export default {
     updateScale(data) {
       this.scale = data.newScale
     },
-    setSelected(item){
-      let rotateStart, rotateEnd
+    getBoundGroup(group,item){
+      let rotateStart, rotateEnd, angle
       let boundRect= new paper.Path.Rectangle({
         rectangle: item.strokeBounds,
         strokeColor: '#42aaff',
-        strokeWidth: 1
+        strokeWidth: 1,
+        name: "rect"
       })
-      let unvisRect=item.strokeBounds
       let boundCircle= new paper.Path.Circle({
-        center: unvisRect.center,
-        radius: Math.sqrt((unvisRect.width*unvisRect.width+unvisRect.height*unvisRect.height))/2,
+        center: boundRect.position,
+        radius: Math.sqrt((item.strokeBounds.width*item.strokeBounds.width+item.strokeBounds.height*item.strokeBounds.height))/2,
         strokeColor: "#000000",
         fillColor: "#000000",
-        strokeWidth: (unvisRect.width+unvisRect.height)/20,
-        opacity:0.000001
+        strokeWidth: 0.001,
+        opacity:0.000001,
+        name: "circle"
       })
-      boundCircle.onMouseLeave=()=>{
-        this.styleCursor="default"
-      }
-      boundCircle.onMouseEnter=()=>{
-        this.styleCursor="url(@/assets/images/Service/rotate.png), auto"
-      }
-      boundCircle.onMouseDown=(event)=>{
-         rotateStart=new paper.Point({
-          x:event.point.x - boundCircle.position.x,
-          y:event.point.y - boundCircle.position.y
-        })
-      }
-      const baseCoef=boundRect.position.getDistance(boundRect.bounds['topLeft'])
-      let boundGroup = new paper.Group()
-      boundGroup.addChild(boundRect)
-      boundGroup.addChild(boundCircle)
-      boundGroup.insertBelow(item)
       let corners=['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
-      let sqArray=[]
-      corners.forEach(corner =>{
+      let twoLast=[]
+      const baseCoef=boundRect.position.getDistance(boundRect.bounds['topLeft'])
+      group.removeChildren()
+      corners.forEach((corner,index) =>{
         let boundSq=new paper.Path.Rectangle({
           width:10,
           height:10,
           position: boundRect.bounds[corner],
-          fillColor: "#42aaff"
+          fillColor: "#42aaff",
+          name: (index+1)+"corner"
         })
         boundSq.onMouseLeave=()=>{
           this.styleCursor="default"
@@ -165,36 +152,17 @@ export default {
           boundSq.onMouseEnter=()=>{
             this.styleCursor='nesw-resize'
           }}
-        boundGroup.addChild(boundSq)
-        sqArray.push(boundSq)
+        group.addChild(boundSq)
       })
-      let twoLast=[]
+      let sqArray=[group.children['1corner'],group.children['2corner'],group.children['3corner'],group.children['4corner']]
       sqArray.forEach((square, index) =>{
         square.onMouseDrag=(event)=>{
-          console.log(event.point)
           square.position=event.point
-         /* if((event.delta.x<0 && event.delta.y<0)||(event.delta.x>0 && event.delta.y>0)) {
-            square.position.x += (event.delta.x + event.delta.y) / 2
-            square.position.y += (event.delta.x + event.delta.y) / 2
-          }
-          if((event.delta.x>0 && event.delta.y<0) || (event.delta.x<0 && event.delta.y>0)){
-            square.position.x += (event.delta.x - event.delta.y) / 2
-            square.position.y += (-event.delta.x + event.delta.y) / 2
-          }*/
           let oppositeSq=(sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position
-          boundRect.remove()
-          boundRect=new paper.Path.Rectangle({
-            from: square.position,
-            to: oppositeSq ,
-            strokeColor: '#42aaff',
-            strokeWidth: 1
-          })
           corners.forEach((corner,i) =>{
             sqArray[i].position= boundRect.bounds[corner]
           })
-          boundGroup.addChild(boundRect)
-          let scaleFactor=(boundRect.position.getDistance(boundRect.bounds['topLeft']))/(baseCoef)
-          console.log(scaleFactor)
+          let scaleFactor=(boundRect.position.getDistance(event.point))/(baseCoef)
           if(twoLast.length<2) {
             twoLast.push(scaleFactor)
             item.scale(1/twoLast[0],oppositeSq)
@@ -206,25 +174,25 @@ export default {
             twoLast[0]=twoLast[1]
             twoLast[1]=scaleFactor
           }
-
-
-
-          boundRect.remove()
-          boundRect= new paper.Path.Rectangle({
-            rectangle: item.strokeBounds,
-            strokeColor: '#42aaff',
-            strokeWidth: 1
-          })
-          boundGroup.addChild(boundRect)
-          corners.forEach((corner,i) =>{
-            sqArray[i].position= boundRect.bounds[corner]
-          })
+          group.removeChildren()
+          group=this.getBoundGroup(group,item)
         }
         square.onMouseUp=()=>{
           twoLast=[]
         }
       })
-      let angle
+      boundCircle.onMouseLeave=()=>{
+        this.styleCursor="default"
+      }
+      boundCircle.onMouseEnter=()=>{
+        this.styleCursor="url(@/assets/images/Service/rotate.png), auto"
+      }
+      boundCircle.onMouseDown=(event)=>{
+        rotateStart=new paper.Point({
+          x:event.point.x - boundCircle.position.x,
+          y:event.point.y - boundCircle.position.y
+        })
+      }
       boundCircle.onMouseDrag=(event)=>{
         if(angle) {
           item.rotate(-angle)
@@ -237,14 +205,30 @@ export default {
         angle=rotateStart.getDirectedAngle(rotateEnd)
         item.rotate(angle)
         item.position=boundRect.position
+        group.removeChildren()
+        group=this.getBoundGroup(group,item)
       }
       item.onMouseDrag=(event)=>{
-          item.position.x += event.delta.x
-          item.position.y += event.delta.y
-          boundGroup.position.x += event.delta.x
-          boundGroup.position.y += event.delta.y
+        item.position.x += event.delta.x
+        item.position.y += event.delta.y
+        group.position.x += event.delta.x
+        group.position.y += event.delta.y
       }
+      group.addChild(boundRect)
+      group.addChild(boundCircle)
+      group.insertBelow(item)
+      return group
+    },
+    setSelected(item){
+      let boundGroup=this.getBoundGroup(new paper.Group(),item)
       return boundGroup
+    },
+    removeSelect(){
+      this.cursorOpt.selectionGroup.removeChildren()
+      this.cursorOpt.selectionGroup.remove()
+      this.cursorOpt.selectionGroup=undefined
+      this.cursorOpt.selectedObj.onMouseDrag=undefined
+      this.cursorOpt.selectedObj=undefined
     },
     toolSwitch(mode) {
       if (mode == "on" && this.currentTool.toolRef) {
@@ -300,10 +284,7 @@ export default {
        let obj=event.item
         if(obj && options.selectedObj && obj.id==options.selectionGroup.id) return
         if(options.selectedObj && obj!=options.selectedObj) {
-          options.selectionGroup.removeChildren()
-          options.selectionGroup.remove()
-          options.selectionGroup=null
-          options.selectedObj=null
+          this.removeSelect()
         }
         if(!obj || this.OBJECT_STORAGE.indexOf(obj) == -1) return
         if(!options.selectedObj) {
@@ -313,11 +294,8 @@ export default {
       }
       cursor.onKeyDown=(event)=>{
         if(event.key=='delete' && options.selectedObj) {
-          options.selectionGroup.removeChildren()
-          options.selectionGroup.remove()
-          options.selectionGroup = null
           options.selectedObj.remove()
-          options.selectedObj = null
+          this.removeSelect()
         }
       }
     },
@@ -785,12 +763,8 @@ export default {
         this.brushOpt.cursor.visible = false
       if (val != "path")
         this.pathOpt.cursor.visible = false
-      if (val !="cursor" && this.cursorOpt.selectedObj){
-        this.cursorOpt.selectionGroup.removeChildren()
-        this.cursorOpt.selectionGroup.remove()
-        this.cursorOpt.selectionGroup=null
-        this.cursorOpt.selectedObj=null
-      }
+      if (val !="cursor" && this.cursorOpt.selectedObj)
+        this.removeSelect()
       switch (val) {
         case "cursor":
           this.currentTool.toolRef = this.cursorTool

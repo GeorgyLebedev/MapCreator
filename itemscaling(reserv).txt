@@ -1,0 +1,122 @@
+   setSelected(item){
+      let rotateStart, rotateEnd
+      let boundRect= new paper.Path.Rectangle({
+        rectangle: item.strokeBounds,
+        strokeColor: '#42aaff',
+        strokeWidth: 1
+      })
+      let unvisRect=item.strokeBounds
+      let boundCircle= new paper.Path.Circle({
+        center: unvisRect.center,
+        radius: Math.sqrt((unvisRect.width*unvisRect.width+unvisRect.height*unvisRect.height))/2,
+        strokeColor: "#000000",
+        fillColor: "#000000",
+        strokeWidth: (unvisRect.width+unvisRect.height)/20,
+        opacity:0.1
+      })
+      boundCircle.onMouseLeave=()=>{
+        this.styleCursor="default"
+      }
+      boundCircle.onMouseEnter=()=>{
+        this.styleCursor="url(@/assets/images/Service/rotate.png), auto"
+      }
+      boundCircle.onMouseDown=(event)=>{
+        rotateStart=new paper.Point({
+          x:event.point.x - boundCircle.position.x,
+          y:event.point.y - boundCircle.position.y
+        })
+      }
+      const baseCoef=boundRect.position.getDistance(boundRect.bounds['topLeft'])
+      let boundGroup = new paper.Group()
+      boundGroup.addChild(boundRect)
+      boundGroup.addChild(boundCircle)
+      boundGroup.insertBelow(item)
+      let corners=['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
+      let sqArray=[]
+      corners.forEach(corner =>{
+        let boundSq=new paper.Path.Rectangle({
+          width:10,
+          height:10,
+          position: boundRect.bounds[corner],
+          fillColor: "#42aaff"
+        })
+        boundSq.onMouseLeave=()=>{
+          this.styleCursor="default"
+        }
+        if(corner=='topLeft' || corner=='bottomRight'){
+          boundSq.onMouseEnter=()=>{
+            this.styleCursor='nwse-resize'
+          }}
+        else{
+          boundSq.onMouseEnter=()=>{
+            this.styleCursor='nesw-resize'
+          }}
+        boundGroup.addChild(boundSq)
+        sqArray.push(boundSq)
+      })
+      let twoLast=[]
+      sqArray.forEach((square, index) =>{
+        square.onMouseDrag=(event)=>{
+          square.position=event.point
+          let oppositeSq=(sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position
+          boundRect.remove()
+          boundRect=new paper.Path.Rectangle({
+            from: square.position,
+            to: oppositeSq ,
+            strokeColor: '#42aaff',
+            strokeWidth: 1
+          })
+          corners.forEach((corner,i) =>{
+            sqArray[i].position= boundRect.bounds[corner]
+          })
+          boundGroup.addChild(boundRect)
+          let scaleFactor=(boundRect.position.getDistance(boundRect.bounds['topLeft']))/(baseCoef)
+          console.log(scaleFactor)
+          if(twoLast.length<2) {
+            twoLast.push(scaleFactor)
+            item.scale(1/twoLast[0],oppositeSq)
+            item.scale(scaleFactor,oppositeSq)
+          }
+          else {
+            item.scale(1/twoLast[0],oppositeSq)
+            item.scale(twoLast[1],oppositeSq)
+            twoLast[0]=twoLast[1]
+            twoLast[1]=scaleFactor
+          }
+          boundRect.remove()
+          boundRect= new paper.Path.Rectangle({
+            rectangle: item.strokeBounds,
+            strokeColor: '#42aaff',
+            strokeWidth: 1
+          })
+          boundGroup.addChild(boundRect)
+          corners.forEach((corner,i) =>{
+            sqArray[i].position= boundRect.bounds[corner]
+          })
+        }
+        square.onMouseUp=()=>{
+          twoLast=[]
+        }
+      })
+      let angle
+      boundCircle.onMouseDrag=(event)=>{
+        if(angle) {
+          item.rotate(-angle)
+          item.position=boundRect.position
+        }
+        rotateEnd=new paper.Point({
+          x:event.point.x - boundCircle.position.x,
+          y:event.point.y - boundCircle.position.y
+        })
+        angle=rotateStart.getDirectedAngle(rotateEnd)
+        item.rotate(angle)
+        item.position=boundRect.position
+      }
+      item.onMouseDrag=(event)=>{
+        item.position.x += event.delta.x
+        item.position.y += event.delta.y
+        boundGroup.position.x += event.delta.x
+        boundGroup.position.y += event.delta.y
+      }
+      return boundGroup
+    },
