@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex align-items-center pe-2">
     <button type="button" id="resetscale" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip" data-bs-placement="top" title="Сбросить" v-on:click="scale=100">
-      <img src="@/assets/images/Tools/reset.png" alt="" class="hoverinv" :height="20">
+      <img src="@/assets/images/Service/reset.png" alt="" class="hoverinv" :height="25">
     </button>
     <img src="@/assets/images/Tools/zoom.png" :height="20">
     <div class="d-flex mx-2">

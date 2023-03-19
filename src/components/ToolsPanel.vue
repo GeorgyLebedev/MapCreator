@@ -266,7 +266,7 @@
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Поворот фигуры">
-                <img src="@/assets/images/Tools/reset.png" alt="" height="20">
+                <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
                 <input type="range" step="1" min="0" max="360" v-model="shapeOpt.rotation">
                 <input type="number" step="1" min="0" max="360" v-model="shapeOpt.rotation" class="input-number-style">
               </div>
@@ -461,7 +461,7 @@
               </div>
               <hr>
               <div title="Поворот текста">
-                <img src="@/assets/images/Tools/reset.png" alt="" height="20">
+                <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
                 <input type="range" step="1" min="0" max="360" v-model="textOpt.rotation">
                 <input type="number" step="1" min="0" max="360" v-model="textOpt.rotation" class="input-number-style">
               </div>

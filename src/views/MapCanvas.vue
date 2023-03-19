@@ -132,7 +132,7 @@ export default {
         this.styleCursor="default"
       }
       boundCircle.onMouseEnter=()=>{
-        this.styleCursor="pointer"
+        this.styleCursor="url(@/assets/images/Service/rotate.png), auto"
       }
       boundCircle.onMouseDown=(event)=>{
          rotateStart=new paper.Point({
@@ -140,6 +140,7 @@ export default {
           y:event.point.y - boundCircle.position.y
         })
       }
+      const baseCoef=boundRect.strokeBounds.width*boundRect.strokeBounds.height
       let boundGroup = new paper.Group()
       boundGroup.addChild(boundRect)
       boundGroup.addChild(boundCircle)
@@ -150,7 +151,7 @@ export default {
         let boundSq=new paper.Path.Rectangle({
           width:10,
           height:10,
-          position: item.bounds[corner],
+          position: boundRect.bounds[corner],
           fillColor: "#42aaff"
         })
         boundSq.onMouseLeave=()=>{
@@ -167,11 +168,54 @@ export default {
         boundGroup.addChild(boundSq)
         sqArray.push(boundSq)
       })
+      let twoLast=[]
+      sqArray.forEach((square, index) =>{
+        square.onMouseDrag=(event)=>{
+          console.log(event.point)
+          if((event.delta.x<0 && event.delta.y<0)||(event.delta.x>0 && event.delta.y>0)) {
+            square.position.x += (event.delta.x + event.delta.y) / 2
+            square.position.y += (event.delta.x + event.delta.y) / 2
+          }
+          if((event.delta.x>0 && event.delta.y<0) || (event.delta.x<0 && event.delta.y>0)){
+            square.position.x += (event.delta.x - event.delta.y) / 2
+            square.position.y += (-event.delta.x + event.delta.y) / 2
+          }
+          boundRect.remove()
+          boundRect=new paper.Path.Rectangle({
+            from: square.position,
+            to: (sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position ,
+            strokeColor: '#42aaff',
+            strokeWidth: 1
+          })
+          corners.forEach((corner,i) =>{
+            sqArray[i].position= boundRect.bounds[corner]
+          })
+          boundGroup.addChild(boundRect)
+          let scaleFactor=(boundRect.strokeBounds.width*boundRect.strokeBounds.height)/(baseCoef)
+          console.log("base"+baseCoef)
+          console.log("scale"+scaleFactor)
+          if(twoLast.length<2) {
+            twoLast.push(scaleFactor)
+            item.scale(1/twoLast[0])
+            item.scale(scaleFactor)
+          }
+          else {
+            item.scale(1/twoLast[0])
+            item.scale(twoLast[1])
+            twoLast[0]=twoLast[1]
+            twoLast[1]=scaleFactor
+          }
+          item.position=boundRect.position
+        }
+        square.onMouseUp=()=>{
+          twoLast=[]
+        }
+      })
       let angle
       boundCircle.onMouseDrag=(event)=>{
         if(angle) {
           item.rotate(-angle)
-          boundGroup.rotate(-angle)
+          item.position=boundRect.position
         }
         rotateEnd=new paper.Point({
           x:event.point.x - boundCircle.position.x,
@@ -179,7 +223,7 @@ export default {
         })
         angle=rotateStart.getDirectedAngle(rotateEnd)
         item.rotate(angle)
-        boundGroup.rotate(angle)
+        item.position=boundRect.position
       }
       item.onMouseDrag=(event)=>{
           item.position.x += event.delta.x
@@ -241,7 +285,7 @@ export default {
     setCursor(cursor, options){
       cursor.onMouseDown=(event)=>{
        let obj=event.item
-        if(options.selectedObj && obj.id==options.selectionGroup.id) return
+        if(obj && options.selectedObj && obj.id==options.selectionGroup.id) return
         if(options.selectedObj && obj!=options.selectedObj) {
           options.selectionGroup.removeChildren()
           options.selectionGroup.remove()
@@ -252,6 +296,15 @@ export default {
         if(!options.selectedObj) {
           options.selectedObj = obj
           options.selectionGroup=this.setSelected(obj)
+        }
+      }
+      cursor.onKeyDown=(event)=>{
+        if(event.key=='delete' && options.selectedObj) {
+          options.selectionGroup.removeChildren()
+          options.selectionGroup.remove()
+          options.selectionGroup = null
+          options.selectedObj.remove()
+          options.selectedObj = null
         }
       }
     },
@@ -709,6 +762,7 @@ export default {
     ////......
     this.setCursor(this.cursorTool, this.cursorOpt)
     this.cursorTool.activate()
+    this.currentTool.toolRef = this.cursorTool
   },
   watch: {
     'currentTool.name'(val) {
