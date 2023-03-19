@@ -140,7 +140,7 @@ export default {
           y:event.point.y - boundCircle.position.y
         })
       }
-      const baseCoef=boundRect.strokeBounds.width*boundRect.strokeBounds.height
+      const baseCoef=boundRect.position.getDistance(boundRect.bounds['topLeft'])
       let boundGroup = new paper.Group()
       boundGroup.addChild(boundRect)
       boundGroup.addChild(boundCircle)
@@ -172,18 +172,20 @@ export default {
       sqArray.forEach((square, index) =>{
         square.onMouseDrag=(event)=>{
           console.log(event.point)
-          if((event.delta.x<0 && event.delta.y<0)||(event.delta.x>0 && event.delta.y>0)) {
+          square.position=event.point
+         /* if((event.delta.x<0 && event.delta.y<0)||(event.delta.x>0 && event.delta.y>0)) {
             square.position.x += (event.delta.x + event.delta.y) / 2
             square.position.y += (event.delta.x + event.delta.y) / 2
           }
           if((event.delta.x>0 && event.delta.y<0) || (event.delta.x<0 && event.delta.y>0)){
             square.position.x += (event.delta.x - event.delta.y) / 2
             square.position.y += (-event.delta.x + event.delta.y) / 2
-          }
+          }*/
+          let oppositeSq=(sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position
           boundRect.remove()
           boundRect=new paper.Path.Rectangle({
             from: square.position,
-            to: (sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position ,
+            to: oppositeSq ,
             strokeColor: '#42aaff',
             strokeWidth: 1
           })
@@ -191,21 +193,32 @@ export default {
             sqArray[i].position= boundRect.bounds[corner]
           })
           boundGroup.addChild(boundRect)
-          let scaleFactor=(boundRect.strokeBounds.width*boundRect.strokeBounds.height)/(baseCoef)
-          console.log("base"+baseCoef)
-          console.log("scale"+scaleFactor)
+          let scaleFactor=(boundRect.position.getDistance(boundRect.bounds['topLeft']))/(baseCoef)
+          console.log(scaleFactor)
           if(twoLast.length<2) {
             twoLast.push(scaleFactor)
-            item.scale(1/twoLast[0])
-            item.scale(scaleFactor)
+            item.scale(1/twoLast[0],oppositeSq)
+            item.scale(scaleFactor,oppositeSq)
           }
           else {
-            item.scale(1/twoLast[0])
-            item.scale(twoLast[1])
+            item.scale(1/twoLast[0],oppositeSq)
+            item.scale(twoLast[1],oppositeSq)
             twoLast[0]=twoLast[1]
             twoLast[1]=scaleFactor
           }
-          item.position=boundRect.position
+
+
+
+          boundRect.remove()
+          boundRect= new paper.Path.Rectangle({
+            rectangle: item.strokeBounds,
+            strokeColor: '#42aaff',
+            strokeWidth: 1
+          })
+          boundGroup.addChild(boundRect)
+          corners.forEach((corner,i) =>{
+            sqArray[i].position= boundRect.bounds[corner]
+          })
         }
         square.onMouseUp=()=>{
           twoLast=[]
