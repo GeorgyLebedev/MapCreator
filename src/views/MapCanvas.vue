@@ -162,8 +162,10 @@ export default {
           corners.forEach((corner,i) =>{
             sqArray[i].position= boundRect.bounds[corner]
           })
+          let limit=(event.point.x+event.point.y)-(oppositeSq.x+oppositeSq.y)
+          if(!(((index==0 || index==3)&& limit<0) || ((index==1 || index==2)&& limit>0)))
+            return
           let scaleFactor=(oppositeSq.getDistance(event.point))/(baseCoef)
-          console.log(scaleFactor)
           if(twoLast.length<2) {
             twoLast.push(scaleFactor)
             item.scale(1/twoLast[0],oppositeSq)
