@@ -8,7 +8,7 @@
         :recent-colors="recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" style="cursor:url('../assets/images/Service/rotate.png'), auto" @mouseout="toolSwitch('off')"
+      <canvas id="map" width="1560" height="680" :style="{cursor:this.styleCursor}" @mouseout="toolSwitch('off')"
               @mouseover="toolSwitch('on')"></canvas>
     </div>
   </div>
