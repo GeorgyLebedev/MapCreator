@@ -8,7 +8,7 @@
         :recent-colors="recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" :style="{cursor:this.styleCursor}" @mouseout="toolSwitch('off')"
+      <canvas id="map" width="1560" height="680" :style="{cursor: this.styleCursor }" @mouseout="toolSwitch('off')"
               @mouseover="toolSwitch('on')"></canvas>
     </div>
   </div>
@@ -188,7 +188,7 @@ export default {
         this.styleCursor="default"
       }
       boundCircle.onMouseEnter=()=>{
-        this.styleCursor="url(../assets/images/Service/rotate.png), auto"
+        this.styleCursor='url(' +require('../assets/images/Service/rotate.png')+'), auto'
       }
       boundCircle.onMouseDown=(event)=>{
         rotateStart=new paper.Point({
@@ -337,11 +337,10 @@ export default {
         if (this.currentItem)
           this.currentItem.remove()
         this.currentItem = new paper.Raster({
-          source: "https://cdn3.iconfinder.com/data/icons/camping-icons/440/Mountains-1024.png",
+          source: require('../assets/images/Stamps/firstSet/stampEx.png'),
           position: event.point,
           size: options.size,
           opacity: options.opacity,
-
         })
       }
       stampTool.onMouseDown = () => {
