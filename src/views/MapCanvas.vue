@@ -8,7 +8,7 @@
         :recent-colors="recentColors"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" :style="{'cursor': styleCursor}" @mouseout="toolSwitch('off')"
+      <canvas id="map" width="1560" height="680" style="cursor:url('../assets/images/Service/rotate.png'), auto" @mouseout="toolSwitch('off')"
               @mouseover="toolSwitch('on')"></canvas>
     </div>
   </div>
@@ -131,7 +131,7 @@ export default {
       })
       let corners=['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
       let twoLast=[]
-      const baseCoef=boundRect.position.getDistance(boundRect.bounds['topLeft'])
+      const baseCoef=boundRect.bounds['bottomRight'].getDistance(boundRect.bounds['topLeft'])
       group.removeChildren()
       corners.forEach((corner,index) =>{
         let boundSq=new paper.Path.Rectangle({
@@ -162,7 +162,8 @@ export default {
           corners.forEach((corner,i) =>{
             sqArray[i].position= boundRect.bounds[corner]
           })
-          let scaleFactor=(boundRect.position.getDistance(event.point))/(baseCoef)
+          let scaleFactor=(oppositeSq.getDistance(event.point))/(baseCoef)
+          console.log(scaleFactor)
           if(twoLast.length<2) {
             twoLast.push(scaleFactor)
             item.scale(1/twoLast[0],oppositeSq)
@@ -185,7 +186,7 @@ export default {
         this.styleCursor="default"
       }
       boundCircle.onMouseEnter=()=>{
-        this.styleCursor="url(@/assets/images/Service/rotate.png), auto"
+        this.styleCursor="url(../assets/images/Service/rotate.png), auto"
       }
       boundCircle.onMouseDown=(event)=>{
         rotateStart=new paper.Point({
