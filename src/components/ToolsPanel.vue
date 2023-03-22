@@ -111,7 +111,7 @@
             <img src="@/assets/images/Tools/stamp.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition name="show">
-            <div id="stampOpt" class="tools-options" v-if="tool=='stamp' && optionVisible">
+            <div id="stampOpt" class="tools-options" v-if="(tool=='stamp' && optionVisible) || (selectedObj && selectedObj.type=='stamp')">
               <div class="d-flex justify-content-between">
                 <b> Штамп </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
@@ -148,6 +148,12 @@
                 <input type="range" step="0.1" min="0" max="1" v-model="stampOpt.opacity">
                 <input type="number" step="0.1" min="0" max="1" class="input-number-style" v-model="stampOpt.opacity">
               </div>
+              <hr>
+              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Поворот иконок">
+                <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
+                <input type="range" step="1" min="-180" max="180" v-model="stampOpt.rotation">
+                <input type="number" step="1" min="-180" max="180" v-model="stampOpt.rotation" class="input-number-style">
+              </div>
             </div>
           </Transition>
         </div>
@@ -160,13 +166,14 @@
             <img src="@/assets/images/Tools/shapes.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition name="show">
-            <div id="shapesOpt" class="tools-options" v-if="tool=='shape' && optionVisible">
+            <div id="shapesOpt" class="tools-options" v-if="(tool=='shape' && optionVisible) || (selectedObj && selectedObj.type=='shape')">
               <div class="d-flex justify-content-between">
                 <b> Фигуры </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="optionVisible=false">
               </div>
               <hr>
+              <div v-if="!(selectedObj && selectedObj.type=='shape')">
               <p> Вид фигуры:</p>
               <div class="d-flex">
                 <div class="card radio-icon me-2">
@@ -214,6 +221,7 @@
                 <input type="number" step="1" min="5" max="20" v-model="shapeOpt.sides" class="input-number-style">
               </div>
               <hr>
+              </div>
               Цвета:
               <table class=" options-table">
                 <tr>
@@ -267,8 +275,8 @@
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Поворот фигуры">
                 <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
-                <input type="range" step="1" min="0" max="360" v-model="shapeOpt.rotation">
-                <input type="number" step="1" min="0" max="360" v-model="shapeOpt.rotation" class="input-number-style">
+                <input type="range" step="1" min="-180" max="180" v-model="shapeOpt.rotation">
+                <input type="number" step="1" min="-180" max="180" v-model="shapeOpt.rotation" class="input-number-style">
               </div>
             </div>
           </Transition>
@@ -406,7 +414,7 @@
             <img src="@/assets/images/Tools/text.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition name="show">
-            <div id="textOpt" class="tools-options" v-if="tool=='text' && optionVisible">
+            <div id="textOpt" class="tools-options" v-if="(tool=='text' && optionVisible) || (selectedObj && selectedObj.type=='text')">
               <div class="d-flex justify-content-between">
                 <b> Надпись </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
@@ -462,8 +470,8 @@
               <hr>
               <div title="Поворот текста">
                 <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
-                <input type="range" step="1" min="0" max="360" v-model="textOpt.rotation">
-                <input type="number" step="1" min="0" max="360" v-model="textOpt.rotation" class="input-number-style">
+                <input type="range" step="1" min="-180" max="180" v-model="textOpt.rotation">
+                <input type="number" step="1" min="-180" max="180" v-model="textOpt.rotation" class="input-number-style">
               </div>
               <hr>
               <div class="d-flex justify-content-between align-items-center">
@@ -536,6 +544,9 @@ export default {
   props: {
     recentColors: {
       type: Array,
+    },
+    selectedObj:{
+      type: Object
     }
   },
   data() {
@@ -646,6 +657,16 @@ export default {
           return
       }
     },
+    selectedObj:{
+    handler(val){
+      if(val) {
+        this.optionVisible=false
+        if(val.type=="text"){
+          Object.assign(this.textOpt,val)
+        }
+      }
+    }
+    },
     brushOpt: {
       handler() {
         this.$emit('optChange', this.brushOpt)
@@ -670,6 +691,8 @@ export default {
     },
     textOpt: {
       handler() {
+        if(this.selectedObj)
+        Object.assign(this.selectedObj, this.textOpt)
         this.$emit('optChange', this.textOpt)
       }, deep: true
     },

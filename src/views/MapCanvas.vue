@@ -5,7 +5,8 @@
     <ToolsPanel
         @toolChange="setTool"
         @optChange="setOpt"
-        :recent-colors="recentColors"/>
+        :recent-colors="recentColors"
+        :selected-obj="cursorOpt.selectedObj"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
       <canvas id="map" width="1560" height="680" :style="{cursor: this.styleCursor }" @mouseout="toolSwitch('off')"
@@ -43,11 +44,11 @@ export default {
       colorChanged: false,
       activeLayer: null,
       cursorTool: new paper.Tool(),
-      brushTool: new paper.Tool(),
       cursorOpt:{
         selectedObj: null,
         selectionGroup: null
       },
+      brushTool: new paper.Tool(),
       brushOpt: {
         size: 1,
         opacity: 1,
@@ -284,7 +285,7 @@ export default {
     },
     setCursor(cursor, options){
       cursor.onMouseDown=(event)=>{
-       let obj=event.item
+        let obj=event.item
         if(obj && options.selectedObj && obj.id==options.selectionGroup.id) return
         if(options.selectedObj && obj!=options.selectedObj) {
           this.removeSelect()
@@ -341,6 +342,7 @@ export default {
           position: event.point,
           size: options.size,
           opacity: options.opacity,
+          rotation: options.rotation
         })
       }
       stampTool.onMouseDown = () => {
@@ -576,26 +578,25 @@ export default {
             if (this.currentItem)
               this.currentItem.remove()
             if (initPoint) {
-                lastSegment = new paper.Segment(
-                    event.point,
-                    null,
-                    null
-                )
-                this.currentItem = new paper.Path({
-                  segments: segments.concat(lastSegment),
-                  strokeWidth: options.size,
-                  strokeJoin: "round",
-                  strokeCap: options.roundCap ? "round" : "square",
-                  strokeColor: options.color,
-                  opacity: options.opacity
-                })
-                if (options.style == "dashed")
-                  this.currentItem.dashArray = options.dashArray.map((x) => (x * options.size))
-                else if (options.style == "dotted")
-                  this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
-                else this.currentItem.dashArray = null
-                this.currentItem.insertBelow(options.cursor)
-
+              lastSegment = new paper.Segment(
+                  event.point,
+                  null,
+                  null
+              )
+              this.currentItem = new paper.Path({
+                segments: segments.concat(lastSegment),
+                strokeWidth: options.size,
+                strokeJoin: "round",
+                strokeCap: options.roundCap ? "round" : "square",
+                strokeColor: options.color,
+                opacity: options.opacity
+              })
+              if (options.style == "dashed")
+                this.currentItem.dashArray = options.dashArray.map((x) => (x * options.size))
+              else if (options.style == "dotted")
+                this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
+              else this.currentItem.dashArray = null
+              this.currentItem.insertBelow(options.cursor)
             }
           }
           pathTool.onMouseDown = (event) => {
@@ -657,35 +658,34 @@ export default {
                 segments[segments.length - 1].handleIn = hIn
                 segments[segments.length - 1].handleOut = hOut
               }
-
-            /*console.log('chIn:'+hIn.angle)
-            console.log('fv:'+firstVector.angle)
-            console.log("hIn:"+(hIn.getDirectedAngle(firstVector)))
-            console.log("hOut:"+(hOut.getDirectedAngle(firstVector)))
-            console.log("hIn-hOut:"+hIn.getDirectedAngle(hOut))
-            console.log("fV-vector:"+angle)*/
-            lastSegment = new paper.Segment(
-                event.point,
-                null,
-                null
-            )
-            /*lastSegment.selected = true
-            segments[segments.length - 1].selected = true*/
-            this.currentItem = new paper.Path({
-              segments: segments.concat(lastSegment),
-              strokeWidth: options.size,
-              strokeJoin: "round",
-              strokeCap: options.roundCap ? "round" : "square",
-              strokeColor: options.color,
-              opacity: options.opacity
-            })
-            if (options.style == "dashed")
-              this.currentItem.dashArray = options.dashArray.map((x) => (x * options.size))
-            else if (options.style == "dotted")
-              this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
-            else this.currentItem.dashArray = null
-            this.currentItem.insertBelow(options.cursor)
-          }}
+              /*console.log('chIn:'+hIn.angle)
+              console.log('fv:'+firstVector.angle)
+              console.log("hIn:"+(hIn.getDirectedAngle(firstVector)))
+              console.log("hOut:"+(hOut.getDirectedAngle(firstVector)))
+              console.log("hIn-hOut:"+hIn.getDirectedAngle(hOut))
+              console.log("fV-vector:"+angle)*/
+              lastSegment = new paper.Segment(
+                  event.point,
+                  null,
+                  null
+              )
+              /*lastSegment.selected = true
+              segments[segments.length - 1].selected = true*/
+              this.currentItem = new paper.Path({
+                segments: segments.concat(lastSegment),
+                strokeWidth: options.size,
+                strokeJoin: "round",
+                strokeCap: options.roundCap ? "round" : "square",
+                strokeColor: options.color,
+                opacity: options.opacity
+              })
+              if (options.style == "dashed")
+                this.currentItem.dashArray = options.dashArray.map((x) => (x * options.size))
+              else if (options.style == "dotted")
+                this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
+              else this.currentItem.dashArray = null
+              this.currentItem.insertBelow(options.cursor)
+            }}
           pathTool.onMouseDown = (event) => {
             if (!initPoint) {
               segments = []
@@ -717,6 +717,7 @@ export default {
           fontWeight: options.fontWeight,
           fontSize: options.fontSize,
           opacity: options.opacity,
+          rotation: options.rotation,
           strokeColor: options.isBorder ? options.strokeColor : undefined,
           strokeWidth: options.isBorder ? options.strokeWidth : 0,
           shadowColor: options.isShadow ? options.shadowColor : undefined,
@@ -803,6 +804,7 @@ export default {
     },
     'OBJECT_STORAGE.length'(val) {
       let obj = this.OBJECT_STORAGE[val - 1]
+      obj.type=this.currentTool.name
       this.activeLayer.addChild(obj)
       console.log(paper.project.layers)
       console.log(this.OBJECT_STORAGE)
@@ -828,7 +830,6 @@ export default {
     "ToolsPanel CanvasArea"
     "BotMenu BotMenu";
 }
-
 .CanvasArea {
   grid-area: CanvasArea;
   z-index: 1;
@@ -837,14 +838,12 @@ export default {
   align-items: center;
   border-left: 1px solid gainsboro;
 }
-
 #map {
   background-color: white;
   -webkit-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
 }
-
 input[type=color] {
   border: none;
   width: 30px;
@@ -854,21 +853,17 @@ input[type=color] {
   padding: 0;
   margin: 0
 }
-
 .cursorNone {
   cursor: none;
 }
-
 input[type=color]::-webkit-color-swatch {
   border-radius: 0;
   border: 1px solid gray;
   cursor: toolRef
 }
-
 *:hover > .hoverinv {
   filter: invert(1);
 }
-
 input[type=number] {
   font-size: smaller;
   font-weight: bolder;
@@ -877,12 +872,10 @@ input[type=number] {
   border-radius: 5px;
   padding: 3px 0 2px 5px
 }
-
 .tools-options input[type=range] {
   width: 150px;
   margin: 0 10px;
 }
-
 input[type=range] {
   width: 175px;
   height: 12px;
@@ -898,19 +891,16 @@ input[type=range] {
   -moz-box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset;
   box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset;
 }
-
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   background: white;
   width: 12px;
   height: 12px;
-
   border: 1px solid #232323;
   border-radius: 10px;
   cursor: toolRef;
   box-shadow: -180px 0 0 173px #232323;
 }
-
 input[type=range]::-moz-range-thumb {
   -webkit-appearance: none;
   background: white;
