@@ -5,7 +5,6 @@
     <ToolsPanel
         @toolChange="setTool"
         @optChange="setOpt"
-        @removeSel="removeSelect"
         @newSelect="setSelected"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
@@ -48,8 +47,7 @@ export default {
       activeLayer: null,
       cursorTool: new paper.Tool(),
       cursorOpt:{
-        selectedObj: null,
-        selectionGroup: null,
+        selectedObj: null
       },
       brushTool: new paper.Tool(),
       brushOpt: {
@@ -204,8 +202,8 @@ export default {
       boundCircle.onMouseUp=(event)=>{
        event.stop()
        item.totalSpin+=angle
-          if(item.totalSpin>180)
-            item.totalSpin=-360+item.totalSpin
+        if(item.totalSpin>180)
+          item.totalSpin=-360+item.totalSpin
         if(item.totalSpin<-180)
           item.totalSpin=360+item.totalSpin
       }
@@ -236,13 +234,18 @@ export default {
       return group
     },
     setSelected(item){
-      let boundGroup=this.getBoundGroup(new paper.Group(),item)
-      return boundGroup
+      if(item.selectionGroup){
+        item.selectionGroup.removeChildren()
+        item.selectionGroup.remove()
+        item.selectionGroup=undefined
+      }
+      item.selectionGroup=this.getBoundGroup(new paper.Group(),item)
+      return item
     },
     removeSelect(){
-      this.cursorOpt.selectionGroup.removeChildren()
-      this.cursorOpt.selectionGroup.remove()
-      this.cursorOpt.selectionGroup=undefined
+      this.cursorOpt.selectedObj.selectionGroup.removeChildren()
+      this.cursorOpt.selectedObj.selectionGroup.remove()
+      this.cursorOpt.selectedObj.selectionGroup=undefined
       this.cursorOpt.selectedObj.onMouseDrag=undefined
       this.cursorOpt.selectedObj=undefined
     },
@@ -298,14 +301,14 @@ export default {
     setCursor(cursor, options){
       cursor.onMouseDown=(event)=>{
         let obj=event.item
-        if(obj && options.selectedObj && obj.id==options.selectionGroup.id) return
+        if(obj && options.selectedObj && obj.id==options.selectedObj.selectionGroup.id) return
         if(options.selectedObj && obj!=options.selectedObj) {
           this.removeSelect()
         }
         if(!obj || this.OBJECT_STORAGE.indexOf(obj) == -1) return
         if(!options.selectedObj) {
+          this.setSelected(obj)
           options.selectedObj = obj
-          options.selectionGroup=this.setSelected(obj)
         }
       }
       cursor.onKeyDown=(event)=>{

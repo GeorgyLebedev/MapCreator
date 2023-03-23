@@ -732,7 +732,6 @@ export default {
       handler() {
         if(this.selectedObj) {
           Object.assign(this.selectedObj, this.textOpt)
-          this.$emit("removeSel", this.selectedObj)
           this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.textOpt)
