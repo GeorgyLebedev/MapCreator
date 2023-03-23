@@ -421,24 +421,24 @@
                      v-on:click="optionVisible=false">
               </div>
               <hr>
-              <textarea id="text" cols="24" rows="3" v-model="textOpt.text"
-                        :style="{'font-family':textOpt.font}"></textarea>
+              <textarea id="text" cols="24" rows="3" v-model="textOpt.content"
+                        :style="{'font-family':textOpt.fontFamily}"></textarea>
               <hr>
               <div class="d-flex align-items-center justify-content-between">
                 Шрифт
-                <div class="dropdown dropdownArea" :style="{'font-family':textOpt.font}">
+                <div class="dropdown dropdownArea" :style="{'font-family':textOpt.fontFamily}">
                   <a class="fontDropDown btn btn-sm btn-outline-dark dropdown-toggle"
                      id="dropdownMenuBorder" data-bs-toggle="dropdown"
                      aria-expanded="false">
                     <div class="d-flex justify-content-between">
-                      <div class="fontList"> {{ textOpt.font }}</div>
+                      <div class="fontList"> {{ textOpt.fontFamily }}</div>
                       <img src="@/assets/images/downArrow.png" height="20" alt="">
                     </div>
                   </a>
                   <div class="dropdown-menu p-2">
                     <div class="dropdown-item"
                          v-for="font in fontsCollection" :key="font"
-                         @click="textOpt.font=font"
+                         @click="textOpt.fontFamily=font"
                          :style="{'font-family':font}">{{ font }}
                     </div>
                   </div>
@@ -547,6 +547,9 @@ export default {
     },
     selectedObj:{
       type: Object
+    },
+    totalSpin:{
+      type: Number
     }
   },
   data() {
@@ -594,20 +597,20 @@ export default {
         isBorder: true
       },
       textOpt: {
-        text: "Текст",
-        font: "Cambria",
+        content: "Текст",
+        fontFamily: "Cambria",
         fontSize: 10,
-        textAlign: "left",
-        fillColor: "#000000",
+        justification: "left",
+        fillColor: "#ffffff",
         strokeColor: "#000000",
         strokeWidth: 1,
         shadowColor: "#000000",
-        shadowBlur: 1,
+        shadowBlur:1,
         shOffsetX: 0,
         shOffsetY: 0,
         opacity: 1,
         rotation: 0,
-        isBorder: false,
+        isBorder: true,
         isFill: true,
         isShadow: false
       },
@@ -662,10 +665,46 @@ export default {
       if(val) {
         this.optionVisible=false
         if(val.type=="text"){
-          Object.assign(this.textOpt,val)
+          val.fillColor=val.fillColor? val.fillColor.toCSS(true):"#000000"
+          val.strokeColor=val.strokeColor? val.strokeColor.toCSS(true) : "#000000"
+          val.shadowColor=val.shadowColor ? val.shadowColor.toCSS(true):"#000000"
+          this.textOpt.content=val.content
+          this.textOpt.fontFamily=val.fontFamily
+          this.textOpt.fontSize=val.fontSize
+          this.textOpt.justification=val.justification
+          this.textOpt.fillColor=val.fillColor.toCSS(true)
+          this.textOpt.strokeColor=val.strokeColor.toCSS(true)
+          this.textOpt.strokeWidth=val.strokeWidth
+          this.textOpt.shadowColor=val.shadowColor.toCSS(true)
+          this.textOpt.shadowBlur=val.shadowBlur
+          this.textOpt.shOffsetX=val.data.shOffsetX
+          this.textOpt.shOffsetY=val.data.shOffsetY
+          this.textOpt.opacity=val.opacity
+          this.textOpt.isBorder=val.data.isBorder
+          this.textOpt.isFill=val.data.isFill
+          this.textOpt.isShadow=val.data.isShadow
+          for(let key in this.textOpt){
+            console.log(this.textOpt[key])
+          }
         }
       }
     }
+    },
+    totalSpin:{
+      handler(val){
+        if(!val) return
+        switch (this.selectedObj.type) {
+          case "text":
+            this.textOpt.rotation = Math.round(val)
+                break
+          case "shape":
+            this.shapeOpt.rotation = Math.round(val)
+                break
+          case "stamp":
+            this.shapeOpt.rotation = Math.round(val)
+                break
+        }
+      }
     },
     brushOpt: {
       handler() {
@@ -691,8 +730,11 @@ export default {
     },
     textOpt: {
       handler() {
-        if(this.selectedObj)
-        Object.assign(this.selectedObj, this.textOpt)
+        if(this.selectedObj) {
+          Object.assign(this.selectedObj, this.textOpt)
+          this.$emit("removeSel", this.selectedObj)
+          this.$emit("newSelect", this.selectedObj)
+        }
         this.$emit('optChange', this.textOpt)
       }, deep: true
     },

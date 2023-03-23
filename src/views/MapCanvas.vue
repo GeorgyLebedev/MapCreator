@@ -5,8 +5,11 @@
     <ToolsPanel
         @toolChange="setTool"
         @optChange="setOpt"
+        @removeSel="removeSelect"
+        @newSelect="setSelected"
         :recent-colors="recentColors"
-        :selected-obj="cursorOpt.selectedObj"/>
+        :selected-obj="cursorOpt.selectedObj"
+        :total-spin="cursorOpt.selectedObj?cursorOpt.selectedObj.totalSpin:0"/>
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
       <canvas id="map" width="1560" height="680" :style="{cursor: this.styleCursor }" @mouseout="toolSwitch('off')"
@@ -46,7 +49,7 @@ export default {
       cursorTool: new paper.Tool(),
       cursorOpt:{
         selectedObj: null,
-        selectionGroup: null
+        selectionGroup: null,
       },
       brushTool: new paper.Tool(),
       brushOpt: {
@@ -89,14 +92,15 @@ export default {
       },
       textTool: new paper.Tool(),
       textOpt: {
-        text: "Текст",
-        font: "Cambria",
+        content: "Текст",
+        fontFamily: "Cambria",
         fontSize: 10,
-        textAlign: "left",
+        justification: "left",
         fillColor: "#ffffff",
         strokeColor: "#000000",
         strokeWidth: 1,
         shadowColor: "#000000",
+        shadowBlur: 1,
         shOffsetX: 0,
         shOffsetY: 0,
         opacity: 1,
@@ -114,7 +118,7 @@ export default {
       this.scale = data.newScale
     },
     getBoundGroup(group,item){
-      let rotateStart, rotateEnd, angle
+      let rotateStart, rotateEnd, angle=0
       let boundRect= new paper.Path.Rectangle({
         rectangle: item.strokeBounds,
         strokeColor: '#42aaff',
@@ -196,6 +200,14 @@ export default {
           x:event.point.x - boundCircle.position.x,
           y:event.point.y - boundCircle.position.y
         })
+      }
+      boundCircle.onMouseUp=(event)=>{
+       event.stop()
+       item.totalSpin+=angle
+          if(item.totalSpin>180)
+            item.totalSpin=-360+item.totalSpin
+        if(item.totalSpin<-180)
+          item.totalSpin=360+item.totalSpin
       }
       boundCircle.onMouseDrag=(event)=>{
         if(angle) {
@@ -711,20 +723,29 @@ export default {
           this.currentItem.remove()
         this.currentItem = new paper.PointText({
           point: event.point,
-          content: options.text,
-          fillColor: options.isFill ? options.fillColor : undefined,
-          fontFamily: options.font,
+          content: options.content,
+          fillColor: options.isFill ? options.fillColor : "transparent",
+          fontFamily: options.fontFamily,
           fontWeight: options.fontWeight,
           fontSize: options.fontSize,
+          justification: options.justification,
           opacity: options.opacity,
           rotation: options.rotation,
-          strokeColor: options.isBorder ? options.strokeColor : undefined,
+          strokeColor: options.isBorder ? options.strokeColor : "transparent",
           strokeWidth: options.isBorder ? options.strokeWidth : 0,
-          shadowColor: options.isShadow ? options.shadowColor : undefined,
+          shadowColor: options.isShadow ? options.shadowColor : "transparent",
           shadowBlur: options.isShadow ? options.shadowBlur : 0,
-          shadowOffset: options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined
+          shadowOffset: options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined,
         })
+        this.currentItem.data={
+          isBorder: options.isBorder,
+          isFill : options.isFill,
+          isShadow: options.isShadow,
+          shOffsetX: options.isShadow ? options.shOffsetX : 0,
+          shOffsetY: options.isShadow ? options.shOffsetY : 0,
+        }
       }
+
       textTool.onMouseDown = () => {
         this.OBJECT_STORAGE.push(this.currentItem.clone())
       }
@@ -803,7 +824,9 @@ export default {
       }
     },
     'OBJECT_STORAGE.length'(val) {
+
       let obj = this.OBJECT_STORAGE[val - 1]
+      obj.totalSpin=obj.rotation
       obj.type=this.currentTool.name
       this.activeLayer.addChild(obj)
       console.log(paper.project.layers)
