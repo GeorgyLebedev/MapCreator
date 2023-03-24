@@ -8,7 +8,8 @@
         @newSelect="setSelected"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
-        :total-spin="cursorOpt.selectedObj?cursorOpt.selectedObj.totalSpin:0"/>
+        :rotation="cursorOpt.selectedObj?Number(cursorOpt.selectedObj.rotation):0"
+        />
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
       <canvas id="map" width="1560" height="680" :style="{cursor: this.styleCursor }" @mouseout="toolSwitch('off')"
@@ -199,28 +200,21 @@ export default {
           y:event.point.y - boundCircle.position.y
         })
       }
-      boundCircle.onMouseUp=(event)=>{
-       event.stop()
-       item.totalSpin+=angle
-        if(item.totalSpin>180)
-          item.totalSpin=-360+item.totalSpin
-        if(item.totalSpin<-180)
-          item.totalSpin=360+item.totalSpin
+      boundCircle.onMouseUp=()=>{
+        angle=undefined
       }
       boundCircle.onMouseDrag=(event)=>{
         if(angle) {
-          item.rotate(-angle)
-          item.position=boundRect.position
+          item.rotation-=angle
+          item.position = boundRect.position
         }
         rotateEnd=new paper.Point({
           x:event.point.x - boundCircle.position.x,
           y:event.point.y - boundCircle.position.y
         })
         angle=rotateStart.getDirectedAngle(rotateEnd)
-        item.rotate(angle)
+        item.rotation+=angle
         item.position=boundRect.position
-        group.removeChildren()
-        group=this.getBoundGroup(group,item)
       }
       item.onMouseDrag=(event)=>{
         item.position.x += event.delta.x
@@ -829,7 +823,6 @@ export default {
     'OBJECT_STORAGE.length'(val) {
 
       let obj = this.OBJECT_STORAGE[val - 1]
-      obj.totalSpin=obj.rotation
       obj.type=this.currentTool.name
       this.activeLayer.addChild(obj)
       console.log(paper.project.layers)

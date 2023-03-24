@@ -548,7 +548,7 @@ export default {
     selectedObj:{
       type: Object
     },
-    totalSpin:{
+    rotation:{
       type: Number
     }
   },
@@ -672,25 +672,25 @@ export default {
           this.textOpt.fontFamily=val.fontFamily
           this.textOpt.fontSize=val.fontSize
           this.textOpt.justification=val.justification
-          this.textOpt.fillColor=val.fillColor.toCSS(true)
-          this.textOpt.strokeColor=val.strokeColor.toCSS(true)
-          this.textOpt.strokeWidth=val.strokeWidth
-          this.textOpt.shadowColor=val.shadowColor.toCSS(true)
-          this.textOpt.shadowBlur=val.shadowBlur
+          this.textOpt.fillColor=val.data.isFill? val.fillColor.toCSS(true) : "transparent"
+          this.textOpt.strokeColor=val.data.isBorder? val.strokeColor.toCSS(true) : "transparent"
+          this.textOpt.strokeWidth=val.data.isBorder? val.strokeWidth : 0
+          this.textOpt.shadowColor=val.data.isShadow? val.shadowColor.toCSS(true) : "transparent"
+          this.textOpt.shadowBlur=val.data.isShadow? val.shadowBlur : 0
           this.textOpt.shOffsetX=val.data.shOffsetX
           this.textOpt.shOffsetY=val.data.shOffsetY
           this.textOpt.opacity=val.opacity
           this.textOpt.isBorder=val.data.isBorder
           this.textOpt.isFill=val.data.isFill
           this.textOpt.isShadow=val.data.isShadow
-          for(let key in this.textOpt){
+          /*for(let key in this.textOpt){
             console.log(this.textOpt[key])
-          }
+          }*/
         }
       }
     }
     },
-    totalSpin:{
+    rotation:{
       handler(val){
         if(!val) return
         switch (this.selectedObj.type) {
