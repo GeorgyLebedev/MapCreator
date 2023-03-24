@@ -6,6 +6,7 @@
         @toolChange="setTool"
         @optChange="setOpt"
         @newSelect="setSelected"
+        @update="updateItem"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
         :rotation="cursorOpt.selectedObj?Number(cursorOpt.selectedObj.rotation):0"
@@ -41,7 +42,7 @@ export default {
         toolRef: null
       },
       currentItem: null,
-      spin:0,
+      rotation:0,
       OBJECT_STORAGE: [],
       styleCursor: "default",
       recentColors: Array(8).fill("#ffffff"),
@@ -119,7 +120,7 @@ export default {
     },
     getBoundGroup(group,item){
       let rotateStart, rotateEnd, angle=0
-      this.spin=item.rotation
+      this.rotation=item.rotation
       let boundRect= new paper.Path.Rectangle({
         rectangle: item.strokeBounds,
         strokeColor: '#42aaff',
@@ -207,7 +208,7 @@ export default {
       }
       boundCircle.onMouseDrag=(event)=>{
         if(angle) {
-          this.spin-=angle
+          this.rotation-=angle
           item.position = boundRect.position
         }
         rotateEnd=new paper.Point({
@@ -215,7 +216,7 @@ export default {
           y:event.point.y - boundCircle.position.y
         })
         angle=rotateStart.getDirectedAngle(rotateEnd)
-        this.spin+=angle
+        this.rotation+=angle
         item.position=boundRect.position
       }
       item.onMouseDrag=(event)=>{
@@ -244,6 +245,17 @@ export default {
       this.cursorOpt.selectedObj.selectionGroup=undefined
       this.cursorOpt.selectedObj.onMouseDrag=undefined
       this.cursorOpt.selectedObj=undefined
+    },
+    updateItem(item, options){
+      switch (item.type) {
+        case "text":
+          item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
+          item.strokeWidth= options.isBorder ? options.strokeWidth : 0
+          item.shadowColor= options.isShadow ? options.shadowColor : "transparent"
+          item.shadowBlur= options.isShadow ? options.shadowBlur : 0
+          item.shadowOffset= options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined
+          break
+      }
     },
     toolSwitch(mode) {
       if (mode == "on" && this.currentTool.toolRef) {
@@ -822,7 +834,7 @@ export default {
           this.textTool.activate()
       }
     },
-    'spin'(val){
+    'rotation'(val){
       this.cursorOpt.selectedObj.rotation=val
     },
     'OBJECT_STORAGE.length'(val) {

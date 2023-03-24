@@ -550,7 +550,7 @@ export default {
     },
     rotation:{
       type: Number
-    }
+    },
   },
   data() {
     return {
@@ -693,7 +693,6 @@ export default {
     rotation:{
       handler(val){
         if(!val) return
-        console.log("entering: "+ val)
         switch (this.selectedObj.type) {
           case "text":
             this.textOpt.rotation = Math.round(val)
@@ -702,7 +701,7 @@ export default {
             this.shapeOpt.rotation = Math.round(val)
                 break
           case "stamp":
-            this.shapeOpt.rotation = Math.round(val)
+            this.stampOpt.rotation = Math.round(val)
                 break
         }
       }
@@ -714,6 +713,10 @@ export default {
     },
     stampOpt: {
       handler() {
+        if(this.selectedObj) {
+          Object.assign(this.selectedObj, this.stampOpt)
+          this.$emit("newSelect", this.selectedObj)
+        }
      /*   this.stampOpt.currentStampPath='../assets/images/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
         console.log(this.stampOpt.currentStampPath)*/
         this.$emit('optChange', this.stampOpt)
@@ -733,6 +736,7 @@ export default {
       handler() {
         if(this.selectedObj) {
           Object.assign(this.selectedObj, this.textOpt)
+          this.$emit("update",this.selectedObj, this.textOpt)
           this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.textOpt)
