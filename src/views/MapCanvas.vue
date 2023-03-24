@@ -41,6 +41,7 @@ export default {
         toolRef: null
       },
       currentItem: null,
+      spin:0,
       OBJECT_STORAGE: [],
       styleCursor: "default",
       recentColors: Array(8).fill("#ffffff"),
@@ -118,6 +119,7 @@ export default {
     },
     getBoundGroup(group,item){
       let rotateStart, rotateEnd, angle=0
+      this.spin=item.rotation
       let boundRect= new paper.Path.Rectangle({
         rectangle: item.strokeBounds,
         strokeColor: '#42aaff',
@@ -205,7 +207,7 @@ export default {
       }
       boundCircle.onMouseDrag=(event)=>{
         if(angle) {
-          item.rotation-=angle
+          this.spin-=angle
           item.position = boundRect.position
         }
         rotateEnd=new paper.Point({
@@ -213,7 +215,7 @@ export default {
           y:event.point.y - boundCircle.position.y
         })
         angle=rotateStart.getDirectedAngle(rotateEnd)
-        item.rotation+=angle
+        this.spin+=angle
         item.position=boundRect.position
       }
       item.onMouseDrag=(event)=>{
@@ -819,6 +821,9 @@ export default {
           this.styleCursor = "none"
           this.textTool.activate()
       }
+    },
+    'spin'(val){
+      this.cursorOpt.selectedObj.rotation=val
     },
     'OBJECT_STORAGE.length'(val) {
 

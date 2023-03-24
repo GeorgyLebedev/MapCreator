@@ -693,6 +693,7 @@ export default {
     rotation:{
       handler(val){
         if(!val) return
+        console.log("entering: "+ val)
         switch (this.selectedObj.type) {
           case "text":
             this.textOpt.rotation = Math.round(val)
