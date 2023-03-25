@@ -9,7 +9,7 @@
         @update="updateItem"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
-        :rotation="cursorOpt.selectedObj?Number(cursorOpt.selectedObj.rotation):0"
+        :rotation="rotation"
         />
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
@@ -89,7 +89,8 @@ export default {
         borderColor: "#000000",
         fillColor: "#ffffff",
         borderRadius: 0,
-        opacity: 1
+        opacity: 1,
+        rotation: 0
       },
       textTool: new paper.Tool(),
       textOpt: {
@@ -249,12 +250,26 @@ export default {
     updateItem(item, options){
       switch (item.type) {
         case "text":
-          item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
-          item.strokeWidth= options.isBorder ? options.strokeWidth : 0
           item.shadowColor= options.isShadow ? options.shadowColor : "transparent"
           item.shadowBlur= options.isShadow ? options.shadowBlur : 0
           item.shadowOffset= options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined
-          break
+          item.data.shOffsetX=options.isShadow ? options.shOffsetX:0
+          item.data.shOffsetY=options.isShadow ? options.shOffsetY:0
+          item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
+          item.fillColor=options.isFill?options.fillColor:"transparent"
+          item.strokeWidth= options.isBorder ? options.strokeWidth : 0
+          item.data.isBorder=options.isBorder ?options.isBorder:false
+          item.data.isFill=options.isFill ?options.isFill:false
+          item.data.isShadow=options.isShadow ?options.isShadow:false
+              break
+        case "shape":
+          item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
+          item.fillColor=options.isFill?options.fillColor:"transparent"
+          item.strokeWidth= options.isBorder ? options.strokeWidth : 0
+          item.data.isBorder=options.isBorder ?options.isBorder:false
+          item.data.isFill=options.isFill ?options.isFill:false
+          item.data.isShadow=options.isShadow ?options.isShadow:false
+              break
       }
     },
     toolSwitch(mode) {
@@ -396,7 +411,6 @@ export default {
               initPoint = event.point
             else {
               this.OBJECT_STORAGE.push(this.currentItem.clone())
-              /*this.currentItem.clone()*/
               initPoint = undefined
             }
             if (ref.colorChanged == "fill") {
@@ -418,8 +432,11 @@ export default {
                 strokeColor: options.borderColor,
                 fillColor: options.fillColor,
                 strokeWidth: options.borderWidth == 1 ? options.borderWidth * 2 : options.borderWidth,
-                opacity: options.opacity
+                opacity: options.opacity,
+                rotation: options.rotation
               })
+              this.currentItem.data.isBorder=this.shapeOpt.isBorder
+              this.currentItem.data.isFill=this.shapeOpt.isFill
             }
           }
           break
@@ -464,8 +481,11 @@ export default {
                 strokeColor: options.borderColor,
                 fillColor: options.fillColor,
                 strokeWidth: options.borderWidth,
-                opacity: options.opacity
+                opacity: options.opacity,
+                rotation: options.rotation
               })
+              this.currentItem.data.isBorder=this.shapeOpt.isBorder
+              this.currentItem.data.isFill=this.shapeOpt.isFill
             }
           }
           break
@@ -496,8 +516,11 @@ export default {
                 strokeColor: options.borderColor,
                 fillColor: options.fillColor,
                 strokeWidth: options.borderWidth,
-                opacity: options.opacity
+                opacity: options.opacity,
+                rotation: options.rotation
               })
+              this.currentItem.data.isBorder=this.shapeOpt.isBorder
+              this.currentItem.data.isFill=this.shapeOpt.isFill
             }
           }
           break
@@ -522,8 +545,11 @@ export default {
                 strokeWidth: options.borderWidth,
                 strokeColor: options.borderColor,
                 opacity: options.opacity,
-                strokeCap: "round"
+                strokeCap: "round",
+                rotation: options.rotation
               })
+              this.currentItem.data.isBorder=this.shapeOpt.isBorder
+              this.currentItem.data.isFill=this.shapeOpt.isFill
               initPoint = event.point
               this.currentItem.add(initPoint)
             } else {
@@ -838,7 +864,6 @@ export default {
       this.cursorOpt.selectedObj.rotation=val
     },
     'OBJECT_STORAGE.length'(val) {
-
       let obj = this.OBJECT_STORAGE[val - 1]
       obj.type=this.currentTool.name
       this.activeLayer.addChild(obj)

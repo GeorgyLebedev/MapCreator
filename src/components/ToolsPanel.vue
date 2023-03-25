@@ -242,7 +242,7 @@
                     <label for="shapeBorderChbx">Контур</label>
                   </td>
                   <td>
-                    <input type="color" v-model="shapeOpt.borderColor" v-if="shapeOpt.isBorder">
+                    <input type="color" v-model="shapeOpt.strokeColor" v-if="shapeOpt.isBorder">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!shapeOpt.isBorder">
                   </td>
@@ -255,16 +255,16 @@
                       class="colorCell interactive"
                       :style="{ 'background-color': color}"
                       @click="shapeOpt.fillColor=color; shapeOpt.isFill=true"
-                      @contextmenu="shapeOpt.borderColor=color; shapeOpt.isBorder=true">
+                      @contextmenu="shapeOpt.strokeColor=color; shapeOpt.isBorder=true">
                   </td>
                 </tr>
               </table>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Толщина контура">
                 <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                <input type="range" step="1" min="1" max="50" v-model="shapeOpt.borderWidth">
+                <input type="range" step="1" min="1" max="50" v-model="shapeOpt.strokeWidth">
                 <input type="number" step="1" min="1" max="50" class="input-number-style"
-                       v-model="shapeOpt.borderWidth">
+                       v-model="shapeOpt.strokeWidth">
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность фигуры">
@@ -421,7 +421,7 @@
                      v-on:click="optionVisible=false">
               </div>
               <hr>
-              <textarea id="text" cols="24" rows="3" v-model="textOpt.content"
+              <textarea id="text" class="px-1" cols="24" rows="3" v-model="textOpt.content"
                         :style="{'font-family':textOpt.fontFamily}"></textarea>
               <hr>
               <div class="d-flex align-items-center justify-content-between">
@@ -472,6 +472,31 @@
                 <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
                 <input type="range" step="1" min="-180" max="180" v-model="textOpt.rotation">
                 <input type="number" step="1" min="-180" max="180" v-model="textOpt.rotation" class="input-number-style">
+              </div>
+              <hr>
+              Положение текста:
+              <div class="d-flex">
+                <div class="card radio-icon me-2">
+                  <input id="textLeftId" type="radio" value="left" name="shapeTypeRadio"
+                         v-model="textOpt.justification">
+                  <label for="textLeftId" title="Слева">
+                    <img src="@/assets/images/Tools/Options/textLeft.png" class="card-img-top p-1 icon-sm" alt="">
+                  </label>
+                </div>
+                <div class="card radio-icon mx-2">
+                  <input id="textCenterId" type="radio" value="center" name="shapeTypeRadio"
+                         v-model="textOpt.justification">
+                  <label for="textCenterId" title="По центру">
+                    <img src="@/assets/images/Tools/Options/textCenter.png" class="card-img-top p-1 icon-sm" alt="">
+                  </label>
+                </div>
+                <div class="card radio-icon mx-2">
+                  <input id="textRightId" type="radio" value="right" name="shapeTypeRadio"
+                         v-model="textOpt.justification">
+                  <label for="textRightId" title="Справа">
+                    <img src="@/assets/images/Tools/Options/textRight.png" class="card-img-top p-1 icon-sm" alt="">
+                  </label>
+                </div>
               </div>
               <hr>
               <div class="d-flex justify-content-between align-items-center">
@@ -585,8 +610,8 @@ export default {
       },
       shapeOpt: {
         shapeType: "rectangle",
-        borderWidth: 1,
-        borderColor: "#000000",
+        strokeWidth: 1,
+        strokeColor: "#000000",
         fillColor: "#ffffff",
         borderRadius: 0,
         opacity: 1,
@@ -620,14 +645,14 @@ export default {
     setArbitraryShape(isArbitrary) {
       this.shapeOpt.shapeType = isArbitrary ? "arbitrary" : "rectangle"
     },
-    setFill(object) {
-      object.fillColor = object.isFill ? "#ffffff" : "transparent"
+    setFill(opt) {
+      opt.fillColor = opt.isFill ? "#ffffff" : "transparent"
     },
-    setBorder(object) {
-      object.borderColor = object.isBorder ? "#000000" : "transparent"
+    setBorder(opt) {
+      opt.borderColor = opt.isBorder ? "#000000" : "transparent"
     },
-    setShadow(object) {
-      object.shadowColor = object.isShadow ? "#000000" : "transparent"
+    setShadow(opt) {
+      opt.shadowColor = opt.isShadow ? "#000000" : "transparent"
     }
   },
   watch: {
@@ -665,9 +690,6 @@ export default {
       if(val) {
         this.optionVisible=false
         if(val.type=="text"){
-          val.fillColor=val.fillColor? val.fillColor.toCSS(true):"#000000"
-          val.strokeColor=val.strokeColor? val.strokeColor.toCSS(true) : "#000000"
-          val.shadowColor=val.shadowColor ? val.shadowColor.toCSS(true):"#000000"
           this.textOpt.content=val.content
           this.textOpt.fontFamily=val.fontFamily
           this.textOpt.fontSize=val.fontSize
@@ -683,9 +705,14 @@ export default {
           this.textOpt.isBorder=val.data.isBorder
           this.textOpt.isFill=val.data.isFill
           this.textOpt.isShadow=val.data.isShadow
-          /*for(let key in this.textOpt){
-            console.log(this.textOpt[key])
-          }*/
+        }
+        if(val.type=="shape"){
+          this.shapeOpt.strokeColor=val.data.isBorder? val.strokeColor.toCSS(true) : "transparent"
+          this.shapeOpt.fillColor=val.data.isFill? val.fillColor.toCSS(true) : "transparent"
+          this.shapeOpt.strokeWidth=val.data.isBorder? val.strokeWidth : 0
+          this.shapeOpt.opacity=val.opacity
+          this.shapeOpt.isBorder=val.data.isBorder
+          this.shapeOpt.isFill=val.data.isFill
         }
       }
     }
@@ -724,6 +751,11 @@ export default {
     },
     shapeOpt: {
       handler() {
+        if(this.selectedObj) {
+          Object.assign(this.selectedObj, this.shapeOpt)
+          this.$emit("update",this.selectedObj, this.shapeOpt)
+          this.$emit("newSelect", this.selectedObj)
+        }
         this.$emit('optChange', this.shapeOpt)
       }, deep: true
     },
