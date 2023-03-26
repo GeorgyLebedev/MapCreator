@@ -139,8 +139,8 @@
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок" >
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
-                <input type="range" step="1" min="10" max="300" v-model="stampOpt.size">
-                <input type="number" step="1" min="10" max="300" class="input-number-style" v-model="stampOpt.size">
+                <input type="range" step="10" min="10" max="500" v-model="stampOpt.scale">
+                <input type="number" step="1" min="10" max="500" class="input-number-style" v-model="stampOpt.scale">
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность иконок">
@@ -521,7 +521,7 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex">
                   <input type="checkbox" class="form-check-input me-2 " id="textShadowChbx" v-model="textOpt.isShadow"
-                         @change="setShadow(textOpt)">
+                         @change="setShadow(textOpt)" :disabled="!textOpt.isFill">
                   <label for="shapeBorderChbx">Тень</label>
                 </div>
                 <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow">
@@ -589,12 +589,13 @@ export default {
         brushType: "color"
       },
       stampOpt:{
-        size: 30,
+        size: 500,
+        scale: 50,
         opacity: 1,
         rotation: 0,
         revert: "none",
         currentSet: "firstSet",
-        currentStamp: "stampEx.png",
+        currentStamp: "stampEx.svg",
         currentStampPath: undefined,
         stampSetArray: []
       },
@@ -647,9 +648,10 @@ export default {
     },
     setFill(opt) {
       opt.fillColor = opt.isFill ? "#ffffff" : "transparent"
+      if(opt.isShadow && !opt.isFill) opt.isShadow=false
     },
     setBorder(opt) {
-      opt.borderColor = opt.isBorder ? "#000000" : "transparent"
+      opt.strokeColor = opt.isBorder ? "#000000" : "transparent"
     },
     setShadow(opt) {
       opt.shadowColor = opt.isShadow ? "#000000" : "transparent"
@@ -714,6 +716,9 @@ export default {
           this.shapeOpt.isBorder=val.data.isBorder
           this.shapeOpt.isFill=val.data.isFill
         }
+        if(val.type=="stamp"){
+          this.stampOpt.scale=val.data.scale
+        }
       }
     }
     },
@@ -742,6 +747,7 @@ export default {
       handler() {
         if(this.selectedObj) {
           Object.assign(this.selectedObj, this.stampOpt)
+          this.$emit("update",this.selectedObj, this.stampOpt)
           this.$emit("newSelect", this.selectedObj)
         }
      /*   this.stampOpt.currentStampPath='../assets/images/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp

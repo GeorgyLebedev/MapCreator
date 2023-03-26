@@ -9,7 +9,7 @@
         @update="updateItem"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
-        :rotation="rotation"
+        :rotation="Number(rotation)"
         />
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
@@ -61,12 +61,13 @@ export default {
       },
       stampTool: new paper.Tool(),
       stampOpt:{
-        size: 30,
+        size: 500,
+        scale: 50,
         opacity: 1,
         rotation: 0,
         revert: "none",
         currentSet: "firstSet",
-        currentStamp: "stampEx.png",
+        currentStamp: "stampEx.svg",
         currentStampPath: undefined,
         stampSetArray: []
       },
@@ -86,7 +87,7 @@ export default {
       shapeOpt: {
         shapeType: "rectangle",
         borderWidth: 1,
-        borderColor: "#000000",
+        strokeColor: "#000000",
         fillColor: "#ffffff",
         borderRadius: 0,
         opacity: 1,
@@ -255,8 +256,8 @@ export default {
           item.shadowOffset= options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined
           item.data.shOffsetX=options.isShadow ? options.shOffsetX:0
           item.data.shOffsetY=options.isShadow ? options.shOffsetY:0
-          item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
-          item.fillColor=options.isFill?options.fillColor:"transparent"
+          item.strokeColor = options.isBorder ? options.strokeColor : "transparent"
+          item.fillColor = options.isFill ? options.fillColor : new paper.Color(0, 0, 0, 1e-6)
           item.strokeWidth= options.isBorder ? options.strokeWidth : 0
           item.data.isBorder=options.isBorder ?options.isBorder:false
           item.data.isFill=options.isFill ?options.isFill:false
@@ -270,6 +271,8 @@ export default {
           item.data.isFill=options.isFill ?options.isFill:false
           item.data.isShadow=options.isShadow ?options.isShadow:false
               break
+        case "stamp":
+          item.size=options.scale/options.size*options.size
       }
     },
     toolSwitch(mode) {
@@ -292,7 +295,7 @@ export default {
       if (this.currentTool.name == "shape") {
         if (this.shapeOpt.fillColor != opt.fillColor)
           this.colorChanged = "fill"
-        if (this.shapeOpt.borderColor != opt.borderColor)
+        if (this.shapeOpt.strokeColor != opt.strokeColor)
           this.colorChanged = "border"
         Object.assign(this.shapeOpt, opt)
         this.setShapeTool(this.shapeTool, this.shapeOpt)
@@ -314,6 +317,7 @@ export default {
     },
     updateRecentColors(newColor) {
       if (newColor == "transparent") return
+      if(this.recentColors.indexOf(newColor)!=-1) return
       if (this.recentColors.length < 8)
         this.recentColors.unshift(newColor)
       else {
@@ -376,12 +380,13 @@ export default {
         if (this.currentItem)
           this.currentItem.remove()
         this.currentItem = new paper.Raster({
-          source: require('../assets/images/Stamps/firstSet/stampEx.png'),
+          source: require('../assets/images/Stamps/'+options.currentSet+'/'+options.currentStamp),
           position: event.point,
-          size: options.size,
+          size: options.size * options.scale/options.size,
           opacity: options.opacity,
           rotation: options.rotation
         })
+        this.currentItem.data.scale=options.scale
       }
       stampTool.onMouseDown = () => {
         this.OBJECT_STORAGE.push(this.currentItem.clone())
@@ -418,7 +423,7 @@ export default {
               ref.colorChanged = false
             }
             if (ref.colorChanged == "border") {
-              ref.updateRecentColors(options.borderColor)
+              ref.updateRecentColors(options.strokeColor)
               ref.colorChanged = false
             }
           }
@@ -429,7 +434,7 @@ export default {
               this.currentItem = new paper.Path.Rectangle({
                 from: initPoint,
                 to: event.point,
-                strokeColor: options.borderColor,
+                strokeColor: options.strokeColor,
                 fillColor: options.fillColor,
                 strokeWidth: options.borderWidth == 1 ? options.borderWidth * 2 : options.borderWidth,
                 opacity: options.opacity,
@@ -462,7 +467,7 @@ export default {
               ref.colorChanged = false
             }
             if (ref.colorChanged == "border") {
-              ref.updateRecentColors(options.borderColor)
+              ref.updateRecentColors(options.strokeColor)
               ref.colorChanged = false
             }
           }
@@ -478,7 +483,7 @@ export default {
                 center: center,
                 sides: sides,
                 radius: radius,
-                strokeColor: options.borderColor,
+                strokeColor: options.strokeColor,
                 fillColor: options.fillColor,
                 strokeWidth: options.borderWidth,
                 opacity: options.opacity,
@@ -502,7 +507,7 @@ export default {
               ref.colorChanged = false
             }
             if (ref.colorChanged == "border") {
-              ref.updateRecentColors(options.borderColor)
+              ref.updateRecentColors(options.strokeColor)
               ref.colorChanged = false
             }
           }
@@ -513,7 +518,7 @@ export default {
               this.currentItem = new paper.Path.Ellipse({
                 point: initPoint,
                 size: new paper.Point(event.point.x - initPoint.x, event.point.y - initPoint.y),
-                strokeColor: options.borderColor,
+                strokeColor: options.strokeColor,
                 fillColor: options.fillColor,
                 strokeWidth: options.borderWidth,
                 opacity: options.opacity,
@@ -533,7 +538,7 @@ export default {
                 from: initPoint,
                 to: event.point,
                 strokeWidth: options.borderWidth,
-                strokeColor: options.borderColor,
+                strokeColor: options.strokeColor,
                 opacity: options.opacity,
                 strokeCap: "round"
               })
@@ -543,7 +548,7 @@ export default {
             if (!initPoint) {
               this.currentItem = new paper.Path({
                 strokeWidth: options.borderWidth,
-                strokeColor: options.borderColor,
+                strokeColor: options.strokeColor,
                 opacity: options.opacity,
                 strokeCap: "round",
                 rotation: options.rotation
@@ -561,7 +566,7 @@ export default {
               ref.colorChanged = false
             }
             if (ref.colorChanged == "border") {
-              ref.updateRecentColors(options.borderColor)
+              ref.updateRecentColors(options.strokeColor)
               ref.colorChanged = false
             }
           }
@@ -761,7 +766,7 @@ export default {
         this.currentItem = new paper.PointText({
           point: event.point,
           content: options.content,
-          fillColor: options.isFill ? options.fillColor : "transparent",
+          fillColor: options.isFill ? options.fillColor : new paper.Color(0, 0, 0, 1e-6),
           fontFamily: options.fontFamily,
           fontWeight: options.fontWeight,
           fontSize: options.fontSize,
