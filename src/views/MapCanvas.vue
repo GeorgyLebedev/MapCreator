@@ -264,6 +264,7 @@ export default {
           item.data.isShadow=options.isShadow ?options.isShadow:false
           break
         case "shape":
+          item.opacity=options.opacity
           item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
           item.fillColor=options.isFill?options.fillColor:"transparent"
           item.strokeWidth= options.isBorder ? options.strokeWidth : 0

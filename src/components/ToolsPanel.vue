@@ -758,7 +758,7 @@ export default {
     shapeOpt: {
       handler() {
         if(this.selectedObj) {
-          Object.assign(this.selectedObj, this.shapeOpt)
+          //Object.assign(this.selectedObj, this.shapeOpt)
           this.$emit("update",this.selectedObj, this.shapeOpt)
           this.$emit("newSelect", this.selectedObj)
         }
