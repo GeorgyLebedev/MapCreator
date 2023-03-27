@@ -10,7 +10,7 @@
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
         :rotation="Number(rotation)"
-        />
+    />
     <BotMenu @scaleChange="updateScale"/>
     <div class="CanvasArea">
       <canvas id="map" width="1560" height="680" :style="{cursor: this.styleCursor }" @mouseout="toolSwitch('off')"
@@ -262,7 +262,7 @@ export default {
           item.data.isBorder=options.isBorder ?options.isBorder:false
           item.data.isFill=options.isFill ?options.isFill:false
           item.data.isShadow=options.isShadow ?options.isShadow:false
-              break
+          break
         case "shape":
           item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
           item.fillColor=options.isFill?options.fillColor:"transparent"
@@ -270,7 +270,8 @@ export default {
           item.data.isBorder=options.isBorder ?options.isBorder:false
           item.data.isFill=options.isFill ?options.isFill:false
           item.data.isShadow=options.isShadow ?options.isShadow:false
-              break
+          item.rotation=options.rotation
+          break
         case "stamp":
           item.size=options.scale/options.size*options.size
       }
@@ -866,10 +867,12 @@ export default {
       }
     },
     'rotation'(val){
+      if(this.cursorOpt.selectedObj.type!="shape")
       this.cursorOpt.selectedObj.rotation=val
     },
     'OBJECT_STORAGE.length'(val) {
       let obj = this.OBJECT_STORAGE[val - 1]
+      obj.applyMatrix=false
       obj.type=this.currentTool.name
       this.activeLayer.addChild(obj)
       console.log(paper.project.layers)
