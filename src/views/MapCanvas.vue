@@ -86,7 +86,7 @@ export default {
       shapeTool: new paper.Tool(),
       shapeOpt: {
         shapeType: "rectangle",
-        borderWidth: 1,
+        strokeWidth: 1,
         strokeColor: "#000000",
         fillColor: "#ffffff",
         borderRadius: 0,
@@ -436,7 +436,7 @@ export default {
                 to: event.point,
                 strokeColor: options.strokeColor,
                 fillColor: options.fillColor,
-                strokeWidth: options.borderWidth == 1 ? options.borderWidth * 2 : options.borderWidth,
+                strokeWidth: options.strokeWidth == 1 ? options.strokeWidth * 2 : options.strokeWidth,
                 opacity: options.opacity,
                 rotation: options.rotation
               })
@@ -485,7 +485,7 @@ export default {
                 radius: radius,
                 strokeColor: options.strokeColor,
                 fillColor: options.fillColor,
-                strokeWidth: options.borderWidth,
+                strokeWidth: options.strokeWidth,
                 opacity: options.opacity,
                 rotation: options.rotation
               })
@@ -520,7 +520,7 @@ export default {
                 size: new paper.Point(event.point.x - initPoint.x, event.point.y - initPoint.y),
                 strokeColor: options.strokeColor,
                 fillColor: options.fillColor,
-                strokeWidth: options.borderWidth,
+                strokeWidth: options.strokeWidth,
                 opacity: options.opacity,
                 rotation: options.rotation
               })
@@ -537,7 +537,7 @@ export default {
               exLine = new paper.Path.Line({
                 from: initPoint,
                 to: event.point,
-                strokeWidth: options.borderWidth,
+                strokeWidth: options.strokeWidth,
                 strokeColor: options.strokeColor,
                 opacity: options.opacity,
                 strokeCap: "round"
@@ -547,7 +547,7 @@ export default {
           shapeTool.onMouseDown = (event) => {
             if (!initPoint) {
               this.currentItem = new paper.Path({
-                strokeWidth: options.borderWidth,
+                strokeWidth: options.strokeWidth,
                 strokeColor: options.strokeColor,
                 opacity: options.opacity,
                 strokeCap: "round",
