@@ -10,13 +10,13 @@
     <span class="text-muted">Не сохранено</span>
   </div>
   <div class="d-flex align-items-center pe-2">
-    <button type="button" id="resetscale" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip" data-bs-placement="top" title="Сбросить" v-on:click="scale=100">
+    <button type="button" id="resetscale" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip" data-bs-placement="top" title="Сбросить" v-on:click="scale=1" v-if="scale!=1">
       <img src="@/assets/images/Service/reset.png" alt="" class="hoverinv" :height="25">
     </button>
     <img src="@/assets/images/Tools/zoom.png" :height="20">
     <div class="d-flex mx-2">
-      <input class="me-2" type="range" step="10" min="20"  max="500" v-model="scale">
-      <input type="number" min="20" max="500" step="1" v-model="scale">
+      <input class="me-2" type="range" step="0.2" min="0.2"  max="5" v-model="scale">
+      <input type="number" min="0.2" max="5" step="0.2" v-model="scale">
     </div>
     <button type="button" id="fitbtn" class="btn btn-sm btn-outline-dark me-2">Выровнять</button>
   </div>
@@ -28,12 +28,21 @@ export default {
   name: "BotMenu",
   data (){
     return {
-      scale: 100
+      scale: 1
     }
+  },
+  props:{
+    scaleProp: Number
   },
   watch:{
     scale(val){
-      this.$emit('scaleChange', {newScale: val})
+      this.$emit('scaleChange', Number(val))
+      this.$emit("zoom")
+    },
+    scaleProp: {
+         handler(val){
+           this.scale=val
+         }
     }
   }
 }
@@ -42,7 +51,9 @@ export default {
 .botMenu{
   background-color: white;
   grid-area: BotMenu;
-  position: relative;
+  position: fixed;
+  bottom:0;
+  width:100%;
   z-index: 2;
 }
 #btnsave{

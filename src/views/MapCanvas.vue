@@ -11,10 +11,14 @@
         :selected-obj="cursorOpt.selectedObj"
         :rotation="Number(rotation)"
     />
-    <BotMenu @scaleChange="updateScale"/>
-    <div class="CanvasArea">
-      <canvas id="map" width="1560" height="680" :style="{cursor: this.styleCursor }" @mouseout="toolSwitch('off')"
-              @mouseover="toolSwitch('on')"></canvas>
+    <BotMenu @scaleChange="updateScale"
+             @zoom="zoom"
+    :scale-prop="this.canvasObj.scale"/>
+    <div class="CanvasArea" id="canvasBox">
+      <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY" :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
+              @mouseout="toolSwitch('off')"
+              @mouseover="toolSwitch('on')"
+              @wheel="zoom(event,0.2)"></canvas>
     </div>
   </div>
 </template>
@@ -36,7 +40,18 @@ export default {
   },
   data() {
     return {
-      scale: 100,
+      boxHeight: null,
+      bowWidth: null,
+      canvasObj:{
+        ref: null,
+        resoX: 1920,
+        CSSwidth: 1,
+        defaultWidth: 1,
+        resoY: 1080,
+        CSSheight: 1,
+        defaultHeight: 1,
+        scale: 1
+      },
       currentTool: {
         name: "cursor",
         toolRef: null
@@ -117,8 +132,44 @@ export default {
     }
   },
   methods: {
-    updateScale(data) {
-      this.scale = data.newScale
+    updateScale(newScale) {
+      this.canvasObj.scale = newScale
+    },
+    zoom(e,step=0, mode=null){
+      let event = window.event || e
+      let cObj=this.canvasObj
+      let scale=cObj.scale
+      if(!mode)
+      mode=event.wheelDelta>0 ? "+":"-"
+      switch (mode) {
+        case "+":
+          step=Math.abs(step)
+          break
+        case "-":
+          step=-step
+          break
+        case "=":
+          break
+      }
+      if(scale+step<0.2 || scale+step>5) return
+      scale+=step
+      scale=Number(scale.toFixed(2))
+      cObj.CSSheight=cObj.defaultHeight*scale
+      cObj.CSSwidth=cObj.defaultWidth*scale
+      paper.view.zoom=scale
+/*      paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
+      paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )*/
+      this.canvasObj.scale=scale
+    },
+    setTranslate(x,y){
+      this.canvasObj.ref.style.transform="translate("+x+"px,"+y+"px)"
+    },
+    alignReset(){
+      paper.view.zoom=1
+      this.canvasObj.scale=1
+      this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
+      this.canvasObj.CSSheight=this.canvasObj.defaultHeight
+      this.setTranslate((this.boxWidth-this.canvasObj.defaultWidth)/2, (this.boxHeight-this.canvasObj.defaultHeight)/2)
     },
     getBoundGroup(group,item){
       let rotateStart, rotateEnd, angle=0
@@ -414,6 +465,7 @@ export default {
       switch (options.shapeType) {
         case "rectangle":
           shapeTool.onMouseDown = (event) => {
+            console.log(event.point)
             if (!initPoint)
               initPoint = event.point
             else {
@@ -796,8 +848,20 @@ export default {
     }
   },
   mounted() {
-    let canvas = document.getElementById("map")
-    paper.setup(canvas)
+    this.canvasObj.ref = document.getElementById("map")
+    let ratio=this.canvasObj.resoX/this.canvasObj.resoY
+    this.boxHeight= document.getElementById("canvasBox").offsetHeight
+    this.boxWidth= document.getElementById("canvasBox").offsetWidth
+    this.canvasObj.CSSheight=this.boxHeight
+    this.canvasObj.CSSwidth=this.canvasObj.CSSheight*ratio
+    this.canvasObj.defaultWidth=this.canvasObj.CSSwidth
+    this.canvasObj.defaultHeight=this.canvasObj.CSSheight
+
+    paper.setup(this.canvasObj.ref)
+    paper.view.viewSize=new paper.Size(this.canvasObj.CSSwidth,this.canvasObj.CSSheight)
+    this.alignReset()
+    //paper.view.center=new paper.Point(boxWidth/2,boxHeight/2)
+
     this.activeLayer = paper.project.activeLayer
     //initCursor....
     //------BRUSH------------------------
@@ -886,7 +950,9 @@ export default {
 .MainContainer {
   display: grid;
   width: 100vw;
+  max-height: 100vw;
   height: 100vh;
+  max-width: 100vw;
   overflow-y: hidden;
   z-index: 1;
   position: relative;

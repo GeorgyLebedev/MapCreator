@@ -4,7 +4,7 @@
       <div class="d-flex align-items-center " style="margin-left: 40px">
         <div class="dropdown">
           <button class=" btn btn-sm btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuFile"  data-bs-auto-close="outside"  data-bs-toggle="dropdown" >
-            Файл
+            Меню
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             <a class="dropdown-item" href="#">Изменить информацию о карте</a>
@@ -60,7 +60,7 @@
         </button>
       </div>
     </div>
-    <div class="col text-end me-3">
+    <div class="col text-end me-3 position-fixed end-0">
       <button type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling" style="border: none; background-color: transparent;">
         <img src="@/assets/images/arrow-left.png" alt="" style="height: 25px; ">
       </button>
