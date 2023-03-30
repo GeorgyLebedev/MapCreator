@@ -2,7 +2,7 @@
   <div class="cardlist d-flex flex-wrap">
     <div class="card">
       <a class="maplink" href="/MapCanvas">
-        <img src="@/assets/images/plug.jpg" class="card-img-top" alt="...">
+        <img src="@/assets/images/plug.jpg" class="card-img-top w-100" alt="...">
         <div class="card-body py-1">
           <div class="card-text">
             <span class="fw-bold">Название</span><br>
@@ -14,12 +14,7 @@
         </div>
       </a>
     </div>
-    <div class="card bg-light text-center justify-content-center">
-      <div class="maplink" id="newMapCard" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        <img src="@/assets/images/new.png" :width="70">
-        <p class="fs-5" style="color: #909090">Создать новую карту </p>
-      </div>
-    </div>
+
   </div>
 </template>
 <script>
@@ -47,8 +42,5 @@ export default {
 .card-img-top{
   max-height:200px;
   object-fit: cover
-}
-#newMapCard{
-  cursor: pointer;
 }
 </style>

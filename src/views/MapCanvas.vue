@@ -11,14 +11,15 @@
         :selected-obj="cursorOpt.selectedObj"
         :rotation="Number(rotation)"
     />
-    <BotMenu @scaleChange="updateScale"
-             @zoom="zoom"
-    :scale-prop="this.canvasObj.scale"/>
-    <div class="CanvasArea" id="canvasBox">
+    <BotMenu
+        @scaleChange="updateScale"
+        @resetAlign="alignReset"
+        :scale-prop="this.canvasObj.scale"/>
+    <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2)">
       <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY" :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
               @mouseout="toolSwitch('off')"
               @mouseover="toolSwitch('on')"
-              @wheel="zoom(event,0.2)"></canvas>
+              ></canvas>
     </div>
   </div>
 </template>
@@ -137,7 +138,15 @@ export default {
     },
     zoom(e,step=0, mode=null){
       let event = window.event || e
+      let fixedPoint={
+        x:null,
+        y:null
+      }
       let cObj=this.canvasObj
+      let offset={
+        left: cObj.ref.getBoundingClientRect().left,
+        top: cObj.ref.getBoundingClientRect().top
+      }
       let scale=cObj.scale
       if(!mode)
       mode=event.wheelDelta>0 ? "+":"-"
@@ -151,15 +160,20 @@ export default {
         case "=":
           break
       }
+      fixedPoint.x=(event.pageX-offset.left)*((scale+step)/scale)
+      fixedPoint.y=(event.pageY-offset.top)*((scale+step)/scale)
+      console.log(offset)
       if(scale+step<0.2 || scale+step>5) return
       scale+=step
       scale=Number(scale.toFixed(2))
       cObj.CSSheight=cObj.defaultHeight*scale
       cObj.CSSwidth=cObj.defaultWidth*scale
-      paper.view.zoom=scale
+      //paper.view.zoom=scale
 /*      paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
       paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )*/
-      this.canvasObj.scale=scale
+      cObj.scale=scale
+      //console.log("x: "+(event.pageX-fixedPoint.x)+" y: "+(event.pageY-fixedPoint.y))
+      this.setTranslate(event.pageX-fixedPoint.x,event.pageY-fixedPoint.y)
     },
     setTranslate(x,y){
       this.canvasObj.ref.style.transform="translate("+x+"px,"+y+"px)"

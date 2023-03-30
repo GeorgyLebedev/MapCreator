@@ -18,7 +18,7 @@
       <input class="me-2" type="range" step="0.2" min="0.2"  max="5" v-model="scale">
       <input type="number" min="0.2" max="5" step="0.2" v-model="scale">
     </div>
-    <button type="button" id="fitbtn" class="btn btn-sm btn-outline-dark me-2">Выровнять</button>
+    <button type="button" id="fitbtn" class="btn btn-sm btn-outline-dark me-2" @click="$emit('resetAlign')">Выровнять</button>
   </div>
 </div>
 </div>
@@ -54,7 +54,7 @@ export default {
   position: fixed;
   bottom:0;
   width:100%;
-  z-index: 2;
+  z-index: 4;
 }
 #btnsave{
   border-radius: 0;
