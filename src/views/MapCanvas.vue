@@ -14,6 +14,7 @@
     <BotMenu
         @scaleChange="updateScale"
         @resetAlign="alignReset"
+        @zoom="zoom"
         :scale-prop="this.canvasObj.scale"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2)">
       <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY" :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
@@ -41,8 +42,6 @@ export default {
   },
   data() {
     return {
-      boxHeight: null,
-      bowWidth: null,
       canvasObj:{
         ref: null,
         resoX: 1920,
@@ -138,7 +137,7 @@ export default {
     },
     zoom(e,step=0, mode=null){
       let event = window.event || e
-      let fixedPoint={
+      let canvasPoint={
         x:null,
         y:null
       }
@@ -160,9 +159,10 @@ export default {
         case "=":
           break
       }
-      fixedPoint.x=(event.pageX-offset.left)*((scale+step)/scale)
-      fixedPoint.y=(event.pageY-offset.top)*((scale+step)/scale)
-      console.log(offset)
+      canvasPoint.x=event.pageX-offset.left //координаты на холсте
+      canvasPoint.y=event.pageY-offset.top
+      let newX =canvasPoint.x*((scale+step)/scale)
+      let newY =canvasPoint.y*((scale+step)/scale)
       if(scale+step<0.2 || scale+step>5) return
       scale+=step
       scale=Number(scale.toFixed(2))
@@ -172,8 +172,7 @@ export default {
 /*      paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
       paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )*/
       cObj.scale=scale
-      //console.log("x: "+(event.pageX-fixedPoint.x)+" y: "+(event.pageY-fixedPoint.y))
-      this.setTranslate(event.pageX-fixedPoint.x,event.pageY-fixedPoint.y)
+      this.setTranslate(newX,newY)
     },
     setTranslate(x,y){
       this.canvasObj.ref.style.transform="translate("+x+"px,"+y+"px)"
@@ -183,7 +182,9 @@ export default {
       this.canvasObj.scale=1
       this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
       this.canvasObj.CSSheight=this.canvasObj.defaultHeight
-      this.setTranslate((this.boxWidth-this.canvasObj.defaultWidth)/2, (this.boxHeight-this.canvasObj.defaultHeight)/2)
+      let canvasBoxWidth=document.documentElement.clientWidth-document.getElementById('toolsPanel').offsetWidth
+      let canvasBoxHeight=document.documentElement.clientHeight-document.getElementById('footer').offsetHeight-document.getElementById('header').offsetHeight
+      this.setTranslate((canvasBoxWidth-this.canvasObj.defaultWidth)/2, (canvasBoxHeight-this.canvasObj.defaultHeight)/2)
     },
     getBoundGroup(group,item){
       let rotateStart, rotateEnd, angle=0
@@ -864,9 +865,7 @@ export default {
   mounted() {
     this.canvasObj.ref = document.getElementById("map")
     let ratio=this.canvasObj.resoX/this.canvasObj.resoY
-    this.boxHeight= document.getElementById("canvasBox").offsetHeight
-    this.boxWidth= document.getElementById("canvasBox").offsetWidth
-    this.canvasObj.CSSheight=this.boxHeight
+    this.canvasObj.CSSheight=document.getElementById("canvasBox").offsetHeight
     this.canvasObj.CSSwidth=this.canvasObj.CSSheight*ratio
     this.canvasObj.defaultWidth=this.canvasObj.CSSwidth
     this.canvasObj.defaultHeight=this.canvasObj.CSSheight

@@ -1,5 +1,5 @@
 <template>
-<div class="m-0 p-0 border-top botMenu">
+<div class="m-0 p-0 border-top botMenu" id="footer">
 <div class="d-flex justify-content-between align-items-center ">
   <div class="d-flex align-items-center">
     <button type="button" id="btnsave" class="radio-icon card bg-white me-2 p-0">

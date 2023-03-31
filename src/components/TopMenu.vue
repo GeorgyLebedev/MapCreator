@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-wrap border-bottom align-items-center topMenu">
+  <div class="d-flex flex-wrap border-bottom align-items-center topMenu" id="header">
     <div class="col-6 text-start">
       <div class="d-flex align-items-center " style="margin-left: 40px">
         <div class="dropdown">
