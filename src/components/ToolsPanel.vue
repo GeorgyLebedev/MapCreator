@@ -15,7 +15,7 @@
               <div class="d-flex justify-content-between">
                 <b> Курсор </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
-                     v-on:click="optionVisible=false">
+                     v-on:click="closePanel">
               </div>
               <hr>
               Выбирать:<br>
@@ -45,7 +45,7 @@
               <div class="d-flex justify-content-between">
                 <b> Кисть </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
-                     v-on:click="optionVisible=false">
+                     v-on:click="closePanel">
               </div>
               <hr>
               <div class="mb-3">
@@ -115,7 +115,7 @@
               <div class="d-flex justify-content-between">
                 <b> Штамп </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
-                     v-on:click="optionVisible=false">
+                     v-on:click="closePanel">
               </div>
               <hr>
               <div class="stampsContainer d-flex mb-2">
@@ -170,7 +170,7 @@
               <div class="d-flex justify-content-between">
                 <b> Фигуры </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
-                     v-on:click="optionVisible=false">
+                     v-on:click="closePanel">
               </div>
               <hr>
               <div v-if="!(selectedObj && selectedObj.type=='shape')">
@@ -294,7 +294,7 @@
               <div class="d-flex justify-content-between">
                 <b> Пути/кривые </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
-                     v-on:click="optionVisible=false">
+                     v-on:click="closePanel">
               </div>
               <hr>
               Тип линии:
@@ -418,7 +418,7 @@
               <div class="d-flex justify-content-between">
                 <b> Надпись </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
-                     v-on:click="optionVisible=false">
+                     v-on:click="closePanel">
               </div>
               <hr>
               <textarea id="text" class="px-1" cols="24" rows="3" v-model="textOpt.content"
@@ -655,6 +655,11 @@ export default {
     },
     setShadow(opt) {
       opt.shadowColor = opt.isShadow ? "#000000" : "transparent"
+    },
+    closePanel(){
+      this.optionVisible=false
+      if(this.selectedObj)
+        this.$emit("removeSelect")
     }
   },
   watch: {

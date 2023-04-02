@@ -7,14 +7,16 @@
         @optChange="setOpt"
         @newSelect="setSelected"
         @update="updateItem"
+        @removeSelect="removeSelect"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
         :rotation="Number(rotation)"
     />
     <BotMenu
         @scaleChange="updateScale"
-        @resetAlign="alignReset"
+        @resetAlign="canvasReset"
         @zoom="zoom"
+        @resetScale="resetScale"
         :scale-prop="this.canvasObj.scale"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2)">
       <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY" :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
@@ -159,32 +161,52 @@ export default {
         case "=":
           break
       }
-      canvasPoint.x=event.pageX-offset.left //координаты на холсте
-      canvasPoint.y=event.pageY-offset.top
-      let newX =canvasPoint.x*((scale+step)/scale)
-      let newY =canvasPoint.y*((scale+step)/scale)
-      if(scale+step<0.2 || scale+step>5) return
-      scale+=step
-      scale=Number(scale.toFixed(2))
-      cObj.CSSheight=cObj.defaultHeight*scale
-      cObj.CSSwidth=cObj.defaultWidth*scale
-      //paper.view.zoom=scale
-/*      paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
+      if(mode=="+"|| mode=="-") {
+        canvasPoint.x = event.pageX - offset.left // старые координаты курсора на холсте
+        canvasPoint.y = event.pageY - offset.top
+        //console.log(offset)
+        //console.log("Old X: "+canvasPoint.x)
+        //console.log("Calc X: "+canvasPoint.x*((scale+step)/scale))
+        let newX =canvasPoint.x-canvasPoint.x*((scale+step)/scale)
+        let newY =canvasPoint.y-canvasPoint.y*((scale+step)/scale)
+        //console.log("Offset X:" +newX)
+        //console.log({newX,newY})
+        //console.log("--------------------------------")
+        if (scale + step < 0.2 || scale + step > 5) return
+        scale += step
+        scale = Number(scale.toFixed(2))
+        cObj.CSSheight = cObj.defaultHeight * scale
+        cObj.CSSwidth = cObj.defaultWidth * scale
+        //paper.view.zoom=scale
+        /*      paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
       paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )*/
-      cObj.scale=scale
-      this.setTranslate(newX,newY)
+        cObj.scale = scale
+        this.setTranslate(newX, newY)
+      }
+
     },
     setTranslate(x,y){
       this.canvasObj.ref.style.transform="translate("+x+"px,"+y+"px)"
     },
-    alignReset(){
-      paper.view.zoom=1
+    getCanvasArea(){
+      let canvasArea={
+        width: document.documentElement.clientWidth-document.getElementById('toolsPanel').offsetWidth,
+        height: document.documentElement.clientHeight-document.getElementById('footer').offsetHeight-document.getElementById('header').offsetHeight
+      }
+      return canvasArea
+    },
+    resetScale(){
       this.canvasObj.scale=1
       this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
       this.canvasObj.CSSheight=this.canvasObj.defaultHeight
-      let canvasBoxWidth=document.documentElement.clientWidth-document.getElementById('toolsPanel').offsetWidth
-      let canvasBoxHeight=document.documentElement.clientHeight-document.getElementById('footer').offsetHeight-document.getElementById('header').offsetHeight
-      this.setTranslate((canvasBoxWidth-this.canvasObj.defaultWidth)/2, (canvasBoxHeight-this.canvasObj.defaultHeight)/2)
+    },
+    canvasReset(){
+      //paper.view.zoom=1
+      this.canvasObj.scale=1
+      this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
+      this.canvasObj.CSSheight=this.canvasObj.defaultHeight
+      let area=this.getCanvasArea()
+      this.setTranslate(((area.width-this.canvasObj.defaultWidth)/2), ((area.height-this.canvasObj.defaultHeight)/2))
     },
     getBoundGroup(group,item){
       let rotateStart, rotateEnd, angle=0
@@ -872,7 +894,7 @@ export default {
 
     paper.setup(this.canvasObj.ref)
     paper.view.viewSize=new paper.Size(this.canvasObj.CSSwidth,this.canvasObj.CSSheight)
-    this.alignReset()
+    this.canvasReset()
     //paper.view.center=new paper.Point(boxWidth/2,boxHeight/2)
 
     this.activeLayer = paper.project.activeLayer
