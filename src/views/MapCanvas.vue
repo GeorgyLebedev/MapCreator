@@ -52,7 +52,9 @@ export default {
         resoY: 1080,
         CSSheight: 1,
         defaultHeight: 1,
-        scale: 1
+        scale: 1,
+        offsetLeft:0,
+        offsetTop:0
       },
       currentTool: {
         name: "cursor",
@@ -144,10 +146,6 @@ export default {
         y:null
       }
       let cObj=this.canvasObj
-      let offset={
-        left: cObj.ref.getBoundingClientRect().left,
-        top: cObj.ref.getBoundingClientRect().top
-      }
       let scale=cObj.scale
       if(!mode)
       mode=event.wheelDelta>0 ? "+":"-"
@@ -162,15 +160,13 @@ export default {
           break
       }
       if(mode=="+"|| mode=="-") {
-        canvasPoint.x = event.pageX - offset.left // старые координаты курсора на холсте
-        canvasPoint.y = event.pageY - offset.top
-        //console.log(offset)
-        //console.log("Old X: "+canvasPoint.x)
-        //console.log("Calc X: "+canvasPoint.x*((scale+step)/scale))
+        canvasPoint.x = event.pageX -  cObj.offsetLeft // старые координаты курсора на холсте
+        canvasPoint.y = event.pageY - cObj.offsetTop
+        console.log(canvasPoint)
         let newX =canvasPoint.x-canvasPoint.x*((scale+step)/scale)
         let newY =canvasPoint.y-canvasPoint.y*((scale+step)/scale)
         //console.log("Offset X:" +newX)
-        //console.log({newX,newY})
+        console.log({newX,newY})
         //console.log("--------------------------------")
         if (scale + step < 0.2 || scale + step > 5) return
         scale += step
@@ -181,12 +177,14 @@ export default {
         /*      paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
       paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )*/
         cObj.scale = scale
-        this.setTranslate(newX, newY)
+        this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
 
     },
     setTranslate(x,y){
       this.canvasObj.ref.style.transform="translate("+x+"px,"+y+"px)"
+      this.canvasObj.offsetLeft=x
+      this.canvasObj.offsetTop=y
     },
     getCanvasArea(){
       let canvasArea={
@@ -921,6 +919,9 @@ export default {
     this.setCursor(this.cursorTool, this.cursorOpt)
     this.cursorTool.activate()
     this.currentTool.toolRef = this.cursorTool
+    /*window.onbeforeunload = () =>{
+      return "";
+    }*/
   },
   watch: {
     'currentTool.name'(val) {

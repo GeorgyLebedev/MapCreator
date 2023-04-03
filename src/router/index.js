@@ -17,7 +17,8 @@ const routes = [
   {
     path: '/MapCanvas',
     name: 'MapCanvas',
-    component: MapCanvas
+    component: MapCanvas,
+    props: true
   },
   {
     path: "/:pathMatch(.*)*",

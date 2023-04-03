@@ -1,6 +1,14 @@
 <template>
   <div class="cardlist d-flex flex-wrap">
     <div class="card">
+      <div class="topOptions d-flex">
+            <div class="w-50 justify-content-center align-items-center" style="border-right: gainsboro 1px solid;">
+              <img src="@/assets/images/Service/edit.png" class="c-pointer h-100 w-auto" alt="">
+            </div>
+            <div class="w-50" style="border-left: gainsboro 1px solid;">
+              <img src="@/assets/images/Service/delete.png" class="c-pointer h-100 w-auto"  alt="">
+            </div>
+      </div>
       <a class="maplink" href="/MapCanvas">
         <img src="@/assets/images/plug.jpg" class="card-img-top w-100" alt="...">
         <div class="card-body py-1">
@@ -30,6 +38,21 @@ export default {
   width:300px;
   margin-bottom: 20px;
   margin-left: 20px;
+}
+.topOptions{
+  background-color: white;
+  position: absolute;
+  display: block;
+  max-width: 70px;
+  max-height: 30px;
+  object-fit: cover;
+  right: 10px;
+  top:10px;
+  border-radius: 15px;
+  border: 2px solid gainsboro;
+}
+.c-pointer{
+  cursor: pointer;
 }
 .cardlist{
   margin-right: 20px
