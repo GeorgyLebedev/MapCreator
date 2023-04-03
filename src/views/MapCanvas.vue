@@ -17,7 +17,7 @@
         @resetAlign="canvasReset"
         @zoom="zoom"
         @resetScale="resetScale"
-        :scale-prop="this.canvasObj.scale"/>
+        :scale-prop="Number(this.canvasObj.scale)"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2)">
       <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY" :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
               @mouseout="toolSwitch('off')"
@@ -141,6 +141,7 @@ export default {
     },
     zoom(e,step=0, mode=null){
       let event = window.event || e
+      let newX, newY
       let canvasPoint={
         x:null,
         y:null
@@ -160,22 +161,30 @@ export default {
           break
       }
       if(mode=="+"|| mode=="-") {
+        console.log(event)
         canvasPoint.x = event.pageX -  cObj.offsetLeft // старые координаты курсора на холсте
         canvasPoint.y = event.pageY - cObj.offsetTop
-        console.log(canvasPoint)
-        let newX =canvasPoint.x-canvasPoint.x*((scale+step)/scale)
-        let newY =canvasPoint.y-canvasPoint.y*((scale+step)/scale)
-        //console.log("Offset X:" +newX)
-        console.log({newX,newY})
-        //console.log("--------------------------------")
+        newX =canvasPoint.x-canvasPoint.x*((scale+step)/scale)
+        newY =canvasPoint.y-canvasPoint.y*((scale+step)/scale)
         if (scale + step < 0.2 || scale + step > 5) return
         scale += step
         scale = Number(scale.toFixed(2))
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
-        //paper.view.zoom=scale
-        /*      paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
-      paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )*/
+        paper.view.zoom=scale
+        paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
+        //paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )
+        cObj.scale = scale
+        this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
+      }
+      if(mode=="="){
+        canvasPoint.x = 960 -  cObj.offsetLeft
+        canvasPoint.y = 500 - cObj.offsetTop
+        newX =960-canvasPoint.x*scale
+        newY =500-canvasPoint.y*scale
+        scale=step
+        cObj.CSSheight = cObj.defaultHeight * scale
+        cObj.CSSwidth = cObj.defaultWidth * scale
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
@@ -876,9 +885,37 @@ export default {
           shOffsetY: options.isShadow ? options.shOffsetY : 0,
         }
       }
-
       textTool.onMouseDown = () => {
         this.OBJECT_STORAGE.push(this.currentItem.clone())
+      }
+    },
+    setZoomTool(zoomTool){
+      let drag=false
+      let isZoom=false
+      zoomTool.onMouseUp=(event)=>{
+        let mode
+        if(event.event.button==0){
+          this.styleCursor="zoom-in"
+          mode="+"
+        }
+        if(event.event.button==2) {
+          this.styleCursor="zoom-out"
+          mode = "-"
+        }
+        drag=false
+        if(!isZoom) return
+        this.zoom(event.event,0.5,mode)
+      }
+      zoomTool.onMouseMove=(event)=>{
+        isZoom=false
+        if(!drag) return
+        let cObj=this.canvasObj
+        this.setTranslate(cObj.offsetLeft+event.event.movementX,cObj.offsetTop+event.event.movementY)
+      }
+      zoomTool.onMouseDown=()=>{
+        isZoom=true
+        drag=true
+        this.styleCursor="move"
       }
     }
   },
@@ -915,6 +952,8 @@ export default {
     this.setPathTool(this.pathTool, this.pathOpt)
     //-----TEXT--------------------------
     this.setTextTool(this.textTool, this.textOpt)
+    //-----ZOOM--------------------------
+    this.setZoomTool(this.zoomTool)
     ////......
     this.setCursor(this.cursorTool, this.cursorOpt)
     this.cursorTool.activate()
@@ -965,6 +1004,13 @@ export default {
           this.currentTool.toolRef = this.textTool
           this.styleCursor = "none"
           this.textTool.activate()
+              break
+        case "zoom":
+          this.currentTool.toolRef = this.zoomTool
+          this.styleCursor = "zoom-in"
+          this.zoomTool.activate()
+              break
+
       }
     },
     'rotation'(val){
