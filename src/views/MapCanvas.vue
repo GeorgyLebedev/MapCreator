@@ -52,6 +52,7 @@ export default {
         CSSheight: 1,
         defaultHeight: 1,
         scale: 1,
+        ratio: 1,
         offsetLeft:0,
         offsetTop:0
       },
@@ -167,8 +168,9 @@ export default {
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
         paper.view.zoom=scale
+        paper.view.scaling=scale
         paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
-        //paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )
+
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
@@ -196,6 +198,12 @@ export default {
         height: document.documentElement.clientHeight-document.getElementById('footer').offsetHeight-document.getElementById('header').offsetHeight
       }
       return canvasArea
+    },
+    setDefaultSizes(){
+      let area=this.getCanvasArea()
+      this.canvasObj.defaultHeight=area.height
+      this.canvasObj.defaultWidth=this.canvasObj.defaultHeight*this.canvasObj.ratio
+      this.canvasReset()
     },
     resetScale(){
       this.canvasObj.scale=1
@@ -915,19 +923,16 @@ export default {
   },
   mounted() {
     this.canvasObj.ref = document.getElementById("map")
-    let ratio=this.canvasObj.resoX/this.canvasObj.resoY
+    this.canvasObj.ratio=this.canvasObj.resoX/this.canvasObj.resoY
     this.canvasObj.CSSheight=document.getElementById("canvasBox").offsetHeight
-    this.canvasObj.CSSwidth=this.canvasObj.CSSheight*ratio
+    this.canvasObj.CSSwidth=this.canvasObj.CSSheight*this.canvasObj.ratio
     this.canvasObj.defaultWidth=this.canvasObj.CSSwidth
     this.canvasObj.defaultHeight=this.canvasObj.CSSheight
 
     paper.setup(this.canvasObj.ref)
     paper.view.viewSize=new paper.Size(this.canvasObj.CSSwidth,this.canvasObj.CSSheight)
     this.canvasReset()
-    //paper.view.center=new paper.Point(boxWidth/2,boxHeight/2)
-
     this.activeLayer = paper.project.activeLayer
-    //initCursor....
     //------BRUSH------------------------
     this.brushOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
     this.brushOpt.cursor.fillColor = 'transparent'
@@ -948,13 +953,16 @@ export default {
     this.setTextTool(this.textTool, this.textOpt)
     //-----ZOOM--------------------------
     this.setZoomTool(this.zoomTool)
-    ////......
+    //-----CURSOR------------------------
     this.setCursor(this.cursorTool, this.cursorOpt)
     this.cursorTool.activate()
     this.currentTool.toolRef = this.cursorTool
     /*window.onbeforeunload = () =>{
       return "";
     }*/
+  },
+  created() {
+    window.addEventListener("resize", this.setDefaultSizes);
   },
   watch: {
     'currentTool.name'(val) {
