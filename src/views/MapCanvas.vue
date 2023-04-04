@@ -13,7 +13,6 @@
         :rotation="Number(rotation)"
     />
     <BotMenu
-        @scaleChange="updateScale"
         @resetAlign="canvasReset"
         @zoom="zoom"
         @resetScale="resetScale"
@@ -136,9 +135,6 @@ export default {
     }
   },
   methods: {
-    updateScale(newScale) {
-      this.canvasObj.scale = newScale
-    },
     zoom(e,step=0, mode=null){
       let event = window.event || e
       let newX, newY
@@ -161,7 +157,6 @@ export default {
           break
       }
       if(mode=="+"|| mode=="-") {
-        console.log(event)
         canvasPoint.x = event.pageX -  cObj.offsetLeft // старые координаты курсора на холсте
         canvasPoint.y = event.pageY - cObj.offsetTop
         newX =canvasPoint.x-canvasPoint.x*((scale+step)/scale)
@@ -178,10 +173,10 @@ export default {
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
       if(mode=="="){
-        canvasPoint.x = 960 -  cObj.offsetLeft
-        canvasPoint.y = 500 - cObj.offsetTop
-        newX =960-canvasPoint.x*scale
-        newY =500-canvasPoint.y*scale
+        canvasPoint.x = document.documentElement.clientWidth/2 -  cObj.offsetLeft
+        canvasPoint.y = document.documentElement.clientHeight/2 - cObj.offsetTop
+        newX =canvasPoint.x-canvasPoint.x*(step/scale)
+        newY =canvasPoint.y-canvasPoint.y*(step/scale)
         scale=step
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
@@ -509,7 +504,6 @@ export default {
       switch (options.shapeType) {
         case "rectangle":
           shapeTool.onMouseDown = (event) => {
-            console.log(event.point)
             if (!initPoint)
               initPoint = event.point
             else {
@@ -1041,6 +1035,7 @@ export default {
   grid-template-columns: 40px 1fr;
   grid-template-rows: 40px 1fr 40px;
   gap: 0px 0px;
+  padding:0;
   grid-auto-flow: row dense;
   justify-items: stretch;
   grid-template-areas:

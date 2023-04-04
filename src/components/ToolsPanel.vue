@@ -791,8 +791,9 @@ export default {
 <style>
 #toolsPanel {
   grid-area: ToolsPanel;
-  position: relative;
-  z-index: 3;
+  position: fixed;
+  left:0;
+  z-index: 4;
 }
 
 #text {

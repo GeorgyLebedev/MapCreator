@@ -15,8 +15,8 @@
     </button>
     <img src="@/assets/images/Tools/zoom.png" :height="20">
     <div class="d-flex mx-2">
-      <input class="me-2" type="range" step="0.2" min="0.2"  max="5" v-model="scale" @input="outerChange=false">
-      <input type="number" min="0.2" max="5" step="0.2" v-model="scale" @input="outerChange=false">
+      <input class="me-2" type="range" step="0.2" min="0.2"  max="5" v-model="scale" @input="doZoom">
+      <input type="number" min="0.2" max="5" step="0.2" v-model="scale" @input="doZoom">
     </div>
     <button type="button" id="fitbtn" class="btn btn-sm btn-outline-dark me-2" @click="$emit('resetAlign')">Выровнять</button>
   </div>
@@ -29,22 +29,19 @@ export default {
   data (){
     return {
       scale: 1,
-      outerChange:false
+    }
+  },
+  methods:{
+    doZoom(){
+      this.$emit("zoom", event, Number(this.scale), "=")
     }
   },
   props:{
     scaleProp: Number
   },
   watch:{
-    scale(val){
-      if(!this.outerChange) {
-        this.$emit('scaleChange', Number(val))
-        this.$emit("zoom", event, this.scale, "=")
-      }
-    },
     scaleProp: {
          handler(val){
-           this.outerChange=true
            this.scale=val
          }
     }
