@@ -135,7 +135,7 @@
                   </div>
                 </div>
               </div>
-              <button class="btn btn-outline-dark w-100">Открыть каталог</button>
+              <button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#stampsWindow">Открыть каталог</button>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок" >
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">

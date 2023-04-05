@@ -8,7 +8,9 @@ export default {
 }
 </script>
 <style>
-
+.c-pointer{
+  cursor: pointer;
+}
 input[type=radio] + label{
   font-weight: bolder;
 }

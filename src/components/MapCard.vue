@@ -51,9 +51,6 @@ export default {
   border-radius: 15px;
   border: 2px solid gainsboro;
 }
-.c-pointer{
-  cursor: pointer;
-}
 .cardlist{
   margin-right: 20px
 }

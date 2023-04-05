@@ -1,4 +1,5 @@
 <template>
+  <StampsWindow></StampsWindow>
   <div class="MainContainer" @contextmenu.prevent>
     <TopMenu/>
     <Accordion/>
@@ -30,6 +31,7 @@ import TopMenu from "@/components/TopMenu.vue"
 import Accordion from "@/components/Accordion";
 import BotMenu from "@/components/BotMenu";
 import ToolsPanel from "@/components/ToolsPanel";
+import StampsWindow from "@/components/StampsWindow";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
@@ -39,7 +41,8 @@ export default {
     TopMenu,
     Accordion,
     BotMenu,
-    ToolsPanel
+    ToolsPanel,
+    StampsWindow
   },
   data() {
     return {
@@ -168,9 +171,8 @@ export default {
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
         paper.view.zoom=scale
-        paper.view.scaling=scale
         paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
-
+        paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
