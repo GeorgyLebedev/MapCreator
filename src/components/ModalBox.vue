@@ -1,82 +1,75 @@
 <template>
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-       aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel"><b>Настройки холста</b></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-        </div>
-        <div class="modal-body">
-          <p class="fs-5">Введите название карты:
-            <input type="text" class="p-1 rounded-3 w-100" maxlength="100" v-model="mapData.name" placeholder="Минимум 6 символов"></p>
-          <p class="fs-5">Выберите разрешение:</p>
-          <div class="d-flex radio-icon-group">
-            <div class=" radio-icon canvas-options-size card me-3 text-center">
-              <input id="res1" type="radio" name="reso" value="hd" checked v-model="res">
-              <label for="res1"> <img src="@/assets/images/NewMap/720.png" class="card-img-top p-2 icon" alt="...">
-                HD <br>(1280x720)</label>
+  <transition name="popup-anim">
+    <div class="modalContainer" v-if="showWindow">
+        <div class="modalWindow">
+          <div class="modalHeader">
+            <b>Настройки холста</b>
+            <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
+                 @click="this.$emit('closeWindow')">
+          </div>
+          <hr>
+          <div class="modalBody">
+            Введите название карты:
+            <input type="text" class="mapNameInput" placeholder="Минимум 6 символов" v-model="mapData.name">
+            Выберите разрешение:
+            <div class="selectGroup">
+              <div class="selectItem" :class="{selected:(this.res=='hd')}" @click="this.res='hd'">
+                <img src="@/assets/images/NewMap/720.png" alt="">
+                HD <br> (1280x720)
+              </div>
+              <div class="selectItem" :class="{selected:(this.res=='fhd')}" @click="this.res='fhd'">
+                <img src="@/assets/images/NewMap/1080.png" alt="">
+                Full HD (1920x1080)
+              </div>
+              <div class="selectItem" :class="{selected:(this.res=='qhd')}" @click="this.res='qhd'">
+                <img src="@/assets/images/NewMap/1440.png" alt="">
+                Quad HD (2560x1440)
+              </div>
+              <div class="selectItem" :class="{selected:(this.res=='uhd')}" @click="this.res='uhd'">
+                <img src="@/assets/images/NewMap/2160.png" alt="">
+                Ultra HD (3840x2160)
+              </div>
+              <div class="selectItem" :class="{selected:(this.res=='yours')}" @click="this.res='yours'">
+                <img src="@/assets/images/NewMap/yours.png" alt="">
+                Задать <br> своё
+              </div>
             </div>
-            <div class="radio-icon canvas-options-size card me-3 text-center">
-              <input id="res2" type="radio" name="reso" value="fhd" v-model="res">
-              <label for="res2"><img src="@/assets/images/NewMap/1080.png" class="card-img-top p-2 icon" alt="...">
-                Full HD (1920x1080)</label>
+            <div v-if="res=='yours'">
+              <div class="resOptShell">
+                <img src="@/assets/images/NewMap/width.png" >
+                Ширина холста:<br>
+                <input  type="text" class="resOptInput" maxlength="4" placeholder="В пикселях"
+                       oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resX">
+              </div>
+              <div class="resOptShell">
+                <img src="@/assets/images/NewMap/height.png" >
+                Высота холста: <br>
+                <input  type="text" class="resOptInput" maxlength="4" placeholder="В пикселях"
+                       oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resY">
+              </div>
             </div>
-            <div class="radio-icon canvas-options-size card me-3 text-center">
-              <input id="res3" type="radio" name="reso" value="qhd" v-model="res">
-              <label for="res3"><img src="@/assets/images/NewMap/1440.png" class="card-img-top p-2 icon" alt="...">
-                Quad HD (2560x1440)</label>
-            </div>
-            <div class="radio-icon canvas-options-size card me-3 text-center">
-              <input id="res4" type="radio" name="reso" value="uhd" v-model="res">
-              <label for="res4"><img src="@/assets/images/NewMap/2160.png" class="card-img-top p-2 icon" alt="...">
-                Ultra HD (3840x2160)</label>
-            </div>
-            <div class="radio-icon canvas-options-size card me-3 text-center">
-              <input id="res5" type="radio" name="reso" value="yours" v-model="res">
-              <label for="res5"><img src="@/assets/images/NewMap/yours.png" class="card-img-top p-2 icon" alt="...">
-                Задать <br>своё</label>
+            Выберите ориентацию:
+            <div class="selectGroup">
+              <div class="selectItem" :class="{selected:(this.orient=='hor')}" @click="this.orient='hor'">
+                <img src="@/assets/images/NewMap/horizontal.png" alt="">
+                Альбомная
+              </div>
+              <div class="selectItem"  :class="{selected:(this.orient=='vert')}" @click="this.orient='vert'">
+                <img src="@/assets/images/NewMap/vertical.png" alt="">
+                Портретная
+              </div>
             </div>
           </div>
-          <div id="newCanvasOpt" class="mt-3" v-if="res=='yours'">
-            <div class="mb-3">
-              <img src="@/assets/images/NewMap/width.png" >
-              Ширина холста:<br>
-              <input id="canvasWidthOpt" type="text" class="mt-1 rounded-3 inputnum" maxlength="4" placeholder="В пикселях"
-                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resX">
-            </div>
-            <div>
-              <img src="@/assets/images/NewMap/height.png" >
-              Высота холста: <br>
-              <input id="canvasHeightOpt" type="text" class="mt-1 rounded-3 inputnum" maxlength="4" placeholder="В пикселях"
-                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resY">
-            </div>
-          </div>
-          <p class="fs-5 mt-3">Ориентация холста:</p>
-          <div class="d-flex radio-icon-group">
-            <div class="radio-icon card canvas-options-size me-3 text-center">
-              <input id="or1" type="radio" name="orient" value="hor" checked v-model="orient">
-              <label for="or1">
-                <img src="@/assets/images/NewMap/horizontal.png" class="card-img-top p-2 icon" alt="...">
-                Альбомная</label>
-            </div>
-            <div class="radio-icon canvas-options-size card me-3 text-center" >
-              <input id="or2" type="radio" name="orient" value="vert" v-model="orient">
-              <label for="or2">
-                <img src="@/assets/images/NewMap/vertical.png" class="card-img-top p-2 icon" alt="...">
-                Портретная</label>
-            </div>
+          <div class="modalFooter">
+            <button type="button" class="buttonLight">Закрыть</button>
+            <button type="button"
+                class="buttonDark"
+                @click="createCanvas"
+                :disabled="mapData.name.length<6 ||(res=='yours' && !(mapData.resX && mapData.resY))">Создать</button>
           </div>
         </div>
-        <div class="modal-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-outline-dark " data-bs-dismiss="modal">Закрыть</button>
-          <button type="button" class="btn btn-dark"
-                  @click="createCanvas"
-                  :disabled="mapData.name.length<6 ||(res=='yours' && !(mapData.resX && mapData.resY))">Создать</button>
-        </div>
-      </div>
     </div>
-  </div>
+  </transition>
 </template>
 <script>
 export default {
@@ -91,6 +84,12 @@ export default {
     res:"hd",
     orient:"hor"
   }
+  },
+  props:{
+    showWindow:{
+      default: false,
+      type: Boolean
+    }
   },
   methods:{
     createCanvas(){
@@ -135,19 +134,108 @@ export default {
 
 </script>
 <style>
-.modal-lg{
+input{
+  outline: none
+}
+.modalContainer {
   min-width: 800px;
+  min-height: 750px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  overflow-y: scroll;
 }
-.inputnum{
-  max-width: 110px;
-  text-align: center
+.modalWindow{
+  position: relative;
+  background-color: white;
+  width: 800px;
+  height: 750px;
+  border-radius: 15px;
 }
-.icon{
-  height:100px;
-  object-fit: contain
+.modalHeader {
+  display: flex;
+  font-size: large;
+  justify-content: space-between;
+  padding: 10px 10px 0 10px;
+  width: 100%
 }
-.canvas-options-size{
-  width:17%;
-  height:10%
+.modalBody {
+  width: 100%;
+  padding-inline: 15px
+}
+.modalFooter{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+.mapNameInput{
+  display: table-cell;
+  width: 100%;
+  font-size: 20px;
+  border-radius: 10px;
+  margin-block: 15px;
+  padding-inline: 10px;
+  padding-block: 5px;
+  border: 2px solid #dcdcdc;
+}
+.resOptInput{
+  border: 2px solid #dcdcdc;
+  padding-inline: 10px;
+  padding-block: 5px;
+  font-size: 18px;
+  border-radius: 10px;
+  max-width: 150px;
+  margin: 5px;
+}
+.resOptShell{
+  margin-block:10px;
+}
+.selectGroup{
+  display: flex;
+  margin-block: 10px;
+}
+.selectItem{
+  border: 2px solid #dcdcdc;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-inline: 10px;
+  white-space: normal;
+  max-width: 120px;
+  padding: 5px;
+  text-align: center;
+}
+.selectItem > img{
+  max-height: 80px;
+  max-width: 120px;
+  padding: 5px;
+}
+.selected{
+  background-color: #232323;
+  border-color: #232323;
+  color: white
+}
+.selected >img{
+  filter: invert(1);
+}
+.popup-anim-enter-active,
+.popup-anim-leave-active {
+  transition: all 0.25s ease-out;
+}
+
+.popup-anim-enter-from,
+.popup-anim-leave-to {
+  opacity: 0;
 }
 </style>

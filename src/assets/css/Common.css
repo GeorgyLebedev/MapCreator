@@ -31,6 +31,29 @@ input[type=checkbox]{
     outline: none !important;
     box-shadow: none;
 }
+.buttonDark, .buttonLight:enabled:hover{
+    background-color: #232323;
+    border-radius: 5px;
+    border: 1px solid #232323;
+    color: white;
+    font-weight: bolder;
+    padding: 5px;
+    margin:5px;
+    cursor: pointer;
+}
+.buttonLight, .buttonDark:enabled:hover{
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #232323;
+    color: #232323;
+    font-weight: bolder;
+    padding: 5px;
+    margin:5px;
+    cursor: pointer;
+}
+.buttonLight:disabled, .buttonDark:disabled{
+    opacity: 0.5;
+}
 .dropdown-menu{
     transition: all 0.2s;
 }
