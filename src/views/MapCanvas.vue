@@ -1,5 +1,8 @@
 <template>
-  <StampsWindow></StampsWindow>
+  <StampsWindow
+      :window-visible="this.stampsWinVisible"
+      @showStampsWindow="showStampsWin"
+  ></StampsWindow>
   <div class="MainContainer" @contextmenu.prevent>
     <TopMenu/>
     <Accordion/>
@@ -9,6 +12,7 @@
         @newSelect="setSelected"
         @update="updateItem"
         @removeSelect="removeSelect"
+        @showStampsWindow="showStampsWin"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
         :rotation="Number(rotation)"
@@ -64,6 +68,7 @@ export default {
         toolRef: null
       },
       currentItem: null,
+      stampsWinVisible: false,
       rotation:0,
       OBJECT_STORAGE: [],
       styleCursor: "default",
@@ -139,6 +144,9 @@ export default {
     }
   },
   methods: {
+    showStampsWin(flag){
+      this.stampsWinVisible=flag
+    },
     zoom(e,step=0, mode=null){
       let event = window.event || e
       let newX, newY
