@@ -94,7 +94,8 @@ export default {
   },
   methods:{
     createCanvas(){
-
+        Object.assign(this.$store.state,this.mapData)
+        this.$router.push({ path: 'MapCanvas' })
     }
   },
   watch:{
