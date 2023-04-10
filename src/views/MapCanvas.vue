@@ -178,9 +178,9 @@ export default {
         scale = Number(scale.toFixed(2))
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
-        paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )
         paper.view.zoom=scale
         paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
+        paper.view.center=new paper.Point(0,0 )
         paper.view.update()
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
@@ -193,6 +193,10 @@ export default {
         scale=step
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
+        paper.view.zoom=scale
+        paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
+        paper.view.center=new paper.Point(0,0 )
+        paper.view.update()
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
@@ -942,6 +946,7 @@ export default {
 
     paper.setup(this.canvasObj.ref)
     paper.view.viewSize=new paper.Size(this.canvasObj.CSSwidth,this.canvasObj.CSSheight)
+    paper.view.center=new paper.Point(0,0 )
     this.canvasReset()
     this.activeLayer = paper.project.activeLayer
     //------BRUSH------------------------
