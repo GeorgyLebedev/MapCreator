@@ -178,9 +178,10 @@ export default {
         scale = Number(scale.toFixed(2))
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
+        paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )
         paper.view.zoom=scale
         paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
-        paper.view.center=new paper.Point(cObj.CSSwidth/2,cObj.CSSheight/2 )
+        paper.view.update()
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
@@ -945,6 +946,7 @@ export default {
     this.activeLayer = paper.project.activeLayer
     //------BRUSH------------------------
     this.brushOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
+    this.brushOpt.cursor.name="cursor"
     this.brushOpt.cursor.fillColor = 'transparent'
     this.brushOpt.cursor.strokeColor = "black"
     this.brushOpt.cursor.visible = false
@@ -956,6 +958,7 @@ export default {
     //-----PATH--------------------------
     this.pathOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
     this.pathOpt.cursor.fillColor = 'transparent'
+    this.pathOpt.cursor.name="cursor"
     this.pathOpt.cursor.strokeColor = "black"
     this.pathOpt.cursor.visible = false
     this.setPathTool(this.pathTool, this.pathOpt)
