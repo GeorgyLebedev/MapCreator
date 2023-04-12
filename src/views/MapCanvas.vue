@@ -349,7 +349,7 @@ export default {
           group.removeChildren()
           group = this.getBoundGroup(group, item)
         }
-        square.onMouseUp = () => {
+        square.onMouseUp = (event) => {
           twoLast = []
           if (item.type == 'stamp') {
             let size = new paper.Size({
@@ -359,6 +359,7 @@ export default {
             item = this.reRender(item, size)
             this.setSelected(item)
           }
+          event.stop()
         }
       })
       boundCircle.onMouseLeave = () => {
@@ -373,12 +374,13 @@ export default {
           y: event.point.y - boundCircle.position.y
         })
       }
-      boundCircle.onMouseUp = () => {
+      boundCircle.onMouseUp = (event) => {
         angle = undefined
             if(item.type=='stamp') {
               item = this.reRender(item, item.size)
               this.setSelected(item)
              }
+          event.stop()
       }
       boundCircle.onMouseDrag = (event) => {
         if (angle) {
@@ -449,8 +451,9 @@ export default {
           item.rotation = options.rotation
           break
         case "stamp":
-          /*  this.reRender(item, options.size)
-            item.remove()*/
+          item.source=require('../assets/images/Stamps/' + item.data.set + '/' + item.data.stamp)
+              item.size=options.size
+
       }
     },
     reRender(item, size) {
@@ -465,7 +468,6 @@ export default {
       newItem.type = "stamp"
       newItem.data.set = item.data.set
       newItem.data.stamp = item.data.stamp
-      this.OBJECT_STORAGE.push(newItem)
       item.remove()
       return newItem
     },
@@ -526,7 +528,7 @@ export default {
         if (options.selectedObj && obj != options.selectedObj) {
           this.removeSelect()
         }
-        if (!obj || this.OBJECT_STORAGE.indexOf(obj) == -1) return
+        if (!obj || this.activeLayer.children.indexOf(obj) == -1) return
         if (!options.selectedObj) {
           this.setSelected(obj)
         }
@@ -583,7 +585,7 @@ export default {
         this.currentItem.data.stamp = options.currentStamp
       }
       stampTool.onMouseDown = () => {
-        this.OBJECT_STORAGE.push(this.currentItem.clone())
+        this.activeLayer.addChild(this.currentItem.clone())
       }
     },
     setShapeTool(shapeTool, options) {
@@ -598,7 +600,7 @@ export default {
         this.activeLayer.onDoubleClick = () => {
           this.currentItem.closed = true
           this.currentItem.fillColor = options.fillColor
-          this.OBJECT_STORAGE.push(this.currentItem.clone())
+          this.activeLayer.addChild(this.currentItem.clone())
           this.currentItem.remove()
           initPoint = undefined
         }
@@ -609,7 +611,7 @@ export default {
             if (!initPoint)
               initPoint = event.point
             else {
-              this.OBJECT_STORAGE.push(this.currentItem.clone())
+              this.activeLayer.addChild(this.currentItem.clone())
               initPoint = undefined
             }
             if (ref.colorChanged == "fill") {
@@ -653,7 +655,7 @@ export default {
               center.x = (event.point.x + initPoint.x) / 2
               center.y = (event.point.y + initPoint.y) / 2
               radius = Math.sqrt(Math.pow((initPoint.x - center.x), 2) + Math.pow((initPoint.y - center.y), 2))
-              this.OBJECT_STORAGE.push(this.currentItem.clone())
+              this.activeLayer.addChild(this.currentItem.clone())
               initPoint = undefined
             }
             if (ref.colorChanged == "fill") {
@@ -693,7 +695,7 @@ export default {
             if (!initPoint)
               initPoint = event.point
             else {
-              this.OBJECT_STORAGE.push(this.currentItem.clone())
+              this.activeLayer.addChild(this.currentItem.clone())
               initPoint = undefined
             }
             if (ref.colorChanged == "fill") {
@@ -981,7 +983,7 @@ export default {
         }
       }
       textTool.onMouseDown = () => {
-        this.OBJECT_STORAGE.push(this.currentItem.clone())
+        this.activeLayer.addChild(this.currentItem.clone())
       }
     },
     setZoomTool(zoomTool) {
@@ -1121,14 +1123,15 @@ export default {
       if (this.cursorOpt.selectedObj.type != "shape")
         this.cursorOpt.selectedObj.rotation = val
     },
-    'OBJECT_STORAGE.length'(val) {
-      let obj = this.OBJECT_STORAGE[val - 1]
+    'activeLayer.children.length'(val) {
+      let obj = this.activeLayer.lastChild
       obj.applyMatrix = false
       if (!obj.type)
         obj.type = this.currentTool.name
-      this.activeLayer.addChild(obj)
-      console.log(paper.project.layers)
-      console.log(this.OBJECT_STORAGE)
+
+      //console.log(paper.project.layers)
+      //console.log(paper.project.getItems())
+      console.log(val)
     }
   }
 }
