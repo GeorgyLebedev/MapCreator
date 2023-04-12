@@ -59,7 +59,7 @@ export default {
         CSSheight: 1,
         defaultHeight: 1,
         scale: 1,
-        ratio: 1,
+        XtoY: 1,
         offsetLeft:0,
         offsetTop:0
       },
@@ -196,11 +196,9 @@ export default {
         paper.view.zoom=scale
         paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
         paper.view.center=new paper.Point(0,0 )
-        paper.view.update()
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
       }
-
     },
     setTranslate(x,y){
       this.canvasObj.ref.style.transform="translate("+x+"px,"+y+"px)"
@@ -216,22 +214,47 @@ export default {
     },
     setDefaultSizes(){
       let area=this.getCanvasArea()
-      this.canvasObj.defaultHeight=area.height
-      this.canvasObj.defaultWidth=this.canvasObj.defaultHeight*this.canvasObj.ratio
+      if(this.canvasObj.XtoY>1){
+        this.canvasObj.defaultWidth=area.width
+        this.canvasObj.defaultHeight=this.canvasObj.defaultWidth/this.canvasObj.XtoY
+      }
+      else {
+        this.canvasObj.defaultHeight=area.height
+        this.canvasObj.defaultWidth=this.canvasObj.defaultHeight*this.canvasObj.XtoY
+      }
       this.canvasReset()
+    },
+    resetCoords(){
+      paper.view.zoom=1
+      paper.view.viewSize=new paper.Size(this.canvasObj.CSSwidth,this.canvasObj.CSSheight)
+      paper.view.center=new paper.Point(0,0 )
     },
     resetScale(){
       this.canvasObj.scale=1
       this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
       this.canvasObj.CSSheight=this.canvasObj.defaultHeight
+      this.resetCoords()
     },
     canvasReset(){
-      //paper.view.zoom=1
       this.canvasObj.scale=1
       this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
       this.canvasObj.CSSheight=this.canvasObj.defaultHeight
       let area=this.getCanvasArea()
       this.setTranslate(((area.width-this.canvasObj.defaultWidth)/2), ((area.height-this.canvasObj.defaultHeight)/2))
+      this.resetCoords()
+    },
+    reRender(source,position, size, opacity, rotation){
+      console.log(size)
+      let item=new paper.Raster({
+        source: source,
+        position: position,
+        size: size,
+        opacity: opacity,
+        rotation: rotation
+      })
+      item.type="stamp"
+      this.OBJECT_STORAGE.push(item)
+      return item
     },
     getBoundGroup(group,item){
       let rotateStart, rotateEnd, angle=0
@@ -251,6 +274,18 @@ export default {
         opacity:0.000001,
         name: "circle"
       })
+      item.onMouseEnter=()=>{
+        this.styleCursor='grab'
+      }
+      item.onMouseLeave=()=>{
+        this.styleCursor='default'
+      }
+      item.onMouseDown=()=>{
+        this.styleCursor='grabbing'
+      }
+      item.onMouseUp=()=>{
+        this.styleCursor='grab'
+      }
       let corners=['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
       let twoLast=[]
       const baseCoef=boundRect.bounds['bottomRight'].getDistance(boundRect.bounds['topLeft'])
@@ -280,22 +315,22 @@ export default {
       sqArray.forEach((square, index) =>{
         square.onMouseDrag=(event)=>{
           square.position=event.point
-          let oppositeSq=(sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position
+          square.data.oppositeSq=(sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position
           corners.forEach((corner,i) =>{
             sqArray[i].position= boundRect.bounds[corner]
           })
-          let limit=(event.point.x+event.point.y)-(oppositeSq.x+oppositeSq.y)
+          let limit=(event.point.x+event.point.y)-(square.data.oppositeSq.x+square.data.oppositeSq.y)
           if(!(((index==0 || index==3)&& limit<0) || ((index==1 || index==2)&& limit>0)))
             return
-          let scaleFactor=(oppositeSq.getDistance(event.point))/(baseCoef)
+          let scaleFactor=(square.data.oppositeSq.getDistance(event.point))/(baseCoef)
           if(twoLast.length<2) {
             twoLast.push(scaleFactor)
-            item.scale(1/twoLast[0],oppositeSq)
-            item.scale(scaleFactor,oppositeSq)
+            item.scale(1/twoLast[0],square.data.oppositeSq)
+            item.scale(scaleFactor,square.data.oppositeSq)
           }
           else {
-            item.scale(1/twoLast[0],oppositeSq)
-            item.scale(twoLast[1],oppositeSq)
+            item.scale(1/twoLast[0],square.data.oppositeSq)
+            item.scale(twoLast[1],square.data.oppositeSq)
             twoLast[0]=twoLast[1]
             twoLast[1]=scaleFactor
           }
@@ -304,6 +339,27 @@ export default {
         }
         square.onMouseUp=()=>{
           twoLast=[]
+          if(item.type=='stamp') {
+     /*       let distance=Math.abs(event.point.x-square.data.oppositeSq.x)
+            let size= new paper.Size({
+              width: distance,
+              height: distance
+            })
+            this.removeSelect()
+            let newItem=new paper.Raster({
+              source: item.source,
+              position: item.position
+            })
+            newItem.size=size
+            console.log("newSize:"+newItem)
+            item.remove()
+            this.setSelected(newItem)*/
+            /*let newItem=this.reRender(item.source,item.position, size, item.opacity, item.rotation)
+            item.remove()
+            console.log("new:")
+            console.log(newItem)
+            this.setSelected(newItem)*/
+          }
         }
       })
       boundCircle.onMouseLeave=()=>{
@@ -320,6 +376,9 @@ export default {
       }
       boundCircle.onMouseUp=()=>{
         angle=undefined
+   /*     if(item.type=='stamp') {
+
+        }*/
       }
       boundCircle.onMouseDrag=(event)=>{
         if(angle) {
@@ -355,10 +414,11 @@ export default {
       return item
     },
     removeSelect(){
-      this.cursorOpt.selectedObj.selectionGroup.removeChildren()
-      this.cursorOpt.selectedObj.selectionGroup.remove()
-      this.cursorOpt.selectedObj.selectionGroup=undefined
-      this.cursorOpt.selectedObj.onMouseDrag=undefined
+      let obj=this.cursorOpt.selectedObj
+      obj.onMouseUp=obj.onMouseDown=obj.onMouseLeave=obj.onMouseEnter=obj.onMouseDrag=undefined
+      obj.selectionGroup.removeChildren()
+      obj.selectionGroup.remove()
+      obj.selectionGroup=undefined
       this.cursorOpt.selectedObj=undefined
     },
     updateItem(item, options){
@@ -938,9 +998,15 @@ export default {
   },
   mounted() {
     this.canvasObj.ref = document.getElementById("map")
-    this.canvasObj.ratio=this.canvasObj.resoX/this.canvasObj.resoY
-    this.canvasObj.CSSheight=document.getElementById("canvasBox").offsetHeight
-    this.canvasObj.CSSwidth=this.canvasObj.CSSheight*this.canvasObj.ratio
+    this.canvasObj.XtoY=this.canvasObj.resoX/this.canvasObj.resoY
+    if(this.canvasObj.XtoY>1){
+      this.canvasObj.CSSwidth=document.getElementById("canvasBox").offsetWidth
+      this.canvasObj.CSSheight=this.canvasObj.CSSwidth/this.canvasObj.XtoY
+    }
+    else {
+      this.canvasObj.CSSheight=document.getElementById("canvasBox").offsetHeight
+      this.canvasObj.CSSwidth=this.canvasObj.CSSheight*this.canvasObj.XtoY
+    }
     this.canvasObj.defaultWidth=this.canvasObj.CSSwidth
     this.canvasObj.defaultHeight=this.canvasObj.CSSheight
 
@@ -981,6 +1047,7 @@ export default {
   },
   created() {
     window.addEventListener("resize", this.setDefaultSizes);
+    window.addEventListener("resize", this.resetCoords);
   },
   watch: {
     'currentTool.name'(val) {
@@ -1040,6 +1107,7 @@ export default {
     'OBJECT_STORAGE.length'(val) {
       let obj = this.OBJECT_STORAGE[val - 1]
       obj.applyMatrix=false
+      if(!obj.type)
       obj.type=this.currentTool.name
       this.activeLayer.addChild(obj)
       console.log(paper.project.layers)
@@ -1052,7 +1120,7 @@ export default {
 .MainContainer {
   display: grid;
   width: 100vw;
-  max-height: 100vw;
+  max-height: 100vh;
   height: 100vh;
   max-width: 100vw;
   overflow-y: hidden;
@@ -1076,6 +1144,8 @@ export default {
   justify-content: center;
   align-items: center;
   border-left: 1px solid gainsboro;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 #map {
   background-color: white;

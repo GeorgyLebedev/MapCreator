@@ -820,6 +820,8 @@ hr {
   white-space: nowrap;
   text-align: left;
   z-index: 2;
+  overflow-y: auto;
+  max-height: 500px;
 }
 
 .options-table tr {
