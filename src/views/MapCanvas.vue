@@ -23,10 +23,11 @@
         @resetScale="resetScale"
         :scale-prop="Number(this.canvasObj.scale)"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2)">
-      <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY" :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
+      <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY"
+              :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
               @mouseout="toolSwitch('off')"
               @mouseover="toolSwitch('on')"
-              ></canvas>
+      ></canvas>
     </div>
   </div>
 </template>
@@ -39,6 +40,7 @@ import StampsWindow from "@/components/StampsWindow";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
+
 export default {
   name: "MapCanvas",
   components: {
@@ -50,7 +52,7 @@ export default {
   },
   data() {
     return {
-      canvasObj:{
+      canvasObj: {
         ref: null,
         resoX: 1920,
         CSSwidth: 1,
@@ -60,8 +62,8 @@ export default {
         defaultHeight: 1,
         scale: 1,
         XtoY: 1,
-        offsetLeft:0,
-        offsetTop:0
+        offsetLeft: 0,
+        offsetTop: 0
       },
       currentTool: {
         name: "cursor",
@@ -69,14 +71,14 @@ export default {
       },
       currentItem: null,
       stampsWinVisible: false,
-      rotation:0,
+      rotation: 0,
       OBJECT_STORAGE: [],
       styleCursor: "default",
       recentColors: Array(8).fill("#ffffff"),
       colorChanged: false,
       activeLayer: null,
       cursorTool: new paper.Tool(),
-      cursorOpt:{
+      cursorOpt: {
         selectedObj: null
       },
       brushTool: new paper.Tool(),
@@ -87,9 +89,8 @@ export default {
         cursor: null,
       },
       stampTool: new paper.Tool(),
-      stampOpt:{
-        size: 500,
-        scale: 50,
+      stampOpt: {
+        size: 50,
         opacity: 1,
         rotation: 0,
         revert: "none",
@@ -144,256 +145,255 @@ export default {
     }
   },
   methods: {
-    showStampsWin(flag){
-      this.stampsWinVisible=flag
+    showStampsWin(flag) {
+      this.stampsWinVisible = flag
     },
-    zoom(e,step=0, mode=null){
+    zoom(e, step = 0, mode = null) {
       let event = window.event || e
       let newX, newY
-      let canvasPoint={
-        x:null,
-        y:null
+      let canvasPoint = {
+        x: null,
+        y: null
       }
-      let cObj=this.canvasObj
-      let scale=cObj.scale
-      if(!mode)
-      mode=event.wheelDelta>0 ? "+":"-"
+      let cObj = this.canvasObj
+      let scale = cObj.scale
+      if (!mode)
+        mode = event.wheelDelta > 0 ? "+" : "-"
       switch (mode) {
         case "+":
-          step=Math.abs(step)
+          step = Math.abs(step)
           break
         case "-":
-          step=-step
+          step = -step
           break
         case "=":
           break
       }
-      if(mode=="+"|| mode=="-") {
-        canvasPoint.x = event.pageX -  cObj.offsetLeft // старые координаты курсора на холсте
+      if (mode == "+" || mode == "-") {
+        canvasPoint.x = event.pageX - cObj.offsetLeft // старые координаты курсора на холсте
         canvasPoint.y = event.pageY - cObj.offsetTop
-        newX =canvasPoint.x-canvasPoint.x*((scale+step)/scale)
-        newY =canvasPoint.y-canvasPoint.y*((scale+step)/scale)
+        newX = canvasPoint.x - canvasPoint.x * ((scale + step) / scale)
+        newY = canvasPoint.y - canvasPoint.y * ((scale + step) / scale)
         if (scale + step < 0.2 || scale + step > 5) return
         scale += step
         scale = Number(scale.toFixed(2))
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
-        paper.view.zoom=scale
-        paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
-        paper.view.center=new paper.Point(0,0 )
+        paper.view.zoom = scale
+        paper.view.viewSize = new paper.Size(cObj.CSSwidth, cObj.CSSheight)
+        paper.view.center = new paper.Point(0, 0)
         paper.view.update()
         cObj.scale = scale
-        this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
+        this.setTranslate(cObj.offsetLeft + newX, cObj.offsetTop + newY)
       }
-      if(mode=="="){
-        canvasPoint.x = document.documentElement.clientWidth/2 -  cObj.offsetLeft
-        canvasPoint.y = document.documentElement.clientHeight/2 - cObj.offsetTop
-        newX =canvasPoint.x-canvasPoint.x*(step/scale)
-        newY =canvasPoint.y-canvasPoint.y*(step/scale)
-        scale=step
+      if (mode == "=") {
+        canvasPoint.x = document.documentElement.clientWidth / 2 - cObj.offsetLeft
+        canvasPoint.y = document.documentElement.clientHeight / 2 - cObj.offsetTop
+        newX = canvasPoint.x - canvasPoint.x * (step / scale)
+        newY = canvasPoint.y - canvasPoint.y * (step / scale)
+        scale = step
         cObj.CSSheight = cObj.defaultHeight * scale
         cObj.CSSwidth = cObj.defaultWidth * scale
-        paper.view.zoom=scale
-        paper.view.viewSize=new paper.Size(cObj.CSSwidth,cObj.CSSheight)
-        paper.view.center=new paper.Point(0,0 )
+        paper.view.zoom = scale
+        paper.view.viewSize = new paper.Size(cObj.CSSwidth, cObj.CSSheight)
+        paper.view.center = new paper.Point(0, 0)
         cObj.scale = scale
-        this.setTranslate(cObj.offsetLeft+newX, cObj.offsetTop+newY)
+        this.setTranslate(cObj.offsetLeft + newX, cObj.offsetTop + newY)
       }
     },
-    setTranslate(x,y){
-      this.canvasObj.ref.style.transform="translate("+x+"px,"+y+"px)"
-      this.canvasObj.offsetLeft=x
-      this.canvasObj.offsetTop=y
+    setTranslate(x, y) {
+      this.canvasObj.ref.style.transform = "translate(" + x + "px," + y + "px)"
+      this.canvasObj.offsetLeft = x
+      this.canvasObj.offsetTop = y
     },
-    getCanvasArea(){
-      let canvasArea={
-        width: document.documentElement.clientWidth-document.getElementById('toolsPanel').offsetWidth,
-        height: document.documentElement.clientHeight-document.getElementById('footer').offsetHeight-document.getElementById('header').offsetHeight
+    getCanvasArea() {
+      let canvasArea = {
+        width: document.documentElement.clientWidth - document.getElementById('toolsPanel').offsetWidth,
+        height: document.documentElement.clientHeight - document.getElementById('footer').offsetHeight - document.getElementById('header').offsetHeight
       }
       return canvasArea
     },
-    setDefaultSizes(){
-      let area=this.getCanvasArea()
-      if(this.canvasObj.XtoY>1){
-        this.canvasObj.defaultWidth=area.width
-        this.canvasObj.defaultHeight=this.canvasObj.defaultWidth/this.canvasObj.XtoY
-      }
-      else {
-        this.canvasObj.defaultHeight=area.height
-        this.canvasObj.defaultWidth=this.canvasObj.defaultHeight*this.canvasObj.XtoY
+    setDefaultSizes() {
+      let area = this.getCanvasArea()
+      if (this.canvasObj.XtoY > 1) {
+        this.canvasObj.defaultWidth = area.width
+        this.canvasObj.defaultHeight = this.canvasObj.defaultWidth / this.canvasObj.XtoY
+      } else {
+        this.canvasObj.defaultHeight = area.height
+        this.canvasObj.defaultWidth = this.canvasObj.defaultHeight * this.canvasObj.XtoY
       }
       this.canvasReset()
     },
-    resetCoords(){
-      paper.view.zoom=1
-      paper.view.viewSize=new paper.Size(this.canvasObj.CSSwidth,this.canvasObj.CSSheight)
-      paper.view.center=new paper.Point(0,0 )
+    resetCoords() {
+      paper.view.zoom = 1
+      paper.view.viewSize = new paper.Size(this.canvasObj.CSSwidth, this.canvasObj.CSSheight)
+      paper.view.center = new paper.Point(0, 0)
     },
-    resetScale(){
-      this.canvasObj.scale=1
-      this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
-      this.canvasObj.CSSheight=this.canvasObj.defaultHeight
+    resetScale() {
+      this.canvasObj.scale = 1
+      this.canvasObj.CSSwidth = this.canvasObj.defaultWidth
+      this.canvasObj.CSSheight = this.canvasObj.defaultHeight
       this.resetCoords()
     },
-    canvasReset(){
-      this.canvasObj.scale=1
-      this.canvasObj.CSSwidth=this.canvasObj.defaultWidth
-      this.canvasObj.CSSheight=this.canvasObj.defaultHeight
-      let area=this.getCanvasArea()
-      this.setTranslate(((area.width-this.canvasObj.defaultWidth)/2), ((area.height-this.canvasObj.defaultHeight)/2))
+    canvasReset() {
+      this.canvasObj.scale = 1
+      this.canvasObj.CSSwidth = this.canvasObj.defaultWidth
+      this.canvasObj.CSSheight = this.canvasObj.defaultHeight
+      let area = this.getCanvasArea()
+      this.setTranslate(((area.width - this.canvasObj.defaultWidth) / 2), ((area.height - this.canvasObj.defaultHeight) / 2))
       this.resetCoords()
     },
-    reRender(source,position, size, opacity, rotation){
-      console.log(size)
-      let item=new paper.Raster({
-        source: source,
-        position: position,
-        size: size,
-        opacity: opacity,
-        rotation: rotation
+    /*hardRemove(item){
+      this.OBJECT_STORAGE=this.OBJECT_STORAGE.filter((elem)=>{
+        return elem.id==item.id
       })
-      item.type="stamp"
-      this.OBJECT_STORAGE.push(item)
-      return item
-    },
-    getBoundGroup(group,item){
-      let rotateStart, rotateEnd, angle=0
-      this.rotation=item.rotation
-      let boundRect= new paper.Path.Rectangle({
+      item.remove()
+    },*/
+    getBoundGroup(group, item) {
+      let rotateStart, rotateEnd, angle = 0
+      this.rotation = item.rotation
+      let boundRect = new paper.Path.Rectangle({
         rectangle: item.strokeBounds,
         strokeColor: '#42aaff',
         strokeWidth: 1,
         name: "rect"
       })
-      let boundCircle= new paper.Path.Circle({
+      let boundCircle = new paper.Path.Circle({
         center: boundRect.position,
-        radius: Math.sqrt((item.strokeBounds.width*item.strokeBounds.width+item.strokeBounds.height*item.strokeBounds.height))/2,
+        radius: Math.sqrt((item.strokeBounds.width * item.strokeBounds.width + item.strokeBounds.height * item.strokeBounds.height)) / 2,
         strokeColor: "#000000",
         fillColor: "#000000",
         strokeWidth: 0.001,
-        opacity:0.000001,
+        opacity: 0.000001,
         name: "circle"
       })
-      item.onMouseEnter=()=>{
-        this.styleCursor='grab'
+      item.onMouseEnter = () => {
+        this.styleCursor = 'grab'
       }
-      item.onMouseLeave=()=>{
-        this.styleCursor='default'
+      item.onMouseLeave = () => {
+        this.styleCursor = 'default'
       }
-      item.onMouseDown=()=>{
-        this.styleCursor='grabbing'
+      item.onMouseDown = () => {
+        this.styleCursor = 'grabbing'
       }
-      item.onMouseUp=()=>{
-        this.styleCursor='grab'
+      item.onMouseUp = () => {
+        this.styleCursor = 'grab'
       }
-      let corners=['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
-      let twoLast=[]
-      const baseCoef=boundRect.bounds['bottomRight'].getDistance(boundRect.bounds['topLeft'])
+      let corners = ['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
+      let twoLast = []
+      const baseCoef = boundRect.bounds['bottomRight'].getDistance(boundRect.bounds['topLeft'])
       group.removeChildren()
-      corners.forEach((corner,index) =>{
-        let boundSq=new paper.Path.Rectangle({
-          width:10,
-          height:10,
+      corners.forEach((corner, index) => {
+        let boundSq = new paper.Path.Rectangle({
+          width: 10,
+          height: 10,
           position: boundRect.bounds[corner],
           fillColor: "#42aaff",
-          name: (index+1)+"corner"
+          name: (index + 1) + "corner"
         })
-        boundSq.onMouseLeave=()=>{
-          this.styleCursor="default"
+        boundSq.onMouseLeave = () => {
+          this.styleCursor = "default"
         }
-        if(corner=='topLeft' || corner=='bottomRight'){
-          boundSq.onMouseEnter=()=>{
-            this.styleCursor='nwse-resize'
-          }}
-        else{
-          boundSq.onMouseEnter=()=>{
-            this.styleCursor='nesw-resize'
-          }}
+        if (corner == 'topLeft' || corner == 'bottomRight') {
+          boundSq.onMouseEnter = () => {
+            this.styleCursor = 'nwse-resize'
+          }
+        } else {
+          boundSq.onMouseEnter = () => {
+            this.styleCursor = 'nesw-resize'
+          }
+        }
         group.addChild(boundSq)
       })
-      let sqArray=[group.children['1corner'],group.children['2corner'],group.children['3corner'],group.children['4corner']]
-      sqArray.forEach((square, index) =>{
-        square.onMouseDrag=(event)=>{
-          square.position=event.point
-          square.data.oppositeSq=(sqArray[index+2]) ? sqArray[index+2].position : sqArray[index+2-4].position
-          corners.forEach((corner,i) =>{
-            sqArray[i].position= boundRect.bounds[corner]
+      let sqArray = [group.children['1corner'], group.children['2corner'], group.children['3corner'], group.children['4corner']]
+      let brWidth = 0
+      let brHeight = 0
+      sqArray.forEach((square, index) => {
+        square.onMouseDrag = (event) => {
+          square.position = event.point
+          square.data.oppositeSq = (sqArray[index + 2]) ? sqArray[index + 2].position : sqArray[index - 2].position
+          corners.forEach((corner, i) => {
+            sqArray[i].position = boundRect.bounds[corner]
           })
-          let limit=(event.point.x+event.point.y)-(square.data.oppositeSq.x+square.data.oppositeSq.y)
-          if(!(((index==0 || index==3)&& limit<0) || ((index==1 || index==2)&& limit>0)))
-            return
-          let scaleFactor=(square.data.oppositeSq.getDistance(event.point))/(baseCoef)
-          if(twoLast.length<2) {
+          switch (index) {
+            case 0:
+              if(event.point.x>square.data.oppositeSq.x || event.point.y>square.data.oppositeSq.y )
+                return
+              break;
+            case 1:
+              if(event.point.x<square.data.oppositeSq.x || event.point.y>square.data.oppositeSq.y )
+                return
+              break;
+            case 2:
+              if(event.point.x<square.data.oppositeSq.x || event.point.y<square.data.oppositeSq.y )
+                return
+              break;
+            case 3:
+              if(event.point.x>square.data.oppositeSq.x || event.point.y<square.data.oppositeSq.y )
+                return
+              break;
+          }
+          let scaleFactor = (square.data.oppositeSq.getDistance(event.point)) / (baseCoef)
+          if (twoLast.length < 2) {
             twoLast.push(scaleFactor)
-            item.scale(1/twoLast[0],square.data.oppositeSq)
-            item.scale(scaleFactor,square.data.oppositeSq)
+            item.scale(1 / twoLast[0], square.data.oppositeSq)
+            item.scale(scaleFactor, square.data.oppositeSq)
+          } else {
+            item.scale(1 / twoLast[0], square.data.oppositeSq)
+            item.scale(twoLast[1], square.data.oppositeSq)
+            twoLast[0] = twoLast[1]
+            twoLast[1] = scaleFactor
           }
-          else {
-            item.scale(1/twoLast[0],square.data.oppositeSq)
-            item.scale(twoLast[1],square.data.oppositeSq)
-            twoLast[0]=twoLast[1]
-            twoLast[1]=scaleFactor
-          }
+          brHeight = item.height * scaleFactor
+          brWidth = item.width * scaleFactor
           group.removeChildren()
-          group=this.getBoundGroup(group,item)
+          group = this.getBoundGroup(group, item)
         }
-        square.onMouseUp=()=>{
-          twoLast=[]
-          if(item.type=='stamp') {
-     /*       let distance=Math.abs(event.point.x-square.data.oppositeSq.x)
-            let size= new paper.Size({
-              width: distance,
-              height: distance
+        square.onMouseUp = () => {
+          twoLast = []
+          if (item.type == 'stamp') {
+            let size = new paper.Size({
+              width: brWidth,
+              height: brHeight
             })
-            this.removeSelect()
-            let newItem=new paper.Raster({
-              source: item.source,
-              position: item.position
-            })
-            newItem.size=size
-            console.log("newSize:"+newItem)
-            item.remove()
-            this.setSelected(newItem)*/
-            /*let newItem=this.reRender(item.source,item.position, size, item.opacity, item.rotation)
-            item.remove()
-            console.log("new:")
-            console.log(newItem)
-            this.setSelected(newItem)*/
+            item = this.reRender(item, size)
+            this.setSelected(item)
           }
         }
       })
-      boundCircle.onMouseLeave=()=>{
-        this.styleCursor="default"
+      boundCircle.onMouseLeave = () => {
+        this.styleCursor = "default"
       }
-      boundCircle.onMouseEnter=()=>{
-        this.styleCursor='url(' +require('../assets/images/Service/rotate.png')+'), auto'
+      boundCircle.onMouseEnter = () => {
+        this.styleCursor = 'url(' + require('../assets/images/Service/rotate.png') + '), auto'
       }
-      boundCircle.onMouseDown=(event)=>{
-        rotateStart=new paper.Point({
-          x:event.point.x - boundCircle.position.x,
-          y:event.point.y - boundCircle.position.y
+      boundCircle.onMouseDown = (event) => {
+        rotateStart = new paper.Point({
+          x: event.point.x - boundCircle.position.x,
+          y: event.point.y - boundCircle.position.y
         })
       }
-      boundCircle.onMouseUp=()=>{
-        angle=undefined
-   /*     if(item.type=='stamp') {
-
-        }*/
+      boundCircle.onMouseUp = () => {
+        angle = undefined
+            if(item.type=='stamp') {
+              item = this.reRender(item, item.size)
+              this.setSelected(item)
+             }
       }
-      boundCircle.onMouseDrag=(event)=>{
-        if(angle) {
-          this.rotation-=angle
+      boundCircle.onMouseDrag = (event) => {
+        if (angle) {
+          this.rotation -= angle
           item.position = boundRect.position
         }
-        rotateEnd=new paper.Point({
-          x:event.point.x - boundCircle.position.x,
-          y:event.point.y - boundCircle.position.y
+        rotateEnd = new paper.Point({
+          x: event.point.x - boundCircle.position.x,
+          y: event.point.y - boundCircle.position.y
         })
-        angle=rotateStart.getDirectedAngle(rotateEnd)
-        this.rotation+=angle
-        item.position=boundRect.position
+        angle = rotateStart.getDirectedAngle(rotateEnd)
+        this.rotation += angle
+        item.position = boundRect.position
       }
-      item.onMouseDrag=(event)=>{
+      item.onMouseDrag = (event) => {
         item.position.x += event.delta.x
         item.position.y += event.delta.y
         group.position.x += event.delta.x
@@ -404,51 +404,70 @@ export default {
       group.insertBelow(item)
       return group
     },
-    setSelected(item){
-      if(item.selectionGroup){
+    setSelected(item) {
+      if (item.selectionGroup) {
         item.selectionGroup.removeChildren()
         item.selectionGroup.remove()
-        item.selectionGroup=undefined
+        item.selectionGroup = undefined
       }
-      item.selectionGroup=this.getBoundGroup(new paper.Group(),item)
+      item.selectionGroup = this.getBoundGroup(new paper.Group(), item)
+      this.cursorOpt.selectedObj = item
       return item
     },
-    removeSelect(){
-      let obj=this.cursorOpt.selectedObj
-      obj.onMouseUp=obj.onMouseDown=obj.onMouseLeave=obj.onMouseEnter=obj.onMouseDrag=undefined
+    removeSelect() {
+      let obj = this.cursorOpt.selectedObj
+      if (!obj) return
+      obj.onMouseUp = obj.onMouseDown = obj.onMouseLeave = obj.onMouseEnter = obj.onMouseDrag = undefined
       obj.selectionGroup.removeChildren()
       obj.selectionGroup.remove()
-      obj.selectionGroup=undefined
-      this.cursorOpt.selectedObj=undefined
+      obj.selectionGroup = undefined
+      this.cursorOpt.selectedObj = undefined
     },
-    updateItem(item, options){
+    updateItem(item, options) {
       switch (item.type) {
         case "text":
-          item.shadowColor= options.isShadow ? options.shadowColor : "transparent"
-          item.shadowBlur= options.isShadow ? options.shadowBlur : 0
-          item.shadowOffset= options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined
-          item.data.shOffsetX=options.isShadow ? options.shOffsetX:0
-          item.data.shOffsetY=options.isShadow ? options.shOffsetY:0
+          item.shadowColor = options.isShadow ? options.shadowColor : "transparent"
+          item.shadowBlur = options.isShadow ? options.shadowBlur : 0
+          item.shadowOffset = options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined
+          item.data.shOffsetX = options.isShadow ? options.shOffsetX : 0
+          item.data.shOffsetY = options.isShadow ? options.shOffsetY : 0
           item.strokeColor = options.isBorder ? options.strokeColor : "transparent"
           item.fillColor = options.isFill ? options.fillColor : new paper.Color(0, 0, 0, 1e-6)
-          item.strokeWidth= options.isBorder ? options.strokeWidth : 0
-          item.data.isBorder=options.isBorder ?options.isBorder:false
-          item.data.isFill=options.isFill ?options.isFill:false
-          item.data.isShadow=options.isShadow ?options.isShadow:false
+          item.strokeWidth = options.isBorder ? options.strokeWidth : 0
+          item.data.isBorder = options.isBorder ? options.isBorder : false
+          item.data.isFill = options.isFill ? options.isFill : false
+          item.data.isShadow = options.isShadow ? options.isShadow : false
           break
         case "shape":
-          item.opacity=options.opacity
-          item.strokeColor= options.isBorder ? options.strokeColor : "transparent"
-          item.fillColor=options.isFill?options.fillColor:"transparent"
-          item.strokeWidth= options.isBorder ? options.strokeWidth : 0
-          item.data.isBorder=options.isBorder ?options.isBorder:false
-          item.data.isFill=options.isFill ?options.isFill:false
-          item.data.isShadow=options.isShadow ?options.isShadow:false
-          item.rotation=options.rotation
+          item.opacity = options.opacity
+          item.strokeColor = options.isBorder ? options.strokeColor : "transparent"
+          item.fillColor = options.isFill ? options.fillColor : "transparent"
+          item.strokeWidth = options.isBorder ? options.strokeWidth : 0
+          item.data.isBorder = options.isBorder ? options.isBorder : false
+          item.data.isFill = options.isFill ? options.isFill : false
+          item.data.isShadow = options.isShadow ? options.isShadow : false
+          item.rotation = options.rotation
           break
         case "stamp":
-          item.size=options.scale/options.size*options.size
+          /*  this.reRender(item, options.size)
+            item.remove()*/
       }
+    },
+    reRender(item, size) {
+      this.removeSelect()
+      let newItem = new paper.Raster({
+        source: require('../assets/images/Stamps/' + item.data.set + '/' + item.data.stamp),
+        position: item.position,
+        size: size,
+        opacity: item.opacity,
+        rotation: item.rotation
+      })
+      newItem.type = "stamp"
+      newItem.data.set = item.data.set
+      newItem.data.stamp = item.data.stamp
+      this.OBJECT_STORAGE.push(newItem)
+      item.remove()
+      return newItem
     },
     toolSwitch(mode) {
       if (mode == "on" && this.currentTool.toolRef) {
@@ -492,7 +511,7 @@ export default {
     },
     updateRecentColors(newColor) {
       if (newColor == "transparent") return
-      if(this.recentColors.indexOf(newColor)!=-1) return
+      if (this.recentColors.indexOf(newColor) != -1) return
       if (this.recentColors.length < 8)
         this.recentColors.unshift(newColor)
       else {
@@ -500,21 +519,20 @@ export default {
         this.recentColors.unshift(newColor)
       }
     },
-    setCursor(cursor, options){
-      cursor.onMouseDown=(event)=>{
-        let obj=event.item
-        if(obj && options.selectedObj && obj.id==options.selectedObj.selectionGroup.id) return
-        if(options.selectedObj && obj!=options.selectedObj) {
+    setCursor(cursor, options) {
+      cursor.onMouseDown = (event) => {
+        let obj = event.item
+        if (obj && options.selectedObj && obj.id == options.selectedObj.selectionGroup.id) return
+        if (options.selectedObj && obj != options.selectedObj) {
           this.removeSelect()
         }
-        if(!obj || this.OBJECT_STORAGE.indexOf(obj) == -1) return
-        if(!options.selectedObj) {
+        if (!obj || this.OBJECT_STORAGE.indexOf(obj) == -1) return
+        if (!options.selectedObj) {
           this.setSelected(obj)
-          options.selectedObj = obj
         }
       }
-      cursor.onKeyDown=(event)=>{
-        if(event.key=='delete' && options.selectedObj) {
+      cursor.onKeyDown = (event) => {
+        if (event.key == 'delete' && options.selectedObj) {
           options.selectedObj.remove()
           this.removeSelect()
         }
@@ -550,18 +568,19 @@ export default {
         path.smooth();
       }
     },
-    setStampTool(stampTool,options){
+    setStampTool(stampTool, options) {
       stampTool.onMouseMove = (event) => {
         if (this.currentItem)
           this.currentItem.remove()
         this.currentItem = new paper.Raster({
-          source: require('../assets/images/Stamps/'+options.currentSet+'/'+options.currentStamp),
+          source: require('../assets/images/Stamps/' + options.currentSet + '/' + options.currentStamp),
           position: event.point,
-          size: options.size * options.scale/options.size,
+          size: options.size,
           opacity: options.opacity,
           rotation: options.rotation
         })
-        this.currentItem.data.scale=options.scale
+        this.currentItem.data.set = options.currentSet
+        this.currentItem.data.stamp = options.currentStamp
       }
       stampTool.onMouseDown = () => {
         this.OBJECT_STORAGE.push(this.currentItem.clone())
@@ -615,8 +634,8 @@ export default {
                 opacity: options.opacity,
                 rotation: options.rotation
               })
-              this.currentItem.data.isBorder=this.shapeOpt.isBorder
-              this.currentItem.data.isFill=this.shapeOpt.isFill
+              this.currentItem.data.isBorder = this.shapeOpt.isBorder
+              this.currentItem.data.isFill = this.shapeOpt.isFill
             }
           }
           break
@@ -664,8 +683,8 @@ export default {
                 opacity: options.opacity,
                 rotation: options.rotation
               })
-              this.currentItem.data.isBorder=this.shapeOpt.isBorder
-              this.currentItem.data.isFill=this.shapeOpt.isFill
+              this.currentItem.data.isBorder = this.shapeOpt.isBorder
+              this.currentItem.data.isFill = this.shapeOpt.isFill
             }
           }
           break
@@ -699,8 +718,8 @@ export default {
                 opacity: options.opacity,
                 rotation: options.rotation
               })
-              this.currentItem.data.isBorder=this.shapeOpt.isBorder
-              this.currentItem.data.isFill=this.shapeOpt.isFill
+              this.currentItem.data.isBorder = this.shapeOpt.isBorder
+              this.currentItem.data.isFill = this.shapeOpt.isFill
             }
           }
           break
@@ -728,8 +747,8 @@ export default {
                 strokeCap: "round",
                 rotation: options.rotation
               })
-              this.currentItem.data.isBorder=this.shapeOpt.isBorder
-              this.currentItem.data.isFill=this.shapeOpt.isFill
+              this.currentItem.data.isBorder = this.shapeOpt.isBorder
+              this.currentItem.data.isFill = this.shapeOpt.isFill
               initPoint = event.point
               this.currentItem.add(initPoint)
             } else {
@@ -866,21 +885,19 @@ export default {
                     -180 + Math.abs(vector.getDirectedAngle(firstVector))
                 hIn = vector.rotate(180)
                 hOut = vector
-                hOut.length=hIn.length=vector.length*0.3
-                if(angle>0) {
+                hOut.length = hIn.length = vector.length * 0.3
+                if (angle > 0) {
                   hIn.angle = firstVector.angle - (90 - angle / 2) - 180
-                  hOut.angle = hIn.angle +180
-                }
-                else if(angle<0) {
+                  hOut.angle = hIn.angle + 180
+                } else if (angle < 0) {
                   hIn.angle = firstVector.angle - (-90 - angle / 2) - 180
-                  hOut.angle = hIn.angle+180
+                  hOut.angle = hIn.angle + 180
+                } else {
+                  hIn.angle = firstVector.angle - angle / 2 - 180
+                  hOut.angle = vector.angle - (180 - (hIn.getDirectedAngle(firstVector)))
                 }
-                else {
-                  hIn.angle=firstVector.angle - angle / 2 - 180
-                  hOut.angle=vector.angle-(180-(hIn.getDirectedAngle(firstVector)))
-                }
-                hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2 + vector.length*0.2
-                if(Math.abs(angle)/40 < 1) {
+                hIn.length = Math.abs(segments[segments.length - 1].point.getDistance(segments[segments.length - 2].point)) * 0.2 + vector.length * 0.2
+                if (Math.abs(angle) / 40 < 1) {
                   hIn.length *= (Math.abs(angle) / 40)
                   hOut.length *= (Math.abs(angle) / 40)
                 }
@@ -914,7 +931,8 @@ export default {
                 this.currentItem.dashArray = options.dotArray.map((x) => (x * options.size))
               else this.currentItem.dashArray = null
               this.currentItem.insertBelow(options.cursor)
-            }}
+            }
+          }
           pathTool.onMouseDown = (event) => {
             if (!initPoint) {
               segments = []
@@ -954,9 +972,9 @@ export default {
           shadowBlur: options.isShadow ? options.shadowBlur : 0,
           shadowOffset: options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined,
         })
-        this.currentItem.data={
+        this.currentItem.data = {
           isBorder: options.isBorder,
-          isFill : options.isFill,
+          isFill: options.isFill,
           isShadow: options.isShadow,
           shOffsetX: options.isShadow ? options.shOffsetX : 0,
           shOffsetY: options.isShadow ? options.shOffsetY : 0,
@@ -966,58 +984,57 @@ export default {
         this.OBJECT_STORAGE.push(this.currentItem.clone())
       }
     },
-    setZoomTool(zoomTool){
-      let drag=false
-      let isZoom=false
-      zoomTool.onMouseUp=(event)=>{
+    setZoomTool(zoomTool) {
+      let drag = false
+      let isZoom = false
+      zoomTool.onMouseUp = (event) => {
         let mode
-        if(event.event.button==0){
-          this.styleCursor="zoom-in"
-          mode="+"
+        if (event.event.button == 0) {
+          this.styleCursor = "zoom-in"
+          mode = "+"
         }
-        if(event.event.button==2) {
-          this.styleCursor="zoom-out"
+        if (event.event.button == 2) {
+          this.styleCursor = "zoom-out"
           mode = "-"
         }
-        drag=false
-        if(!isZoom) return
-        this.zoom(event.event,0.5,mode)
+        drag = false
+        if (!isZoom) return
+        this.zoom(event.event, 0.5, mode)
       }
-      zoomTool.onMouseMove=(event)=>{
-        isZoom=false
-        if(!drag) return
-        let cObj=this.canvasObj
-        this.setTranslate(cObj.offsetLeft+event.event.movementX,cObj.offsetTop+event.event.movementY)
+      zoomTool.onMouseMove = (event) => {
+        isZoom = false
+        if (!drag) return
+        let cObj = this.canvasObj
+        this.setTranslate(cObj.offsetLeft + event.event.movementX, cObj.offsetTop + event.event.movementY)
       }
-      zoomTool.onMouseDown=()=>{
-        isZoom=true
-        drag=true
-        this.styleCursor="move"
+      zoomTool.onMouseDown = () => {
+        isZoom = true
+        drag = true
+        this.styleCursor = "move"
       }
     }
   },
   mounted() {
     this.canvasObj.ref = document.getElementById("map")
-    this.canvasObj.XtoY=this.canvasObj.resoX/this.canvasObj.resoY
-    if(this.canvasObj.XtoY>1){
-      this.canvasObj.CSSwidth=document.getElementById("canvasBox").offsetWidth
-      this.canvasObj.CSSheight=this.canvasObj.CSSwidth/this.canvasObj.XtoY
+    this.canvasObj.XtoY = this.canvasObj.resoX / this.canvasObj.resoY
+    if (this.canvasObj.XtoY > 1) {
+      this.canvasObj.CSSwidth = document.getElementById("canvasBox").offsetWidth
+      this.canvasObj.CSSheight = this.canvasObj.CSSwidth / this.canvasObj.XtoY
+    } else {
+      this.canvasObj.CSSheight = document.getElementById("canvasBox").offsetHeight
+      this.canvasObj.CSSwidth = this.canvasObj.CSSheight * this.canvasObj.XtoY
     }
-    else {
-      this.canvasObj.CSSheight=document.getElementById("canvasBox").offsetHeight
-      this.canvasObj.CSSwidth=this.canvasObj.CSSheight*this.canvasObj.XtoY
-    }
-    this.canvasObj.defaultWidth=this.canvasObj.CSSwidth
-    this.canvasObj.defaultHeight=this.canvasObj.CSSheight
+    this.canvasObj.defaultWidth = this.canvasObj.CSSwidth
+    this.canvasObj.defaultHeight = this.canvasObj.CSSheight
 
     paper.setup(this.canvasObj.ref)
-    paper.view.viewSize=new paper.Size(this.canvasObj.CSSwidth,this.canvasObj.CSSheight)
-    paper.view.center=new paper.Point(0,0 )
-    this.canvasReset()
+    paper.view.viewSize = new paper.Size(this.canvasObj.CSSwidth, this.canvasObj.CSSheight)
+    paper.view.center = new paper.Point(0, 0)
+    this.setDefaultSizes()
     this.activeLayer = paper.project.activeLayer
     //------BRUSH------------------------
     this.brushOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
-    this.brushOpt.cursor.name="cursor"
+    this.brushOpt.cursor.name = "cursor"
     this.brushOpt.cursor.fillColor = 'transparent'
     this.brushOpt.cursor.strokeColor = "black"
     this.brushOpt.cursor.visible = false
@@ -1029,7 +1046,7 @@ export default {
     //-----PATH--------------------------
     this.pathOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
     this.pathOpt.cursor.fillColor = 'transparent'
-    this.pathOpt.cursor.name="cursor"
+    this.pathOpt.cursor.name = "cursor"
     this.pathOpt.cursor.strokeColor = "black"
     this.pathOpt.cursor.visible = false
     this.setPathTool(this.pathTool, this.pathOpt)
@@ -1057,7 +1074,7 @@ export default {
         this.brushOpt.cursor.visible = false
       if (val != "path")
         this.pathOpt.cursor.visible = false
-      if (val !="cursor" && this.cursorOpt.selectedObj)
+      if (val != "cursor" && this.cursorOpt.selectedObj)
         this.removeSelect()
       switch (val) {
         case "cursor":
@@ -1091,24 +1108,24 @@ export default {
           this.currentTool.toolRef = this.textTool
           this.styleCursor = "none"
           this.textTool.activate()
-              break
+          break
         case "zoom":
           this.currentTool.toolRef = this.zoomTool
           this.styleCursor = "zoom-in"
           this.zoomTool.activate()
-              break
+          break
 
       }
     },
-    'rotation'(val){
-      if(this.cursorOpt.selectedObj.type!="shape")
-      this.cursorOpt.selectedObj.rotation=val
+    'rotation'(val) {
+      if (this.cursorOpt.selectedObj.type != "shape")
+        this.cursorOpt.selectedObj.rotation = val
     },
     'OBJECT_STORAGE.length'(val) {
       let obj = this.OBJECT_STORAGE[val - 1]
-      obj.applyMatrix=false
-      if(!obj.type)
-      obj.type=this.currentTool.name
+      obj.applyMatrix = false
+      if (!obj.type)
+        obj.type = this.currentTool.name
       this.activeLayer.addChild(obj)
       console.log(paper.project.layers)
       console.log(this.OBJECT_STORAGE)
@@ -1129,7 +1146,7 @@ export default {
   grid-template-columns: 40px 1fr;
   grid-template-rows: 40px 1fr 40px;
   gap: 0px 0px;
-  padding:0;
+  padding: 0;
   grid-auto-flow: row dense;
   justify-items: stretch;
   grid-template-areas:
@@ -1137,6 +1154,7 @@ export default {
     "ToolsPanel CanvasArea"
     "BotMenu BotMenu";
 }
+
 .CanvasArea {
   grid-area: CanvasArea;
   z-index: 1;
@@ -1147,12 +1165,14 @@ export default {
   overflow-x: hidden;
   overflow-y: hidden;
 }
+
 #map {
   background-color: white;
   -webkit-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
 }
+
 input[type=color] {
   border: none;
   width: 30px;
@@ -1162,17 +1182,21 @@ input[type=color] {
   padding: 0;
   margin: 0
 }
+
 .cursorNone {
   cursor: none;
 }
+
 input[type=color]::-webkit-color-swatch {
   border-radius: 0;
   border: 1px solid gray;
   cursor: toolRef
 }
+
 *:hover > .hoverinv {
   filter: invert(1);
 }
+
 input[type=number] {
   font-size: smaller;
   font-weight: bolder;
@@ -1181,10 +1205,12 @@ input[type=number] {
   border-radius: 5px;
   padding: 3px 0 2px 5px
 }
+
 .tools-options input[type=range] {
   width: 150px;
   margin: 0 10px;
 }
+
 input[type=range] {
   width: 175px;
   height: 12px;
@@ -1200,6 +1226,7 @@ input[type=range] {
   -moz-box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset;
   box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset;
 }
+
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   background: white;
@@ -1210,6 +1237,7 @@ input[type=range]::-webkit-slider-thumb {
   cursor: toolRef;
   box-shadow: -180px 0 0 173px #232323;
 }
+
 input[type=range]::-moz-range-thumb {
   -webkit-appearance: none;
   background: white;

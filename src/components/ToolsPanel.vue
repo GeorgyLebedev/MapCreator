@@ -139,8 +139,8 @@
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок" >
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
-                <input type="range" step="10" min="10" max="500" v-model="stampOpt.scale">
-                <input type="number" step="1" min="10" max="500" class="input-number-style" v-model="stampOpt.scale">
+                <input type="range" step="10" min="10" max="500" v-model="stampOpt.size">
+                <input type="number" step="1" min="10" max="500" class="input-number-style" v-model="stampOpt.size">
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность иконок">
@@ -589,8 +589,7 @@ export default {
         brushType: "color"
       },
       stampOpt:{
-        size: 500,
-        scale: 50,
+        size: 50,
         opacity: 1,
         rotation: 0,
         revert: "none",
@@ -722,7 +721,7 @@ export default {
           this.shapeOpt.isFill=val.data.isFill
         }
         if(val.type=="stamp"){
-          this.stampOpt.scale=val.data.scale
+          this.stampOpt.size=val.size.width
         }
       }
     }
@@ -755,8 +754,6 @@ export default {
           this.$emit("update",this.selectedObj, this.stampOpt)
           this.$emit("newSelect", this.selectedObj)
         }
-     /*   this.stampOpt.currentStampPath='../assets/images/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
-        console.log(this.stampOpt.currentStampPath)*/
         this.$emit('optChange', this.stampOpt)
       }, deep: true
     },
