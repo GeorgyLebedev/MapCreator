@@ -528,8 +528,9 @@ export default {
         if (options.selectedObj && obj != options.selectedObj) {
           this.removeSelect()
         }
-        if (!obj || this.activeLayer.children.indexOf(obj) == -1) return
+        if (!obj || this.activeLayer.children.indexOf(obj) == -1 || obj.type=="brush" || !obj.type) return
         if (!options.selectedObj) {
+          console.log(obj.type)
           this.setSelected(obj)
         }
       }
