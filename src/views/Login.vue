@@ -14,32 +14,32 @@
       <form class="m-4 text-center " id="logIn" v-if="tab=='signIn'">
         <div class="form-group mb-3 ">
           <label for="Uname">Логин:</label>
-          <input type="text" class="form-control" required id="Uname" placeholder="Ваш логин">
+          <input type="text" class="form-control" required id="Uname" v-model="username" placeholder="Ваш логин">
         </div>
         <div class="form-group mb-3">
           <label for="Password">Пароль:</label>
-          <input type="password" required class="form-control" id="Password" placeholder="*********">
+          <input type="password" required class="form-control" id="Password" v-model="password" placeholder="*********">
           <div id="forgotPassword" class="text-end mt-3">
             <a href="">Забыли пароль?</a>
           </div>
         </div>
-        <button type="submit" class="btn btn-dark fs-5">Войти</button>
+        <button type="submit" class="btn btn-dark fs-5" :disabled="!this.login">Войти</button>
       </form>
       <form class="m-4 text-center" id="signIn" v-if="tab=='signUp'">
         <div class="form-group mb-3">
           <label for="InputEmail">Введите E-mail:</label>
-          <input type="email" class="form-control" required id="InputEmail" placeholder="Ваш E-mail">
+          <input type="email" class="form-control" required id="InputEmail" v-model="email"  placeholder="Ваш E-mail">
         </div>
         <div class="form-group mb-3">
           <label for="InputPassword">Задайте пароль:</label>
           <br><small class="text-secondary">(Минимум 8 символов)</small>
-          <input type="password" required class="form-control" id="InputPassword" placeholder="*********">
+          <input type="password" required class="form-control" id="InputPassword" v-model="regPassword"  placeholder="*********">
         </div>
         <div class="form-group mb-3">
           <label for="RepeatPassword">Повторите пароль:</label>
-          <input type="password" required class="form-control" id="RepeatPassword" placeholder="*********">
+          <input type="password" required class="form-control" id="RepeatPassword" v-model="passwordRepeat" placeholder="*********">
         </div>
-        <button type="submit" class="btn btn-dark fs-5">Зарегистрироваться</button>
+        <button type="submit" class="btn btn-dark fs-5" :disabled="!this.signin">Зарегистрироваться</button>
       </form>
     </div>
   </div>
@@ -49,7 +49,58 @@ export default {
   name: 'LoginPage',
   data(){
     return {
-      tab: "signIn"
+      tab: "signIn",
+      username: null,
+      password: null,
+      email: null,
+      regPassword: null,
+      passwordRepeat: null,
+      signin: false,
+      login: false
+    }
+  },
+  methods:{
+    checkEmail(str){
+      let re = /\S+@\S+\.\S+/;
+      return re.test(str);
+    },
+    validateSignin(){
+      if(
+          this.regPassword &&
+          this.regPassword.length>=8 &&
+          this.regPassword==this.passwordRepeat &&
+          this.checkEmail(this.email)
+      )
+        this.signin=true
+      else
+        this.signin=false
+    },
+    validateLogin(){
+      if(
+          this.password &&
+          this.password.length>=8 &&
+          this.checkEmail(this.username)
+      )
+        this.login=true
+      else
+        this.login=false
+    }
+  },
+  watch:{
+    email(){
+      this.validateSignin()
+    },
+    regPassword(){
+      this.validateSignin()
+    },
+    passwordRepeat(){
+      this.validateSignin()
+    },
+    username(){
+      this.validateLogin()
+    },
+    password(){
+      this.validateLogin()
     }
   }
 }
@@ -100,7 +151,7 @@ export default {
 }
 
 .login input[type=text], .login input[type=password], .login input[type=email] {
-  max-width: 50%;
+  max-width: 75%;
   font-size: larger;
   margin: 0 auto
 }

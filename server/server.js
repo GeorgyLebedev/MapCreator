@@ -9,5 +9,11 @@ mongoose.connect('mongodb://127.0.0.1:27017/test' )
     .catch(err => console.error(err));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use('/api/records', require("router"));
+app.use('/api/records', require("./router"));
 app.use('/', express.static(path.join(__dirname, '../dist')));
+app.get('/', (req, res)=>{
+    res.send("Home Page")
+})
+app.listen(app.get('port'), () => {
+    console.log(`[OK] Server is running on localhost:${app.get('port')}`);
+});

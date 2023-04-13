@@ -3,10 +3,16 @@ const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId
 const User = new Schema({
     id: ObjectId,
-    email: String,
-    password: String,
-    avatar: String,
-    regDate: Date
+    email: {
+        type:String,
+        required: true
+    },
+    password: {
+        type:String,
+        required: true
+    },
+    avatar: {type: String, default: 'defaultAvatar.png'},
+    regDate: {type: Date, default: Date.now()}
 });
 
 module.exports = mongoose.model('User', User);
