@@ -11,6 +11,7 @@
           <label for="radioSignUp">Регистрация</label>
         </div>
       </div>
+      <transition name="smooth" mode="out-in">
       <form class="m-4 text-center " id="logIn" v-if="tab=='signIn'">
         <div class="form-group mb-3 ">
           <label for="Uname">Логин:</label>
@@ -23,9 +24,9 @@
             <a href="">Забыли пароль?</a>
           </div>
         </div>
-        <button type="submit" class="btn btn-dark fs-5" :disabled="!this.login">Войти</button>
+        <button type="button" class="btn btn-dark fs-5" :disabled="!this.login" @click="enter(this.username, this.password)">Войти</button>
       </form>
-      <form class="m-4 text-center" id="signIn" v-if="tab=='signUp'">
+      <form class="m-4 text-center" id="signIn" v-else>
         <div class="form-group mb-3">
           <label for="InputEmail">Введите E-mail:</label>
           <input type="email" class="form-control" required id="InputEmail" v-model="email"  placeholder="Ваш E-mail">
@@ -39,12 +40,15 @@
           <label for="RepeatPassword">Повторите пароль:</label>
           <input type="password" required class="form-control" id="RepeatPassword" v-model="passwordRepeat" placeholder="*********">
         </div>
-        <button type="submit" class="btn btn-dark fs-5" :disabled="!this.signin">Зарегистрироваться</button>
+        <button type="button" class="btn btn-dark fs-5" :disabled="!this.signin" @click="registrate()">Зарегистрироваться</button>
       </form>
+      </transition>
     </div>
   </div>
 </template>
 <script>
+import axios from "axios";
+const bcrypt = require('bcryptjs')
 export default {
   name: 'LoginPage',
   data(){
@@ -55,6 +59,7 @@ export default {
       email: null,
       regPassword: null,
       passwordRepeat: null,
+      hashPassword: null,
       signin: false,
       login: false
     }
@@ -70,8 +75,10 @@ export default {
           this.regPassword.length>=8 &&
           this.regPassword==this.passwordRepeat &&
           this.checkEmail(this.email)
-      )
-        this.signin=true
+      ) {
+        this.signin = true
+        this.hashPassword=bcrypt.hashSync(this.regPassword,  bcrypt.genSaltSync(12))
+      }
       else
         this.signin=false
     },
@@ -84,6 +91,23 @@ export default {
         this.login=true
       else
         this.login=false
+    },
+    async registrate(){
+      let now=new Date()
+      console.log(await axios({
+        url:"http://localhost:1111/server/user",
+        method: 'post',
+        data:{
+          email: this.email,
+          password: this.hashPassword,
+          regDate: new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(now)
+        }
+      }))
+      console.log("done!")
+    },
+    async enter(user, password){
+      console.log(user)
+      console.log(password)
     }
   },
   watch:{
@@ -169,5 +193,14 @@ export default {
   background-image: url("../assets/images/background.png");
   background-size: cover;
   background-repeat: no-repeat;
+}
+.smooth-enter-active,
+.smooth-leave-active {
+  transition: all 0.3s ease-out;
+}
+.smooth-enter-from,
+.smooth-leave-to {
+  opacity: 0;
+  transform: scale(0)
 }
 </style>

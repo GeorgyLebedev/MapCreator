@@ -6,33 +6,38 @@ const optionsModel=require('./models/options');
 const mapModel=require('./models/map');
 const stampsModel=require('./models/objects');
 let record
+function getModel(req){
+    let model
+    switch (req.params.type){
+        case 'user':
+            model = new userModel(req.body);
+            break
+        case 'map':
+            model = new mapModel(req.body);
+            break
+        case 'objects':
+            model = new objectsModel(req.body);
+            break
+        case 'options':
+            model = new optionsModel(req.body);
+            break
+        case 'stamps':
+            model = new stampsModel(req.body);
+            break
+    }
+    return model
+}
 router.get('/', async (req, res) => {
     res.json(await userModel.find());
 });
-
+//Добавление записи
 router.post('/:type', async (req, res) => {
-    switch (req.params.type){
-        case 'user':
-            record = new userModel(req.body);
-            break
-        case 'map':
-            record = new mapModel(req.body);
-            break
-        case 'objects':
-            record = new objectsModel(req.body);
-            break
-        case 'options':
-            record = new optionsModel(req.body);
-            break
-        case 'stamps':
-            record = new stampsModel(req.body);
-            break
-    }
+    record=getModel(req)
     await record.save();
     res.json({state: 'success'});
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:type/:field', async (req, res) => {
     res.json(await userModel.findById(req.params.id));
 });
 

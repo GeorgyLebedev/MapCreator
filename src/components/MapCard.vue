@@ -1,15 +1,17 @@
 <template>
   <div class="cardlist d-flex flex-wrap">
     <div class="card">
-      <div class="topOptions d-flex">
-            <div class="w-50 justify-content-center align-items-center" style="border-right: gainsboro 1px solid;">
-              <img src="@/assets/images/Service/edit.png" class="c-pointer h-100 w-auto" alt="">
+      <a class="maplink" href="/MapCanvas" @mouseenter="showOpt=true" @mouseleave="showOpt=false">
+        <transition name="show-opt">
+          <div class="topOptions d-flex" v-if="showOpt">
+            <div class="w-50" style="border-right: gainsboro 1px solid;">
+              <img src="@/assets/images/Service/edit.png" class="c-pointer option"  alt="">
             </div>
             <div class="w-50" style="border-left: gainsboro 1px solid;">
-              <img src="@/assets/images/Service/delete.png" class="c-pointer h-100 w-auto"  alt="">
+              <img src="@/assets/images/Service/delete.png" class="c-pointer option"  alt="">
             </div>
-      </div>
-      <a class="maplink" href="/MapCanvas">
+          </div>
+        </transition>
         <img src="@/assets/images/plug.jpg" class="card-img-top w-100" alt="...">
         <div class="card-body py-1">
           <div class="card-text">
@@ -22,14 +24,17 @@
         </div>
       </a>
     </div>
-
   </div>
 </template>
 <script>
 export default {
   name: 'MapCard',
+  data(){
+    return{
+      showOpt: false,
+    }
+  },
   props: {
-    msg: String
   },
 }
 </script>
@@ -38,6 +43,9 @@ export default {
   width:300px;
   margin-bottom: 20px;
   margin-left: 20px;
+}
+.card:hover .topOptions{
+  visibility: visible;
 }
 .topOptions{
   background-color: white;
@@ -51,6 +59,11 @@ export default {
   border-radius: 15px;
   border: 2px solid gainsboro;
 }
+.option{
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
 .cardlist{
   margin-right: 20px
 }
@@ -62,5 +75,14 @@ export default {
 .card-img-top{
   max-height:200px;
   object-fit: cover
+}
+.show-opt-enter-active,
+.show-opt-leave-active {
+  transition: all 0.2s ease-out;
+}
+.show-opt-enter-from,
+.show-opt-leave-to {
+  opacity: 0;
+  transform: scale(0)
 }
 </style>

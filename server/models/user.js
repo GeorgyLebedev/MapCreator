@@ -12,7 +12,7 @@ const User = new Schema({
         required: true
     },
     avatar: {type: String, default: 'defaultAvatar.png'},
-    regDate: {type: Date, default: Date.now()}
+    regDate: {type: String}
 });
 
 module.exports = mongoose.model('User', User);
