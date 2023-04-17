@@ -86,18 +86,6 @@ hr {
   margin: 0 !important;
   padding: 0 !important;
 }
-.modalContainer {
-  min-width: 700px;
-  min-height: 700px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-}
 #stampsWindow {
   overflow-y: hidden;
   background-color: white;

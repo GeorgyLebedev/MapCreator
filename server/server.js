@@ -12,9 +12,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use('/server', require("./router"));
 app.use('/', express.static(path.join(__dirname, '../dist')));
-app.get('/', (req, res)=>{
+/*app.get('/', (req, res)=>{
     res.send("Home Page")
-})
+})*/
 app.listen(app.get('port'), () => {
     console.log(`[OK] Server is running on localhost:${app.get('port')}`);
 });
