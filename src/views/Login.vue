@@ -1,18 +1,30 @@
 <template>
   <div id="parentDivId">
+    <transition name="error-anim">
+      <div class="errorNotice" v-if="this.error">
+        <div class="errorHeader">
+          <b>Ошибка</b>
+          <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="20" height="20"
+               @click="this.error=''">
+        </div>
+        <div class="errorContent">
+          {{ this.error }}
+        </div>
+      </div>
+    </transition>
     <div class="login position-absolute top-50 start-50 translate-middle">
       <div class="form_radio_group d-flex mt-4 justify-content-center">
         <div class="form_radio_group-item">
-          <input id="radioSignIn" type="radio" name="radioLog" value="signIn" v-model="tab" checked>
+          <input id="radioSignIn" type="radio" name="radioLog" value="logIn" v-model="tab" checked>
           <label for="radioSignIn">Вход</label>
         </div>
         <div class="form_radio_group-item">
-          <input id="radioSignUp" type="radio" name="radioLog" value="logIn" v-model="tab">
+          <input id="radioSignUp" type="radio" name="radioLog" value="signIn" v-model="tab">
           <label for="radioSignUp">Регистрация</label>
         </div>
       </div>
       <transition name="smooth" mode="out-in">
-        <form class="loginForm" id="logIn" v-if="tab=='signIn'">
+        <form class="loginForm" id="logIn" v-if="tab=='logIn'">
           <div>
             Логин: <br>
             <input type="text" class="loginPageInput" required id="Uname" v-model="userData.username"
@@ -23,17 +35,14 @@
             <input type="password" required class="loginPageInput" id="Password" v-model="userData.password"
                    placeholder="*********">
             <div id="forgotPassword" class="">
-              <a href="">Забыли пароль?</a>
-            </div>
-            <div class="errorMsg">
-              {{ loginError }}
+              <span href="" @click="tab='forgotPassword'">Забыли пароль?</span>
             </div>
           </div>
-          <button type="button" class="buttonDark" :disabled="!this.login"
+          <button type="button" class="buttonDark" :disabled="!flags.login"
                   @click="enter(this.userData.username, this.userData.password)">Войти
           </button>
         </form>
-        <form class="loginForm" id="signIn" v-else-if="tab=='logIn'">
+        <form class="loginForm" id="signIn" v-else-if="tab=='signIn'">
           <div>
             Введите E-mail: <br>
             <input type="email" class="loginPageInput" required id="InputEmail" v-model="regData.email"
@@ -47,32 +56,71 @@
           </div>
           <div>
             Повторите пароль:<br>
-            <input type="password" required class="loginPageInput"  v-model="regData.passwordRepeat"
+            <input type="password" required class="loginPageInput" v-model="regData.passwordRepeat"
                    placeholder="*********">
           </div>
-          <div class="errorMsg">
-            {{ regError }}
-          </div>
-          <button type="button" class="buttonDark" :disabled="!this.signin" @click="registrate()">
+          <button type="button" class="buttonDark" :disabled="!flags.signin" @click="register(regData)">
             Зарегистрироваться
           </button>
         </form>
         <div v-else-if="tab=='confirm'" class="confirmForm">
           <div>
-          Введите код, отправленный на вашу электронную почту:<br>
-          <input type="text" class="loginPageInput" style="width:120px; text-align: center" v-model="regData.enteredCode">
+            Введите код, отправленный на вашу электронную почту:<br>
+            <input type="text" class="loginPageInput" style="width:120px; text-align: center"
+                   v-model="enteredCode">
           </div>
-          <div class="errorMsg">
-            {{ codeError }}
+          <div>
+            <button type="button" class="buttonLight" @click="tab='signIn'">
+              Отмена
+            </button>
+            <button type="button" class="buttonDark"
+                    :disabled="!(Number(enteredCode) && (enteredCode.length==4))"
+                    @click="()=>{
+                      if(confirmType=='register' && checkCode()){
+                        regData.verified=true
+                        this.register(regData)
+                      }
+                      if(confirmType=='resetPas' && checkCode())
+                         this.tab='newPassword'
+                    }">
+              Подтвердить
+            </button>
           </div>
+        </div>
+        <div v-else-if="tab=='forgotPassword'" class="forgotPasswordForm">
+          Введите E-mail, указанный при регистрации: <br>
+          <input type="email" class="loginPageInput" v-model="userData.emailToPasReset"
+                 placeholder="Ваш E-mail">
           <div>
             <button type="button" class="buttonLight" @click="tab='logIn'">
               Отмена
             </button>
-            <button type="button" class="buttonDark" :disabled="!(Number(regData.enteredCode) && (regData.enteredCode.length==4))"
-            @click="checkCode(regData)">
-              Подтвердить
+            <button type="button" class="buttonDark"
+                    :disabled="!flags.passwordReset" @click="resetPassword(userData.emailToPasReset)">
+              Далее
             </button>
+          </div>
+        </div>
+        <div v-else-if="tab=='newPassword'" class="forgotPasswordForm" >
+          <div>
+          Введите новый пароль:<br>
+          <small>(Минимум 8 символов)</small><br>
+          <input type="password" required class="loginPageInput" v-model="userData.newPassword"
+                 placeholder="*********">
+          </div>
+          <div>
+            Повторите пароль:<br>
+            <input type="password" required class="loginPageInput" v-model="userData.newPasswordRepeat"
+                   placeholder="*********">
+          </div>
+          <div>
+          <button type="button" class="buttonLight" @click="tab='logIn'">
+            Отмена
+          </button>
+          <button type="button" class="buttonDark"
+                  :disabled="!(userData.newPassword.length>=8 && userData.newPasswordRepeat==userData.newPassword)" @click="updateData(userData)">
+            Завершить
+          </button>
           </div>
         </div>
       </transition>
@@ -87,29 +135,139 @@ export default {
   name: 'LoginPage',
   data() {
     return {
-      tab: "signIn",
+      tab: "newPassword",
+      code: 0,
+      enteredCode: "",
+      confirmType: "",
       userData: {
         username: "",
         password: "",
+        emailToPasReset: "",
+        newPassword: "",
+        newPasswordRepeat: ""
       },
       regData: {
         email: "",
         regPassword: "",
         passwordRepeat: "",
         hashPassword: "",
-        code: 0,
-        enteredCode: "",
         verified: false
       },
-      signin: false,
-      login: false,
-      loginError: "",
-      regError: "",
-      codeError: "",
-      showCodeWin: false
+      flags: {
+        signin: false,
+        login: false,
+        passwordReset: false,
+      },
+      error: "",
     }
   },
   methods: {
+    async confirmEmail(email, src) {
+      let response
+      try {
+        response = (await axios({
+          url: "http://localhost:1111/user/confirm",
+          method: 'post',
+          data: {
+            email: email.toLowerCase(),
+            src: src
+          }
+        })).data
+      } catch (e) {
+        console.log("Ошибка сервера: " + e)
+        return
+      }
+      return response
+    },
+    async register(data) {
+      if (!data.verified) {
+        let res = await this.confirmEmail(data.email, 'register')
+        if (res.msg) {
+          this.error = res.msg
+          return
+        }
+        if (res.code) {
+          this.tab = 'confirm'
+          this.confirmType = 'register'
+          this.code = Number(res.code)
+        }
+      } else {
+        await this.sendData(data)
+        await this.enter(data.email, data.regPassword)
+      }
+    },
+    async resetPassword(email) {
+      let res = await this.confirmEmail(email, 'pasReset')
+      if (res.msg) {
+        this.error = res.msg
+        return
+      }
+      if (res.code) {
+        this.tab = 'confirm'
+        this.confirmType = 'resetPas'
+        this.code = Number(res.code)
+      }
+    },
+    async updateData(data){
+      let response
+      let newPassword = bcrypt.hashSync(data.newPassword, bcrypt.genSaltSync(12))
+      try {
+        response = (await axios({
+          url: "http://localhost:1111/user",
+          method: 'put',
+          data: {
+            password: newPassword,
+          }
+        })).data
+      } catch (e) {
+        this.error = "Ошибка сервера: " + e
+        return
+      }
+      return response
+    },
+    async sendData(data) {
+      let response
+      let now = new Date()
+      data.hashPassword = bcrypt.hashSync(data.regPassword, bcrypt.genSaltSync(12))
+      try {
+        response = (await axios({
+          url: "http://localhost:1111/user",
+          method: 'post',
+          data: {
+            email: data.email.toLowerCase(),
+            password: data.hashPassword,
+            regDate: new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(now),
+            verified: data.verified
+          }
+        })).data
+      } catch (e) {
+        this.error = "Ошибка сервера: " + e
+        return
+      }
+      return response
+    },
+    checkCode() {
+      if (this.enteredCode == this.code) {
+        this.error = ""
+        return true
+      } else {
+        this.error = "Введённый код неверен!"
+        return false
+      }
+    },
+    async enter(user, password) {
+      let query = (await axios({
+        url: "http://localhost:1111/user/",
+        method: 'get',
+        params: {
+          email: user.toLowerCase(),
+        }
+      })).data.result
+      if (query && query.length > 0 && await bcrypt.compare(password, query[0].password)) {
+        this.error = ""
+        this.$router.push({path: "/"})
+      } else this.error = "Неправильный логин или пароль!"
+    },
     checkEmail(str) {
       let re = /\S+@\S+\.\S+/;
       return re.test(str);
@@ -120,76 +278,17 @@ export default {
           data.regPassword.length >= 8 &&
           data.regPassword == data.passwordRepeat &&
           this.checkEmail(data.email)
-      ) {
-        this.signin = true
-      } else
-        this.signin = false
+      ) this.flags.signin = true
+      else this.flags.signin = false
     },
     validateLogin(data) {
       if (
           data.password &&
           data.password.length >= 8 &&
           this.checkEmail(data.username)
-      )
-        this.login = true
-      else
-        this.login = false
+      ) this.flags.login = true
+      else this.flags.login = false
     },
-    checkCode(data){
-      if(data.enteredCode==data.code){
-        this.codeError=""
-        data.verified=true
-        this.registrate()
-      }
-      else this.codeError="Введённый код неверен!"
-    },
-    async registrate() {
-      let now = new Date()
-      this.regData.hashPassword = bcrypt.hashSync(this.regData.regPassword, bcrypt.genSaltSync(12))
-      let response
-      try{
-        response = (await axios({
-          url: "http://localhost:1111/server/user",
-          method: 'post',
-          data: {
-            email: this.regData.email,
-            password: this.regData.hashPassword,
-            regDate: new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(now),
-            verified: this.regData.verified
-          }
-        })).data
-      }
-      catch (e) {
-        console.log("Ошибка в функции: "+ this.constructor.name)
-        console.log("Текст ошибки: "+ e)
-        return
-      }
-      if (response.code && Number(response.code)) {
-        this.tab = 'confirm'
-        this.regData.code=Number(response.code)
-      }
-      else if(response.msg){
-        this.regError=response.msg
-      }
-      else if (this.regData.verified){
-          await this.enter(this.regData.email, this.regData.regPassword)
-      }
-
-    },
-    async enter(user, password) {
-      let query = (await axios({
-        url: "http://localhost:1111/server/user",
-        method: 'get',
-        params: {
-          email: user,
-        }
-      })).data.result
-      if (query && query.length > 0 && await bcrypt.compare(password, query[0].password)){
-        this.loginError=""
-        this.$router.push({path:"/"})
-      }
-       else this.loginError="Неправильный логин или пароль!"
-    }
   },
   watch: {
     regData: {
@@ -200,8 +299,19 @@ export default {
     userData: {
       handler(val) {
         this.validateLogin(val)
+        this.flags.passwordReset = this.checkEmail(val.emailToPasReset)
       }, deep: true
     },
+    error: {
+      handler(val) {
+        let tmp = val
+        this.error = ""
+        this.error = tmp
+        setTimeout(() => {
+          this.error = ""
+        }, 10000)
+      }
+    }
   }
 }
 </script>
@@ -239,12 +349,6 @@ export default {
   color: white;
 }
 
-.errorMsg {
-  font-size: smaller;
-  font-weight: bolder;
-  color: maroon;
-}
-
 .login {
   transition: 1s all;
   background-color: white;
@@ -258,18 +362,14 @@ export default {
   box-shadow: 0px 0px 8px 8px rgba(35, 35, 35, 0.2);
 }
 
-.login input[type=text], .login input[type=password], .login input[type=email] {
-  max-width: 75%;
-  font-size: larger;
-}
-
-#forgotPassword a {
+#forgotPassword span {
+  cursor: pointer;
   font-size: smaller;
   color: gray;
   text-decoration: underline;
 }
 
-#forgotPassword a:hover {
+#forgotPassword span:hover {
   color: silver !important;
 }
 
@@ -281,7 +381,7 @@ export default {
   background-repeat: no-repeat;
 }
 
-.confirmForm{
+.confirmForm {
   display: flex;
   flex-direction: column;
   font-size: smaller;
@@ -290,19 +390,30 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.loginPageInput{
+
+.forgotPasswordForm {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginPageInput {
   border: 2px solid #dcdcdc;
   padding-inline: 10px;
   padding-block: 5px;
-  font-size: 18px;
+  font-size: 18pt;
   border-radius: 10px;
-  max-width: 150px;
   margin: 15px;
 }
-.loginForm{
+
+.loginForm {
   text-align: center;
-  margin-block:10px
+  margin-block: 10px
 }
+
 .smooth-enter-active,
 .smooth-leave-active {
   transition: all 0.3s ease-out;
