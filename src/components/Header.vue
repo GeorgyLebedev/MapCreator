@@ -7,15 +7,37 @@
       <li><a href="" class="nav-link px-2 link-dark">Справка</a></li>
       <li><a href="" class="nav-link px-2 link-dark">Тема</a></li>
     </ul>
+    <div>
+    <b>{{user?user.split('@',1).toString():""}}</b>
     <a href="/Login">
-      <button type="button" class="btn btn-outline-dark me-2">Вход/Регистрация</button>
+      <button type="button" class="buttonLight" @click="logOut()">Выход</button>
     </a>
+    </div>
   </header>
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: 'NavBar',
+  props:{
+    user: {
+      type: String,
+      default:""
+    }
+  },
+  methods:{
+    async logOut(){
+      localStorage.clear()
+      let response = (await axios({
+        url: "http://localhost:1111/auth/logout",
+        method: 'post',
+      })).data
+      if(!response) {
+        return
+      }
+    }
+  }
 }
 </script>
 

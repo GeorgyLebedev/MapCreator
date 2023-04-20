@@ -129,13 +129,13 @@
 </template>
 <script>
 import axios from "axios";
-
+axios.defaults.withCredentials=true
 const bcrypt = require('bcryptjs')
 export default {
   name: 'LoginPage',
   data() {
     return {
-      tab: "newPassword",
+      tab: "logIn",
       code: 0,
       enteredCode: "",
       confirmType: "",
@@ -150,7 +150,6 @@ export default {
         email: "",
         regPassword: "",
         passwordRepeat: "",
-        hashPassword: "",
         verified: false
       },
       flags: {
@@ -228,14 +227,13 @@ export default {
     async sendData(data) {
       let response
       let now = new Date()
-      data.hashPassword = bcrypt.hashSync(data.regPassword, bcrypt.genSaltSync(12))
       try {
         response = (await axios({
           url: "http://localhost:1111/user",
           method: 'post',
           data: {
             email: data.email.toLowerCase(),
-            password: data.hashPassword,
+            password: data.regPassword,
             regDate: new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(now),
             verified: data.verified
           }
@@ -255,18 +253,29 @@ export default {
         return false
       }
     },
-    async enter(user, password) {
-      let query = (await axios({
-        url: "http://localhost:1111/user/",
-        method: 'get',
-        params: {
-          email: user.toLowerCase(),
+    async enter(login, password) {
+      let response = (await axios({
+        url: "http://localhost:1111/auth/login",
+        method: 'post',
+        data: {
+          email: login.toLowerCase(),
+          password: password
         }
-      })).data.result
-      if (query && query.length > 0 && await bcrypt.compare(password, query[0].password)) {
-        this.error = ""
-        this.$router.push({path: "/"})
-      } else this.error = "Неправильный логин или пароль!"
+      })).data
+      if(!response) {
+        this.error="Сервер недоступен"
+        return
+      }
+      if( response.msg)
+        this.error = response.msg
+      else if(response.token)
+        {
+          localStorage.setItem('TOKEN', response.token)
+          localStorage.setItem("USER", response.user)
+          localStorage.setItem("USERID", response.id)
+          this.error = ""
+          this.$router.push({path: "/Main"})
+        }
     },
     checkEmail(str) {
       let re = /\S+@\S+\.\S+/;

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userModel = require('../models/user');
 const nodemailer=require('nodemailer')
+const bcrypt = require('bcryptjs')
 function getRecord(req){
     let record = new userModel(req.body)
     return record
@@ -22,7 +23,7 @@ async function sendMsg(email, subject, message){
 	    },
 	});
 	await transporter.sendMail({
-	    from: "GeorgyLebedev2001@yandex.ru", // sender address
+	    from: "GeorgyLebedev2001@yandex.ru",
 	    to: email,
 	    subject: subject, // Subject line
 	    text: `${message} ${code} \n\rПожалуйста, не отвечайте на это письмо - оно отправлено автоматически.`,
@@ -59,15 +60,11 @@ router.post('/confirm', async (req, res) => {
 //Добавление записи
 router.post('/', async (req, res) => {
     if(req.body.verified) {
+	req.body.password= bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
 	let activeRecord=getRecord(req)
 	await activeRecord.save();
 	res.json({state: 'success'});
     }
-});
-//Поиск по email
-router.get('/', async (req, res) => {
-    let query=await userModel.find({email:req.query.email})
-    res.json({result:query});
 });
 //Обновление данных
 router.put('/:id', async (req, res) => {

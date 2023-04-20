@@ -5,7 +5,11 @@ import MapCanvas from "@/views/MapCanvas"
 import NotFound from "@/views/NotFound"
 const routes = [
   {
-    path: '',
+    path: '/',
+    redirect: '/Main'
+  },
+  {
+    path: '/Main',
     name: 'Main',
     component: Main
   },
