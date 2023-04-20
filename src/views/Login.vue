@@ -130,7 +130,6 @@
 <script>
 import axios from "axios";
 axios.defaults.withCredentials=true
-const bcrypt = require('bcryptjs')
 export default {
   name: 'LoginPage',
   data() {
@@ -140,6 +139,7 @@ export default {
       enteredCode: "",
       confirmType: "",
       userData: {
+        id: null,
         username: "",
         password: "",
         emailToPasReset: "",
@@ -201,28 +201,35 @@ export default {
         this.error = res.msg
         return
       }
-      if (res.code) {
+      else {
         this.tab = 'confirm'
         this.confirmType = 'resetPas'
         this.code = Number(res.code)
+        this.userData.id=res.id
       }
     },
     async updateData(data){
       let response
-      let newPassword = bcrypt.hashSync(data.newPassword, bcrypt.genSaltSync(12))
       try {
         response = (await axios({
-          url: "http://localhost:1111/user",
+          url: `http://localhost:1111/user/${data.id}`,
           method: 'put',
           data: {
-            password: newPassword,
+            password: data.newPassword,
           }
         })).data
       } catch (e) {
         this.error = "Ошибка сервера: " + e
         return
       }
-      return response
+      try {
+        if(response)
+        await this.enter(data.emailToPasReset, data.newPassword)
+      }
+      catch (e) {
+        this.error = "Ошибка сервера: " + e
+        return
+      }
     },
     async sendData(data) {
       let response

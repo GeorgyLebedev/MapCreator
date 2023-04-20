@@ -48,12 +48,10 @@ router.post('/confirm', async (req, res) => {
 	    subject="Сброс пароля на сайте MapCreator.com"
 	    errorText="Пользователя с таким E-mail не существует!"
 	}
-	if((query && query.length > 0 && req.body.src=="pasReset") || (!(query && query.length > 0) && req.body.src=="register"))
-	    res.json({code:
-		    await sendMsg(req.body.email,
-			subject,
-			message
-		    )});
+	if((query && query.length== 1 && req.body.src=="pasReset") || (!(query && query.length > 0) && req.body.src=="register"))
+	    res.json({
+		code: await sendMsg(req.body.email, subject, message),
+	    	id:  query[0]._id});
 	else
 	    res.json({msg: errorText});
 });
@@ -66,9 +64,10 @@ router.post('/', async (req, res) => {
 	res.json({state: 'success'});
     }
 });
-//Обновление данных
+//Обновление пароля
 router.put('/:id', async (req, res) => {
-    await userModel.findByIdAndUpdate(req.params.id, req.body);
+    req.body.password=bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
+    await userModel.findByIdAndUpdate(req.params.id, {password: req.body.password});
     res.json({state: 'updated'});
 });
 
