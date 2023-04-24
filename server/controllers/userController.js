@@ -3,6 +3,7 @@ const router = express.Router();
 const userModel = require('../models/user');
 const nodemailer=require('nodemailer')
 const bcrypt = require('bcryptjs')
+const authenticateJWT=require("../authenticateJWT")
 async function sendMsg(email, subject, message){
     let code=""
     for (let i = 0; i < 4; i++) {
@@ -30,6 +31,12 @@ async function sendMsg(email, subject, message){
     }
     return code
 }
+router.get('/', authenticateJWT, async (req, res) => {
+    let query=await userModel.findById(req.user.id);
+    if(query){
+	res.json({user: query.email});
+    }
+});
 //Подтверждение пользователя
 router.post('/confirm', async (req, res) => {
 	let query=await userModel.find({email:req.body.email})
@@ -44,7 +51,7 @@ router.post('/confirm', async (req, res) => {
 	    subject="Сброс пароля на сайте MapCreator.com"
 	    errorText="Пользователя с таким E-mail не существует!"
 	}
-	if((query && query.length== 1 && req.body.src=="pasReset") || (!(query && query.length > 0) && req.body.src=="register"))
+	if((query && query.length>0 && req.body.src=="pasReset") || (!(query && query.length > 0) && req.body.src=="register"))
 	    res.json({
 		code: await sendMsg(req.body.email, subject, message),
 	    	id:  query[0]._id});

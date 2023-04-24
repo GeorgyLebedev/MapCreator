@@ -10,12 +10,12 @@ let refreshTokens = [];
 router.post('/login', async (req, res) => {
     let query=await userModel.find({email:req.body.email})
     if (query && query.length > 0 && await bcrypt.compare(req.body.password, query[0].password)) {
-	const accessToken = jwt.sign({ username: req.body.email }, accessTokenSecret , { expiresIn: '10m' });
-	const refreshToken = jwt.sign({ username:  req.body.email }, refreshTokenSecret);
+	const accessToken = jwt.sign({ id: query[0]._id }, accessTokenSecret , { expiresIn: '10m' });
+	const refreshToken = jwt.sign({ id:  query[0]._id }, refreshTokenSecret, { expiresIn: '30d' });
 	refreshTokens.push(refreshToken);
 	res.cookie('jwt', refreshToken, { httpOnly: true,
 	    sameSite: false, secure: false,
-	    maxAge: 24 * 60 * 60 * 1000 });
+	    maxAge: 30 * 24 * 60 * 60 * 1000 });
 	res.json({token: accessToken, user: query[0].email, id: query[0]._id });
     }
     else {
@@ -24,27 +24,26 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/token', (req, res) => {
-    const { token } = req.body;
+    const refToken = req.body.token;
 
-    if (!token) {
+    if (!refToken) {
 	return res.sendStatus(401);
     }
-
-    if (!refreshTokens.includes(token)) {
+/*
+    if (!refreshTokens.includes(refToken)) {
 	return res.sendStatus(403);
-    }
-
-    jwt.verify(token, refreshTokenSecret, (err, user) => {
+    }*/
+    jwt.verify(refToken, refreshTokenSecret, (err, user) => {
 	if (err) {
 	    return res.sendStatus(403);
 	}
 
-	const accessToken = jwt.sign({ username: user.username }, accessTokenSecret, { expiresIn: '20m' });
+	const accessToken = jwt.sign({ username: user.username }, accessTokenSecret, { expiresIn: '10m' });
 
 	res.json({
-	    accessToken
+	    token: accessToken
 	});
-    });
+    })
 });
 
 router.post('/logout', (req, res) => {

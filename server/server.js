@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const cors=require('cors')
 const cookieParser = require("cookie-parser");
-const aut=require('./authenticateJWT')
 const app = express();
 app.set('port', 1111)
 app.use(cors({
@@ -18,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}))
 app.use('/user', require("./controllers/userController"))
 app.use('/auth', require("./controllers/authController"))
-app.use('/map', aut, require("./controllers/mapController"))
+app.use('/map', require("./controllers/mapController"))
 app.use('/', express.static(path.join(__dirname, '../dist')))
 app.listen(app.get('port'), () => {
     console.log(`[OK] Server is running on localhost:${app.get('port')}`);

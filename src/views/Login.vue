@@ -1,17 +1,8 @@
 <template>
   <div id="parentDivId">
-    <transition name="error-anim">
-      <div class="errorNotice" v-if="this.error">
-        <div class="errorHeader">
-          <b>Ошибка</b>
-          <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="20" height="20"
-               @click="this.error=''">
-        </div>
-        <div class="errorContent">
-          {{ this.error }}
-        </div>
-      </div>
-    </transition>
+    <ErrorComponent
+    :error=this.error
+    @clearError="()=>{this.error=''}"/>
     <div class="login position-absolute top-50 start-50 translate-middle">
       <div class="form_radio_group d-flex mt-4 justify-content-center">
         <div class="form_radio_group-item">
@@ -129,9 +120,13 @@
 </template>
 <script>
 import axios from "axios";
+import ErrorComponent from '@/components/Error.vue'
 axios.defaults.withCredentials=true
 export default {
   name: 'LoginPage',
+  components:{
+    ErrorComponent
+  },
   data() {
     return {
       tab: "logIn",
@@ -278,8 +273,6 @@ export default {
       else if(response.token)
         {
           localStorage.setItem('TOKEN', response.token)
-          localStorage.setItem("USER", response.user)
-          localStorage.setItem("USERID", response.id)
           this.error = ""
           this.$router.push({path: "/Main"})
         }

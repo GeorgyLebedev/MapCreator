@@ -11,8 +11,16 @@ const User = new Schema({
         type:String,
         required: true
     },
-    avatar: {type: String, default: 'defaultAvatar.png'},
-    regDate: {type: String}
+    role:{
+        type: "String",
+        default: 'user'
+    },
+    avatar: {type: String,
+        default: 'defaultAvatar.png'
+    },
+    regDate: {type: String,
+        required: true
+    }
 });
 
 module.exports = mongoose.model('User', User);

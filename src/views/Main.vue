@@ -1,4 +1,7 @@
 <template>
+  <ErrorComponent
+      :error=this.error
+      @clearError="()=>{this.error=''}"/>
   <ModalBox :showWindow="this.showNewMapWin"
   @closeWindow="this.closeWindow"/>
   <Header :user="this.USER"/>
@@ -16,13 +19,15 @@
 import Header from '@/components/Header.vue'
 import MapCard from "@/components/MapCard";
 import ModalBox from "@/components/ModalBox";
+import ErrorComponent from "@/components/Error"
 import axios from "axios";
 export default {
   name: 'MainPage',
   data(){
     return{
       USER: null,
-      showNewMapWin: false
+      showNewMapWin: false,
+      error: ""
     }
   },
   methods:{
@@ -33,9 +38,10 @@ export default {
       if(await axios({
         url: "http://localhost:1111/user/confirm",
         method: 'get',
-        data: {
-          userid: 1,
-        }})){
+        headers:{
+          authorization: `Bearer ${localStorage.getItem('TOKEN')}`
+        }
+       })){
       alert()
       }
     }
@@ -43,16 +49,49 @@ export default {
   components: {
     Header,
     MapCard,
-    ModalBox
+    ModalBox,
+    ErrorComponent
   },
-  mounted() {
-      if(localStorage.getItem('USER')){
-        this.USER=localStorage.getItem('USER')
-      } else {
-        this.USER=null
+  async created() {
+    let response
+    try {
+      if (localStorage.getItem('TOKEN')) {
+        response = (await axios({
+          url: "http://localhost:1111/user/",
+          method: 'get',
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('TOKEN')}`
+          }
+        })).data
+        console.log(response)
+        if(response.msg) {
+          this.error=response.msg
+          this.USER = null
+          setTimeout(async ()=>{
+            localStorage.clear()
+            await axios({
+              url: "http://localhost:1111/auth/logout",
+              method: 'post',
+            })
+            this.$router.push('/Login')
+          }, 5000)
+        }
+        if(response.newToken){
+          alert(response.newToken)
+          localStorage.setItem('TOKEN',response.newToken)
+        }
+        if(response.user)
+          this.USER=response.user
+      }
+      else {
+        this.USER = null
         this.$router.push('/Login')
       }
+    }
+  catch(e){
+    this.error=e
   }
+}
 }
 </script>
 <style scoped>
