@@ -24,9 +24,11 @@
               </button>
               <div id="acBlock2" class="accordion-collapse collapse" data-bs-parent="#MenuAccordion">
                 <div class="py-0 accordion-body text-end">
-                  <a class="dropdown-item" href="#">PNG</a>
-                  <a class="dropdown-item" href="#">JPEG</a>
-                  <a class="dropdown-item" href="#">PDF</a>
+                  <a class="dropdown-item" @click="this.$emit('saveAs','png')">PNG</a>
+                  <a class="dropdown-item" @click="this.$emit('saveAs','jpg')">JPEG</a>
+                  <a class="dropdown-item" @click="this.$emit('saveAs','pdf')">PDF</a>
+                  <a class="dropdown-item" @click="this.$emit('saveAs','svg')">SVG</a>
+                  <a class="dropdown-item" @click="this.$emit('saveAs','json')">Файл с картой</a>
                 </div>
               </div>
             </div>

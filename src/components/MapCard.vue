@@ -1,9 +1,8 @@
 <template>
   <div class="cardlist d-flex flex-wrap">
-    <div class="card">
-      <a class="maplink" href="/MapCanvas" @mouseenter="showOpt=true" @mouseleave="showOpt=false">
+    <div class="map c-pointer" @click="this.$router.push('/MapCanvas')"  @mouseenter="showOpt=true" @mouseleave="showOpt=false">
         <transition name="show-opt">
-          <div class="topOptions d-flex" v-if="showOpt">
+          <div class="topOptions" v-if="showOpt">
             <div class="w-50" style="border-right: gainsboro 1px solid;">
               <img src="@/assets/images/Service/edit.png" class="c-pointer option"  alt="">
             </div>
@@ -12,17 +11,16 @@
             </div>
           </div>
         </transition>
-        <img src="@/assets/images/plug.jpg" class="card-img-top w-100" alt="...">
-        <div class="card-body py-1">
-          <div class="card-text">
-            <span class="fw-bold">Название</span><br>
-            <div class="text-end ">
+        <div class="topImgBox">
+      <img src="@/assets/images/plug.jpg" class="topImg" alt="...">
+        </div>
+          <div class="mapData">
+            <b>Название</b><br>
+            <div style="text-align: right">
               Дата создания: <br>
               Дата изменения:
             </div>
           </div>
-        </div>
-      </a>
     </div>
   </div>
 </template>
@@ -39,18 +37,34 @@ export default {
 }
 </script>
 <style scoped>
-.card{
+.map{
+  position: relative;
+  border:2px solid #dcdcdc;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
   width:300px;
+  height: 300px;
   margin-bottom: 20px;
   margin-left: 20px;
 }
-.card:hover .topOptions{
+.map:hover .topOptions{
   visibility: visible;
+}
+.mapData{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  position: absolute;
+  bottom: 0;
+  height: 30%;
+  width: 100%;
+  padding:10px
 }
 .topOptions{
   background-color: white;
   position: absolute;
-  display: block;
+  display: flex;
   max-width: 70px;
   max-height: 30px;
   object-fit: cover;
@@ -58,6 +72,15 @@ export default {
   top:10px;
   border-radius: 15px;
   border: 2px solid gainsboro;
+}
+.topImgBox{
+  width:100%;
+  height: 70%
+}
+.topImg{
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 .option{
   object-fit: contain;

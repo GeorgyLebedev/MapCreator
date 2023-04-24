@@ -3,10 +3,6 @@ const router = express.Router();
 const userModel = require('../models/user');
 const nodemailer=require('nodemailer')
 const bcrypt = require('bcryptjs')
-function getRecord(req){
-    let record = new userModel(req.body)
-    return record
-}
 async function sendMsg(email, subject, message){
     let code=""
     for (let i = 0; i < 4; i++) {
@@ -59,7 +55,7 @@ router.post('/confirm', async (req, res) => {
 router.post('/', async (req, res) => {
     if(req.body.verified) {
 	req.body.password= bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
-	let activeRecord=getRecord(req)
+	let activeRecord=new userModel(req.body)
 	await activeRecord.save();
 	res.json({state: 'success'});
     }

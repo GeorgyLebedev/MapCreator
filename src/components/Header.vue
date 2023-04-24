@@ -1,8 +1,6 @@
 <template>
   <header class="d-flex  py-2 mb-4 border-bottom justify-content-between align-items-center">
-    <a href="/">
       <img src="@/assets/images/logo.png" alt="" :height="50" class="ms-3">
-    </a>
     <ul class="nav">
       <li><a href="" class="nav-link px-2 link-dark">Справка</a></li>
       <li><a href="" class="nav-link px-2 link-dark">Тема</a></li>

@@ -4,7 +4,9 @@
       @showStampsWindow="showStampsWin"
   ></StampsWindow>
   <div class="MainContainer" @contextmenu.prevent>
-    <TopMenu/>
+    <TopMenu
+        @saveAs="exportAs"
+    />
     <Accordion/>
     <ToolsPanel
         @toolChange="setTool"
@@ -25,8 +27,14 @@
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2)">
       <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY"
               :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
-              @mouseout="toolSwitch('off')"
-              @mouseover="toolSwitch('on')"
+              @mouseout="()=>{
+                if(this.currentItem) this.currentItem.visible=false
+                toolSwitch('off')
+              }"
+              @mouseover="()=>{
+                if(this.currentItem) this.currentItem.visible=true
+                toolSwitch('on')
+              }"
       ></canvas>
     </div>
   </div>
@@ -40,7 +48,8 @@ import StampsWindow from "@/components/StampsWindow";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
-
+import { saveAs } from 'file-saver';
+const {jsPDF}=require("jspdf")
 export default {
   name: "MapCanvas",
   components: {
@@ -1015,7 +1024,39 @@ export default {
         drag = true
         this.styleCursor = "move"
       }
-    }
+    },
+    exportAs(Ext){
+      let imgData, docPDF, blob
+   /*   this.canvasObj.CSSheight=this.canvasObj.resoY
+      this.canvasObj.CSSwidth=this.canvasObj.resoX
+      this.resetCoords()*/
+      switch (Ext){
+        case 'png':
+          this.canvasObj.ref.toBlob(function(blob) {
+            saveAs(blob, "MapName.png");
+          });
+          break
+        case 'jpg':
+          this.canvasObj.ref.toBlob(function(blob) {
+            saveAs(blob, "MapName.jpg");
+          });
+          break
+        case 'pdf':
+          imgData=this.canvasObj.ref.toDataURL('image/png')
+          docPDF = new jsPDF((this.canvasObj.XtoY>1)?'l':'p', 'px', [this.canvasObj.resoX, this.canvasObj.resoY]);
+          docPDF.addImage(imgData, 'PNG', 0, 0);
+          docPDF.output('save', 'MapName.pdf');
+          break
+        case 'json':
+          blob = new Blob([paper.project.exportJSON()], {type: "application/json"});
+          saveAs(blob, "MapName.json");
+          break
+        case 'svg':
+          blob = new Blob([paper.project.exportSVG()]);
+          saveAs(blob, "MapName.svg");
+      }
+      //this.setDefaultSizes()
+    },
   },
   mounted() {
     this.canvasObj.ref = document.getElementById("map")
@@ -1035,6 +1076,12 @@ export default {
     paper.view.center = new paper.Point(0, 0)
     this.setDefaultSizes()
     this.activeLayer = paper.project.activeLayer
+    let background= new paper.Path.Rectangle({
+      point: new paper.Point(-this.canvasObj.CSSwidth/2,-this.canvasObj.CSSheight/2),
+      size: paper.view.viewSize,
+      fillColor: "white",
+    })
+    background.sendToBack()
     //------BRUSH------------------------
     this.brushOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
     this.brushOpt.cursor.name = "cursor"
