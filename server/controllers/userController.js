@@ -34,7 +34,12 @@ async function sendMsg(email, subject, message){
 router.get('/', authenticateJWT, async (req, res) => {
     let query=await userModel.findById(req.user.id);
     if(query){
-	res.json({user: query.email});
+	res.json({
+	    user: {
+	        id: req.user.id,
+	        login: query.email,
+	    }
+	});
     }
 });
 //Подтверждение пользователя

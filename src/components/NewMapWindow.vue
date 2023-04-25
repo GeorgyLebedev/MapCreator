@@ -73,13 +73,13 @@
 </template>
 <script>
 export default {
-  name: 'ModalBox',
+  name: 'NewMapWindow',
   data(){
   return{
     mapData:{
       name: "",
       resX: 1280,
-      resY: 720
+      resY: 720,
     },
     res:"hd",
     orient:"hor"
@@ -93,8 +93,7 @@ export default {
   },
   methods:{
     createCanvas(){
-        Object.assign(this.$store.state,this.mapData)
-        this.$router.push({ path: 'MapCanvas' })
+      this.$emit('newMap',this.mapData.name, (this.mapData.resX+"x"+this.mapData.resY))
     }
   },
   watch:{
@@ -128,7 +127,7 @@ export default {
       temp=this.mapData.resX
       this.mapData.resX=this.mapData.resY
       this.mapData.resY=temp
-    }
+    },
   }
 }
 

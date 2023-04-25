@@ -2,11 +2,15 @@
   <ErrorComponent
       :error=this.error
       @clearError="()=>{this.error=''}"/>
-  <ModalBox :showWindow="this.showNewMapWin"
-  @closeWindow="this.closeWindow"/>
-  <Header :user="this.USER"/>
+  <NewMapWindow :showWindow="showNewMapWin"
+                @closeWindow="closeWindow"
+  @newMap="addNewMap"/>
+  <Header :user="this.currentUser.login"/>
   <div class="d-flex flex-wrap">
-  <MapCard/>
+    <MapCard v-for="map in this.mapList" :key="map._id"
+    :change-date="map.changeDate"
+    :creation-date="map.creationDate"
+    :map-name="map.title" />
     <div class="map">
       <div class="newMap" id="newMapCard" @click="this.showNewMapWin=true">
         <img src="@/assets/images/new.png" :width="70">
@@ -18,98 +22,112 @@
 <script>
 import Header from '@/components/Header.vue'
 import MapCard from "@/components/MapCard";
-import ModalBox from "@/components/ModalBox";
+import NewMapWindow from "@/components/NewMapWindow";
 import ErrorComponent from "@/components/Error"
-import axios from "axios";
+import AxiosRequest from "@/components/Logic/axiosController";
+/*const Map=require("../models/map")*/
 export default {
   name: 'MainPage',
-  data(){
-    return{
-      USER: null,
+  data() {
+    return {
+      currentUser: {
+        login: ""
+      },
       showNewMapWin: false,
-      error: ""
+      error: "",
+      mapList: [],
     }
   },
-  methods:{
-    closeWindow(){
-      this.showNewMapWin=false
+  methods: {
+    closeWindow() {
+      this.showNewMapWin = false
     },
-    async getMaps(){
-      if(await axios({
-        url: "http://localhost:1111/user/confirm",
-        method: 'get',
-        headers:{
-          authorization: `Bearer ${localStorage.getItem('TOKEN')}`
+    async logOut() {
+      localStorage.clear()
+      try {
+        await new AxiosRequest('/auth/logout', 'post').sendRequest()
+        this.currentUser = null
+        this.$router.push('/Login')
+      } catch (e) {
+        this.error = e
+      }
+    },
+    async addNewMap(title, resolution) {
+      let map, request
+      try {
+        map = {
+          author: this.currentUser.id,
+          title: title,
+          creationDate: new Date(),
+          changeDate: new Date(),
+          description: "",
+          resolution: resolution,
+          objects:{},
         }
-       })){
-      alert()
+        request=new AxiosRequest('map/','post',map)
+        await request.sendRequest()
+        await this.getMaps()
+      } catch (e) {
+        this.error = e
+      }
+    },
+    async getUser() {
+      let response, request
+      try {
+        request=new AxiosRequest('user/','get')
+        response=await request.sendRequest()
+        if (response.user) this.currentUser = response.user
+        if (response.msg) {
+          this.error = response.msg
+          setTimeout(this.logOut, 5000)
+        }
+      } catch (e) {
+        this.error = e
+      }
+    },
+    async getMaps() {
+      let response, request
+      try {
+        request=new AxiosRequest('map/','get')
+        response = await request.sendRequest()
+        if (response.maps)
+          this.mapList = response.maps
+      } catch (e) {
+        this.error = e
       }
     }
   },
   components: {
     Header,
     MapCard,
-    ModalBox,
+    NewMapWindow,
     ErrorComponent
   },
   async created() {
-    let response
-    try {
-      if (localStorage.getItem('TOKEN')) {
-        response = (await axios({
-          url: "http://localhost:1111/user/",
-          method: 'get',
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('TOKEN')}`
-          }
-        })).data
-        console.log(response)
-        if(response.msg) {
-          this.error=response.msg
-          this.USER = null
-          setTimeout(async ()=>{
-            localStorage.clear()
-            await axios({
-              url: "http://localhost:1111/auth/logout",
-              method: 'post',
-            })
-            this.$router.push('/Login')
-          }, 5000)
-        }
-        if(response.newToken){
-          alert(response.newToken)
-          localStorage.setItem('TOKEN',response.newToken)
-        }
-        if(response.user)
-          this.USER=response.user
-      }
-      else {
-        this.USER = null
-        this.$router.push('/Login')
-      }
-    }
-  catch(e){
-    this.error=e
+    if (!localStorage.getItem('TOKEN')) await this.logOut()
+    await this.getUser()
+    await this.getMaps()
   }
-}
 }
 </script>
 <style scoped>
-#newMapCard{
+#newMapCard {
   cursor: pointer;
 }
-.map{
-  border:2px solid #dcdcdc;
+
+.map {
+  border: 2px solid #dcdcdc;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width:300px;
+  width: 300px;
   height: 300px;
   margin-bottom: 20px;
   margin-left: 20px;
 }
-.newMap{
+
+.newMap {
   display: flex;
   flex-direction: column;
   justify-items: center;

@@ -15,10 +15,14 @@
       <img src="@/assets/images/plug.jpg" class="topImg" alt="...">
         </div>
           <div class="mapData">
-            <b>Название</b><br>
+            <div style="padding-block: 5px"><b>{{ mapName }}</b></div>
             <div style="text-align: right">
-              Дата создания: <br>
-              Дата изменения:
+              <div>
+              Создана: {{new Date(creationDate).toLocaleString().slice(0,-3)}}
+              </div>
+              <div>
+              Изменена: {{new Date(changeDate).toLocaleString().slice(0,-3)}}
+              </div>
             </div>
           </div>
     </div>
@@ -33,6 +37,18 @@ export default {
     }
   },
   props: {
+    mapName:{
+      type: String,
+      required: true
+    },
+    creationDate: {
+      type:String,
+      required: true
+    },
+    changeDate: {
+      type: String,
+      required: true
+    },
   },
 }
 </script>
@@ -51,6 +67,11 @@ export default {
 .map:hover .topOptions{
   visibility: visible;
 }
+.map:hover{
+  -webkit-box-shadow: 0px 0px 5px 3px rgba(35, 35, 35, 0.15);
+  -moz-box-shadow: 0px 0px 5px 3px rgba(35, 35, 35, 0.15);
+  box-shadow: 0px 0px 5px 3px rgba(35, 35, 35, 0.15);
+}
 .mapData{
   overflow: hidden;
   white-space: nowrap;
@@ -59,7 +80,7 @@ export default {
   bottom: 0;
   height: 30%;
   width: 100%;
-  padding:10px
+  padding-inline:10px
 }
 .topOptions{
   background-color: white;
@@ -89,15 +110,6 @@ export default {
 }
 .cardlist{
   margin-right: 20px
-}
-.card:hover{
-  -webkit-box-shadow: 0px 0px 5px 3px rgba(35, 35, 35, 0.15);
-  -moz-box-shadow: 0px 0px 5px 3px rgba(35, 35, 35, 0.15);
-  box-shadow: 0px 0px 5px 3px rgba(35, 35, 35, 0.15);
-}
-.card-img-top{
-  max-height:200px;
-  object-fit: cover
 }
 .show-opt-enter-active,
 .show-opt-leave-active {

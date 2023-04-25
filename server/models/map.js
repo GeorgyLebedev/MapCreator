@@ -3,14 +3,37 @@ const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId
 const Map = new Schema({
     id: ObjectId,
-    userId: String,
-    creationDate: Date,
-    changeDate: Date,
-    title: String,
-    description: String,
-    author: String,
-    resolution: String,
-    smallPicture: String
+    author: {
+        type:String,
+        required: true
+    },
+    title: {
+        type:String,
+        required: true
+    },
+    creationDate: {
+        type:Date,
+        required: true
+    },
+    changeDate: {
+        type: Date,
+        required: true
+    },
+    description: {
+        type: String,
+        default: ""
+    },
+    resolution: {
+        type: String,
+        required: true
+    },
+    smallPicture: {
+        type: String
+    },
+    objects: {
+        type:{},
+        required:true
+    }
 });
 
 module.exports = mongoose.model('Map', Map);
