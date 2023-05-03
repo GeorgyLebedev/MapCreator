@@ -37,13 +37,13 @@
             <div v-if="res=='yours'">
               <div class="resOptShell">
                 <img src="@/assets/images/NewMap/width.png" >
-                Ширина холста:<br>
+                Ширина холста: <small>(не менее 200 и не более 5000)</small><br>
                 <input  type="text" class="resOptInput" maxlength="4" placeholder="В пикселях"
                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resX">
               </div>
               <div class="resOptShell">
                 <img src="@/assets/images/NewMap/height.png" >
-                Высота холста: <br>
+                Высота холста: <small>(не менее 200 и не более 5000)</small> <br>
                 <input  type="text" class="resOptInput" maxlength="4" placeholder="В пикселях"
                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resY">
               </div>
@@ -61,11 +61,12 @@
             </div>
           </div>
           <div class="modalFooter">
-            <button type="button" class="buttonLight">Закрыть</button>
+            <button type="button" class="buttonLight" @click="this.$emit('closeWindow')">Закрыть</button>
             <button type="button"
                 class="buttonDark"
                 @click="createCanvas"
-                :disabled="mapData.name.length<6 ||(res=='yours' && !(mapData.resX && mapData.resY))">Создать</button>
+                :disabled="mapData.name.length<6 ||
+                (res=='yours' && (mapData.resX<200 || mapData.resX>5000 || mapData.resY<200 || mapData.resY>5000))">Создать</button>
           </div>
         </div>
     </div>
@@ -136,51 +137,12 @@ export default {
 input{
   outline: none
 }
-.modalContainer {
-  min-width: 800px;
-  min-height: 750px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-  overflow-y: scroll;
-}
-.modalWindow{
-  position: relative;
-  background-color: white;
-  width: 800px;
-  height: 750px;
-  border-radius: 15px;
-}
-.modalHeader {
-  display: flex;
-  font-size: large;
-  justify-content: space-between;
-  padding: 10px 10px 0 10px;
-  width: 100%
-}
-.modalBody {
-  width: 100%;
-  padding-inline: 15px
-}
-.modalFooter{
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-}
 .mapNameInput{
   display: table-cell;
   width: 100%;
   font-size: 20px;
   border-radius: 10px;
-  margin-block: 15px;
+  margin-block: 10px;
   padding-inline: 10px;
   padding-block: 5px;
   border: 2px solid #dcdcdc;
@@ -227,14 +189,5 @@ input{
 }
 .selected >img{
   filter: invert(1);
-}
-.popup-anim-enter-active,
-.popup-anim-leave-active {
-  transition: all 0.25s ease-out;
-}
-
-.popup-anim-enter-from,
-.popup-anim-leave-to {
-  opacity: 0;
 }
 </style>

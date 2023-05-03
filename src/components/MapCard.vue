@@ -1,16 +1,17 @@
 <template>
   <div class="cardlist d-flex flex-wrap">
     <div class="map c-pointer" @click="this.$router.push('/MapCanvas')"  @mouseenter="showOpt=true" @mouseleave="showOpt=false">
-        <transition name="show-opt">
-          <div class="topOptions" v-if="showOpt">
-            <div class="w-50" style="border-right: gainsboro 1px solid;">
-              <img src="@/assets/images/Service/edit.png" class="c-pointer option"  alt="">
-            </div>
-            <div class="w-50" style="border-left: gainsboro 1px solid;">
-              <img src="@/assets/images/Service/delete.png" class="c-pointer option"  alt="">
-            </div>
+      <transition name="show-opt">
+        <div class="topOptions" v-if="showOpt">
+          <div class="w-50" style="border-right: gainsboro 1px solid;" @mousedown="this.$emit('showWindow')">
+            <img src="@/assets/images/Service/edit.png" class="c-pointer option"
+                 alt="">
           </div>
-        </transition>
+          <div class="w-50" style="border-left: gainsboro 1px solid;">
+            <img src="@/assets/images/Service/delete.png" class="c-pointer option" alt="">
+          </div>
+        </div>
+      </transition>
         <div class="topImgBox">
       <img src="@/assets/images/plug.jpg" class="topImg" alt="...">
         </div>
@@ -49,6 +50,10 @@ export default {
       type: String,
       required: true
     },
+    showEditMapWin:{
+      type: Boolean,
+      default: false
+    }
   },
 }
 </script>

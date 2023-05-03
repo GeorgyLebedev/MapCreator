@@ -3,14 +3,19 @@
       :error=this.error
       @clearError="()=>{this.error=''}"/>
   <NewMapWindow :showWindow="showNewMapWin"
-                @closeWindow="closeWindow"
-  @newMap="addNewMap"/>
+                @closeWindow="()=>{this.showNewMapWin = false}"
+                @newMap="addNewMap"/>
+  <MapEditWindow
+      :show-window="showEditMapWin"
+      @closeWindow="()=>{this.showEditMapWin = false}"
+  />
   <Header :user="this.currentUser.login"/>
   <div class="d-flex flex-wrap">
     <MapCard v-for="map in this.mapList" :key="map._id"
-    :change-date="map.changeDate"
-    :creation-date="map.creationDate"
-    :map-name="map.title" />
+             :change-date="map.changeDate"
+             :creation-date="map.creationDate"
+             :map-name="map.title"
+             @showWindow="()=>{this.showEditMapWin = true}"/>
     <div class="map">
       <div class="newMap" id="newMapCard" @click="this.showNewMapWin=true">
         <img src="@/assets/images/new.png" :width="70">
@@ -23,6 +28,7 @@
 import Header from '@/components/Header.vue'
 import MapCard from "@/components/MapCard";
 import NewMapWindow from "@/components/NewMapWindow";
+import MapEditWindow from "@/components/MapEditWindow";
 import ErrorComponent from "@/components/Error"
 import AxiosRequest from "@/components/Logic/axiosController";
 /*const Map=require("../models/map")*/
@@ -34,14 +40,12 @@ export default {
         login: ""
       },
       showNewMapWin: false,
+      showEditMapWin: false,
       error: "",
       mapList: [],
     }
   },
   methods: {
-    closeWindow() {
-      this.showNewMapWin = false
-    },
     async logOut() {
       localStorage.clear()
       try {
@@ -62,9 +66,9 @@ export default {
           changeDate: new Date(),
           description: "",
           resolution: resolution,
-          objects:{},
+          objects: {},
         }
-        request=new AxiosRequest('map/','post',map)
+        request = new AxiosRequest('map/', 'post', map)
         await request.sendRequest()
         await this.getMaps()
       } catch (e) {
@@ -74,8 +78,8 @@ export default {
     async getUser() {
       let response, request
       try {
-        request=new AxiosRequest('user/','get')
-        response=await request.sendRequest()
+        request = new AxiosRequest('user/', 'get')
+        response = await request.sendRequest()
         if (response.user) this.currentUser = response.user
         if (response.msg) {
           this.error = response.msg
@@ -88,7 +92,7 @@ export default {
     async getMaps() {
       let response, request
       try {
-        request=new AxiosRequest('map/','get')
+        request = new AxiosRequest('map/', 'get')
         response = await request.sendRequest()
         if (response.maps)
           this.mapList = response.maps
@@ -101,6 +105,7 @@ export default {
     Header,
     MapCard,
     NewMapWindow,
+    MapEditWindow,
     ErrorComponent
   },
   async created() {

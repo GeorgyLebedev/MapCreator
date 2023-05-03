@@ -15,10 +15,12 @@ const User = new Schema({
         type: "String",
         default: 'user'
     },
-    avatar: {type: String,
+    avatar: {
+        type: String,
         default: 'defaultAvatar.png'
     },
-    regDate: {type: String,
+    regDate: {
+        type: Date,
         required: true
     }
 });

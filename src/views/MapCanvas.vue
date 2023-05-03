@@ -179,7 +179,7 @@ export default {
           break
       }
       if (mode == "+" || mode == "-") {
-        canvasPoint.x = event.pageX - cObj.offsetLeft // старые координаты курсора на холсте
+        canvasPoint.x = event.pageX - cObj.offsetLeft
         canvasPoint.y = event.pageY - cObj.offsetTop
         newX = canvasPoint.x - canvasPoint.x * ((scale + step) / scale)
         newY = canvasPoint.y - canvasPoint.y * ((scale + step) / scale)
@@ -460,7 +460,7 @@ export default {
           item.rotation = options.rotation
           break
         case "stamp":
-          item.source=require('../assets/images/Stamps/' + item.data.set + '/' + item.data.stamp)
+          item.source=require('../assets/Stamps/' + item.data.set + '/' + item.data.stamp)
               item.size=options.size
 
       }
@@ -468,7 +468,7 @@ export default {
     reRender(item, size) {
       this.removeSelect()
       let newItem = new paper.Raster({
-        source: require('../assets/images/Stamps/' + item.data.set + '/' + item.data.stamp),
+        source: require('../assets/Stamps/' + item.data.set + '/' + item.data.stamp),
         position: item.position,
         size: size,
         opacity: item.opacity,
@@ -585,7 +585,7 @@ export default {
         if (this.currentItem)
           this.currentItem.remove()
         this.currentItem = new paper.Raster({
-          source: require('../assets/images/Stamps/' + options.currentSet + '/' + options.currentStamp),
+          source: require('../assets/Stamps/' + options.currentSet + '/' + options.currentStamp),
           position: event.point,
           size: options.size,
           opacity: options.opacity,

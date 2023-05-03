@@ -18,12 +18,12 @@
         <form class="loginForm" id="logIn" v-if="tab=='logIn'">
           <div>
             Логин: <br>
-            <input type="text" class="loginPageInput" required id="Uname" v-model="userData.username"
+            <input type="email" class="loginPageInput" required  ref="enterEmail" v-model="userData.username"
                    placeholder="Ваш логин">
           </div>
           <div>
             Пароль:<br>
-            <input type="password" required class="loginPageInput" id="Password" v-model="userData.password"
+            <input type="password" required class="loginPageInput" v-model="userData.password"
                    placeholder="*********">
             <div id="forgotPassword" class="">
               <span href="" @click="tab='forgotPassword'">Забыли пароль?</span>
@@ -36,7 +36,7 @@
         <form class="loginForm" id="signIn" v-else-if="tab=='signIn'">
           <div>
             Введите E-mail: <br>
-            <input type="email" class="loginPageInput" required id="InputEmail" v-model="regData.email"
+            <input type="email" class="loginPageInput" required ref="regEmail" v-model="regData.email"
                    placeholder="Ваш E-mail">
           </div>
           <div>
@@ -80,7 +80,7 @@
         </div>
         <div v-else-if="tab=='forgotPassword'" class="forgotPasswordForm">
           Введите E-mail, указанный при регистрации: <br>
-          <input type="email" class="loginPageInput" v-model="userData.emailToPasReset"
+          <input type="email" class="loginPageInput" ref="resetEmail" v-model="userData.emailToPasReset"
                  placeholder="Ваш E-mail">
           <div>
             <button type="button" class="buttonLight" @click="tab='logIn'">
@@ -228,7 +228,6 @@ export default {
     },
     async sendData(data) {
       let response
-      let now = new Date()
       try {
         response = (await axios({
           url: "http://localhost:1111/user",
@@ -236,7 +235,7 @@ export default {
           data: {
             email: data.email.toLowerCase(),
             password: data.regPassword,
-            regDate: new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(now),
+            regDate: new Date(),
             verified: data.verified
           }
         })).data
@@ -277,16 +276,12 @@ export default {
           this.$router.push({path: "/Main"})
         }
     },
-    checkEmail(str) {
-      let re = /\S+@\S+\.\S+/;
-      return re.test(str);
-    },
     validateSignin(data) {
       if (
           data.regPassword &&
           data.regPassword.length >= 8 &&
           data.regPassword == data.passwordRepeat &&
-          this.checkEmail(data.email)
+          this.$refs.regEmail.validity.valid
       ) this.flags.signin = true
       else this.flags.signin = false
     },
@@ -294,7 +289,7 @@ export default {
       if (
           data.password &&
           data.password.length >= 8 &&
-          this.checkEmail(data.username)
+          this.$refs.enterEmail.validity.valid
       ) this.flags.login = true
       else this.flags.login = false
     },
@@ -308,7 +303,8 @@ export default {
     userData: {
       handler(val) {
         this.validateLogin(val)
-        this.flags.passwordReset = this.checkEmail(val.emailToPasReset)
+        if(this.emailToPasReset)
+        this.flags.passwordReset = this.$refs.resetEmail.validity.valid
       }, deep: true
     },
     error: {
