@@ -15,7 +15,7 @@
         </div>
         <div class="modalFooter">
           <button type="button" class="buttonLight" @click="this.$emit('closeWindow')">Отмена</button>
-          <button type="button" class="buttonDark">Завершить</button>
+          <button type="button" class="buttonDark" :disabled="!(name.length>=6)" @click="this.$emit('updateMapMetadata')">Завершить</button>
         </div>
       </div>
     </div>
@@ -53,6 +53,16 @@ export default {
     mapDesc: {
       handler(val) {
         this.description = val
+      }
+    },
+    name:{
+      handler(val){
+        this.$emit('updateName',val)
+      }
+    },
+    description:{
+      handler(val){
+        this.$emit('updateDesc',val)
       }
     }
   }

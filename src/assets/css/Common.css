@@ -148,3 +148,15 @@ html {
 .popup-anim-leave-to {
     opacity: 0;
 }
+
+.mapNameInput{
+    outline: none;
+    display: table-cell;
+    width: 100%;
+    font-size: 20px;
+    border-radius: 10px;
+    margin-block: 10px;
+    padding-inline: 10px;
+    padding-block: 5px;
+    border: 2px solid #dcdcdc;
+}

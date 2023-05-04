@@ -134,19 +134,6 @@ export default {
 
 </script>
 <style>
-input{
-  outline: none
-}
-.mapNameInput{
-  display: table-cell;
-  width: 100%;
-  font-size: 20px;
-  border-radius: 10px;
-  margin-block: 10px;
-  padding-inline: 10px;
-  padding-block: 5px;
-  border: 2px solid #dcdcdc;
-}
 .resOptInput{
   border: 2px solid #dcdcdc;
   padding-inline: 10px;

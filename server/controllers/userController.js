@@ -24,7 +24,7 @@ async function sendMsg(email, subject, message){
 	await transporter.sendMail({
 	    from: "GeorgyLebedev2001@yandex.ru",
 	    to: email,
-	    subject: subject, // Subject line
+	    subject: subject,
 	    text: `${message} ${code} \n\rПожалуйста, не отвечайте на это письмо - оно отправлено автоматически.`,
 	});
     }
@@ -40,6 +40,7 @@ router.get('/', authenticateJWT, async (req, res) => {
 	    user: {
 	        id: req.user.id,
 	        login: query.email,
+		avatar: query.avatar,
 	    }
 	});
     }
@@ -76,6 +77,8 @@ router.post('/', async (req, res) => {
 	    let dirPath=path.join(__dirname,'../users/')
 	    fs.mkdirSync(`${dirPath}/${query[0]._id}`)
 	    fs.mkdirSync(`${dirPath}/${query[0]._id}/stamps`)
+	    fs.mkdirSync(`${dirPath}/${query[0]._id}/data`)
+	    fs.mkdirSync(`${dirPath}/${query[0]._id}/maps`)
 	    res.json({status: "success"})
 	}
 	catch (e) {

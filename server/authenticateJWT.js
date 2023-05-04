@@ -11,7 +11,6 @@ const authenticateJWT = (req, res, next) => {
 		req.user={}
 		req.user.id = decoded.id;
 		next();
-
 	    }
 	    else if(err.name=="TokenExpiredError"){
 	        try {

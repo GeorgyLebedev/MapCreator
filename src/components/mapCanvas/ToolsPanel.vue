@@ -121,7 +121,7 @@
               <div class="stampsContainer d-flex mb-2">
                 <div class="bigStampContainer">
                 <div class="bigStamp interactive">
-                  <img :src="require('../assets/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp)" alt="">
+                  <img :src="require('@/assets/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp)" alt="">
                 </div>
                 <div class="switch d-flex justify-content-between">
                   <img src="@/assets/images/leftArrow.png" class="interactive" height="20">
@@ -131,7 +131,7 @@
                 </div>
                 <div class="stampsTable ms-1 d-flex flex-wrap">
                   <div class="smallStamp mb-1 me-1 interactive" v-for="i in 8" :key="i">
-                    <img :src="require('../assets/Stamps/'+ stampOpt.currentSet + '/' + stampOpt.currentStamp)" alt="" >
+                    <img :src="require('@/assets/Stamps/'+ stampOpt.currentSet + '/' + stampOpt.currentStamp)" alt="" >
                   </div>
                 </div>
               </div>

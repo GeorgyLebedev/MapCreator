@@ -55,7 +55,7 @@
         </div>
 
         <button type="button" class="btn btn-outline-dark px-1 py-0 ms-1" data-bs-toggle="tooltip" data-bs-placement="bottom"  title="На шаг назад">
-          <img src="@/assets/images/undo.png" class="hoverinv"  alt="" style="height: 15px;">
+          <img src="@/assets/images/undo.png" class="hoverinv" alt="" style="height: 15px;">
         </button>
         <button type="button" class="btn btn-outline-dark px-1 py-0 ms-1" data-bs-toggle="tooltip" data-bs-placement="bottom"  title="На шаг вперёд">
           <img src="@/assets/images/redo.png" class="hoverinv" alt="" style="height: 15px; ">

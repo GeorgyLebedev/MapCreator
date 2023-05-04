@@ -40,11 +40,11 @@
   </div>
 </template>
 <script>
-import TopMenu from "@/components/TopMenu.vue"
-import Accordion from "@/components/Accordion";
-import BotMenu from "@/components/BotMenu";
-import ToolsPanel from "@/components/ToolsPanel";
-import StampsWindow from "@/components/StampsWindow";
+import TopMenu from "@/components/mapCanvas/TopMenu.vue"
+import Accordion from "@/components/mapCanvas/Accordion";
+import BotMenu from "@/components/mapCanvas/BotMenu";
+import ToolsPanel from "@/components/mapCanvas/ToolsPanel";
+import StampsWindow from "@/components/mapCanvas/StampsWindow";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"

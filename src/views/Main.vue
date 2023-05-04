@@ -6,16 +6,30 @@
                 @closeWindow="()=>{this.showNewMapWin = false}"
                 @newMap="addNewMap"/>
   <MapEditWindow
+      :map-name="this.selectedMap.title"
+      :map-desc="this.selectedMap.description"
       :show-window="showEditMapWin"
       @closeWindow="()=>{this.showEditMapWin = false}"
+      @updateName="(val)=>{this.selectedMap.title=val}"
+      @updateDesc="(val)=>{this.selectedMap.description=val}"
+      @updateMapMetadata="updateMapMetadata(this.selectedMap)"
   />
-  <Header :user="this.currentUser.login"/>
+  <MapDeleteWindow
+      :map-name="this.selectedMap.title"
+      :show-window="showDelMapWin"
+      @closeWindow="()=>{this.showDelMapWin = false}"
+      @deleteMap="deleteMap(this.selectedMap)"
+  />
+  <Header :user="this.currentUser"/>
   <div class="d-flex flex-wrap">
     <MapCard v-for="map in this.mapList" :key="map._id"
-             :change-date="map.changeDate"
-             :creation-date="map.creationDate"
-             :map-name="map.title"
-             @showWindow="()=>{this.showEditMapWin = true}"/>
+             :map="map"
+             @showEditMapWin="()=>{
+               this.selectedMap=map
+               this.showEditMapWin = true}"
+             @showDelMapWin="()=>{
+               this.selectedMap=map
+               this.showDelMapWin = true}"/>
     <div class="map">
       <div class="newMap" id="newMapCard" @click="this.showNewMapWin=true">
         <img src="@/assets/images/new.png" :width="70">
@@ -25,13 +39,13 @@
   </div>
 </template>
 <script>
-import Header from '@/components/Header.vue'
-import MapCard from "@/components/MapCard";
-import NewMapWindow from "@/components/NewMapWindow";
+import Header from '@/components/main/Header.vue'
+import MapCard from "@/components/main/MapCard";
+import NewMapWindow from "@/components/main/NewMapWindow";
 import MapEditWindow from "@/components/MapEditWindow";
+import MapDeleteWindow from "@/components/main/MapDeleteWindow";
 import ErrorComponent from "@/components/Error"
 import AxiosRequest from "@/services/axiosController";
-/*const Map=require("../models/map")*/
 export default {
   name: 'MainPage',
   data() {
@@ -39,8 +53,10 @@ export default {
       currentUser: {
         login: ""
       },
+      selectedMap: {},
       showNewMapWin: false,
       showEditMapWin: false,
+      showDelMapWin: false,
       error: "",
       mapList: [],
     }
@@ -99,6 +115,31 @@ export default {
       } catch (e) {
         this.error = e
       }
+    },
+    async deleteMap(map){
+      let request
+      try{
+        request=new AxiosRequest(`map/${map._id}`, "delete")
+        await request.sendRequest()
+        map={}
+        await this.getMaps()
+        this.showDelMapWin=false
+      }
+      catch (e) {
+        this.error = e
+      }
+    },
+    async updateMapMetadata(map){
+      let request
+      try{
+        request=new AxiosRequest(`map/${map._id}`, "put", {title:map.title, description:map.description})
+        await request.sendRequest()
+        await this.getMaps()
+        this.showEditMapWin=false
+      }
+      catch (e){
+        this.error=e
+      }
     }
   },
   components: {
@@ -106,6 +147,7 @@ export default {
     MapCard,
     NewMapWindow,
     MapEditWindow,
+    MapDeleteWindow,
     ErrorComponent
   },
   async created() {

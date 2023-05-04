@@ -119,9 +119,8 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import AxiosRequest from "@/services/axiosController";
 import ErrorComponent from '@/components/Error.vue'
-axios.defaults.withCredentials=true
 export default {
   name: 'LoginPage',
   components:{
@@ -157,16 +156,10 @@ export default {
   },
   methods: {
     async confirmEmail(email, src) {
-      let response
+      let request, response
       try {
-        response = (await axios({
-          url: "http://localhost:1111/user/confirm",
-          method: 'post',
-          data: {
-            email: email.toLowerCase(),
-            src: src
-          }
-        })).data
+        request = await new AxiosRequest("confirm","post",{email: email.toLowerCase(),src: src})
+        response=await request.sendRequest()
       } catch (e) {
         console.log("Ошибка сервера: " + e)
         return
@@ -204,15 +197,10 @@ export default {
       }
     },
     async updatePassword(data){
-      let response
+      let request, response
       try {
-        response = (await axios({
-          url: `http://localhost:1111/user/${data.id}`,
-          method: 'put',
-          data: {
-            password: data.newPassword,
-          }
-        })).data
+        request = await new AxiosRequest(`user/${data.id}`, "put", {password:data.newPassword})
+        response= await request.sendRequest()
       } catch (e) {
         this.error = "Ошибка сервера: " + e
         return
@@ -227,18 +215,15 @@ export default {
       }
     },
     async sendNewUserData(data) {
-      let response
+      let request,response
       try {
-        response = (await axios({
-          url: "http://localhost:1111/user",
-          method: 'post',
-          data: {
-            email: data.email.toLowerCase(),
-            password: data.regPassword,
-            regDate: new Date(),
-            verified: data.verified
-          }
-        })).data
+        request = await new AxiosRequest("user", "post",
+            {
+          email: data.email.toLowerCase(),
+          password: data.regPassword,
+          regDate: new Date(),
+          verified: data.verified })
+        response=await request.sendRequest()
         if(response.msg)
           this.error = "Ошибка сервера: " + response.msg
         else console.log(response)
@@ -258,14 +243,12 @@ export default {
       }
     },
     async enter(login, password) {
-      let response = (await axios({
-        url: "http://localhost:1111/auth/login",
-        method: 'post',
-        data: {
-          email: login.toLowerCase(),
-          password: password
-        }
-      })).data
+      let request,response
+      request = await new AxiosRequest("auth/login", "post",{
+        email: login.toLowerCase(),
+        password: password
+      })
+      response = await request.sendRequest()
       if(!response) {
         this.error="Сервер недоступен"
         return

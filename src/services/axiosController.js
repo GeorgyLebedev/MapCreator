@@ -1,4 +1,5 @@
 import axios from "axios";
+axios.defaults.withCredentials=true
 export default class AxiosRequest {
     baseURL="http://localhost:1111/"
     constructor(url, method, data={}, authHeader=`Bearer ${localStorage.getItem('TOKEN')}`) {
