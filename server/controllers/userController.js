@@ -4,6 +4,8 @@ const userModel = require('../models/user');
 const nodemailer=require('nodemailer')
 const bcrypt = require('bcryptjs')
 const authenticateJWT=require("../authenticateJWT")
+const fs=require("fs")
+const path=require("path")
 async function sendMsg(email, subject, message){
     let code=""
     for (let i = 0; i < 4; i++) {
@@ -56,20 +58,29 @@ router.post('/confirm', async (req, res) => {
 	    subject="Сброс пароля на сайте MapCreator.com"
 	    errorText="Пользователя с таким E-mail не существует!"
 	}
-	if((query && query.length>0 && req.body.src=="pasReset") || (!(query && query.length > 0) && req.body.src=="register"))
+	if((query.length>0 && req.body.src=="pasReset") || (!(query.length > 0) && req.body.src=="register"))
 	    res.json({
 		code: await sendMsg(req.body.email, subject, message),
-	    	id:  query[0]._id});
+	    	id:  query.length>0?query[0]._id:null});
 	else
 	    res.json({msg: errorText});
 });
 //Добавление записи
 router.post('/', async (req, res) => {
     if(req.body.verified) {
-	req.body.password= bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
-	let activeRecord=new userModel(req.body)
-	await activeRecord.save();
-	res.json({state: 'success'});
+        try {
+	    req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
+	    let activeRecord = new userModel(req.body)
+	    await activeRecord.save();
+	    let query = await userModel.find({email: req.body.email})
+	    let dirPath=path.join(__dirname,'../users/')
+	    fs.mkdirSync(`${dirPath}/${query[0]._id}`)
+	    fs.mkdirSync(`${dirPath}/${query[0]._id}/stamps`)
+	    res.json({status: "success"})
+	}
+	catch (e) {
+	    res.json({msg:e.message})
+	}
     }
 });
 //Обновление пароля

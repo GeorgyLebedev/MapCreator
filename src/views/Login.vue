@@ -109,7 +109,7 @@
             Отмена
           </button>
           <button type="button" class="buttonDark"
-                  :disabled="!(userData.newPassword.length>=8 && userData.newPasswordRepeat==userData.newPassword)" @click="updateData(userData)">
+                  :disabled="!(userData.newPassword.length>=8 && userData.newPasswordRepeat==userData.newPassword)" @click="updatePassword(userData)">
             Завершить
           </button>
           </div>
@@ -176,17 +176,17 @@ export default {
     async register(data) {
       if (!data.verified) {
         let res = await this.confirmEmail(data.email, 'register')
-        if (res.msg) {
+        if (res && res.msg) {
           this.error = res.msg
           return
         }
-        if (res.code) {
+        if (res && res.code) {
           this.tab = 'confirm'
           this.confirmType = 'register'
           this.code = Number(res.code)
         }
       } else {
-        await this.sendData(data)
+        await this.sendNewUserData(data)
         await this.enter(data.email, data.regPassword)
       }
     },
@@ -203,7 +203,7 @@ export default {
         this.userData.id=res.id
       }
     },
-    async updateData(data){
+    async updatePassword(data){
       let response
       try {
         response = (await axios({
@@ -226,7 +226,7 @@ export default {
         return
       }
     },
-    async sendData(data) {
+    async sendNewUserData(data) {
       let response
       try {
         response = (await axios({
@@ -239,6 +239,9 @@ export default {
             verified: data.verified
           }
         })).data
+        if(response.msg)
+          this.error = "Ошибка сервера: " + response.msg
+        else console.log(response)
       } catch (e) {
         this.error = "Ошибка сервера: " + e
         return

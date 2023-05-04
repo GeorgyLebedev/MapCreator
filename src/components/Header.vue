@@ -6,7 +6,7 @@
       <li><a href="" class="nav-link px-2 link-dark">Тема</a></li>
     </ul>
     <div>
-    <b>{{user?user.split('@',1).toString():""}}</b>
+    <b>{{user?user:""}}</b>
     <a href="/Login">
       <button type="button" class="buttonLight" @click="logOut()">Выход</button>
     </a>
@@ -22,7 +22,8 @@ export default {
     user: {
       type: String,
       default:""
-    }
+    },
+
   },
   methods:{
     async logOut(){

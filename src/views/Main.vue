@@ -30,7 +30,7 @@ import MapCard from "@/components/MapCard";
 import NewMapWindow from "@/components/NewMapWindow";
 import MapEditWindow from "@/components/MapEditWindow";
 import ErrorComponent from "@/components/Error"
-import AxiosRequest from "@/components/Logic/axiosController";
+import AxiosRequest from "@/services/axiosController";
 /*const Map=require("../models/map")*/
 export default {
   name: 'MainPage',
