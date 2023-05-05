@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId
 const Map = new Schema({
     id: ObjectId,
-    author: {
+    user: {
         type:String,
         required: true
     },

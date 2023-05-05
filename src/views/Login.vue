@@ -158,7 +158,7 @@ export default {
     async confirmEmail(email, src) {
       let request, response
       try {
-        request = await new AxiosRequest("confirm","post",{email: email.toLowerCase(),src: src})
+        request = await new AxiosRequest("user/confirm/","post",{email: email.toLowerCase(),src: src})
         response=await request.sendRequest()
       } catch (e) {
         console.log("Ошибка сервера: " + e)
@@ -217,7 +217,7 @@ export default {
     async sendNewUserData(data) {
       let request,response
       try {
-        request = await new AxiosRequest("user", "post",
+        request = await new AxiosRequest("user/", "post",
             {
           email: data.email.toLowerCase(),
           password: data.regPassword,
@@ -258,6 +258,7 @@ export default {
       else if(response.token)
         {
           localStorage.setItem('TOKEN', response.token)
+          localStorage.setItem('USER', response.username)
           this.error = ""
           this.$router.push({path: "/Main"})
         }

@@ -16,7 +16,7 @@ router.post('/login', async (req, res) => {
 	res.cookie('jwt', refreshToken, { httpOnly: true,
 	    sameSite: false, secure: false,
 	    maxAge: 30 * 24 * 60 * 60 * 1000 });
-	res.json({token: accessToken, user: query[0].email, id: query[0]._id });
+	res.json({token: accessToken, username: query[0].login, id: query[0]._id });
     }
     else {
 	res.json({msg:'Неправильный логин или пароль!'});
@@ -33,15 +33,17 @@ router.post('/token', (req, res) => {
     if (!refreshTokens.includes(refToken)) {
 	return res.sendStatus(403);
     }*/
-    jwt.verify(refToken, refreshTokenSecret, (err, user) => {
+    jwt.verify(refToken, refreshTokenSecret, async (err, decoded) => {
 	if (err) {
 	    return res.sendStatus(403);
 	}
-
-	const accessToken = jwt.sign({ username: user.username }, accessTokenSecret, { expiresIn: '10m' });
+	let query=await userModel.findById(decoded.id)
+	let user=query[0].login
+	const accessToken = jwt.sign({ id: decoded.id }, accessTokenSecret, { expiresIn: '10m' });
 
 	res.json({
-	    token: accessToken
+	    token: accessToken,
+	    username: user,
 	});
     })
 });

@@ -7,6 +7,10 @@ const User = new Schema({
         type:String,
         required: true
     },
+    login:{
+        type: String,
+        default: ""
+    },
     password: {
         type:String,
         required: true
@@ -23,6 +27,12 @@ const User = new Schema({
         type: Date,
         required: true
     }
+});
+User.pre('save', function(next) {
+    if (!this.login) {
+        this.login = this.email;
+    }
+    next();
 });
 
 module.exports = mongoose.model('User', User);

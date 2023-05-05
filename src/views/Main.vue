@@ -20,7 +20,7 @@
       @closeWindow="()=>{this.showDelMapWin = false}"
       @deleteMap="deleteMap(this.selectedMap)"
   />
-  <Header :user="this.currentUser"/>
+  <Header />
   <div class="d-flex flex-wrap">
     <MapCard v-for="map in this.mapList" :key="map._id"
              :map="map"
@@ -50,9 +50,6 @@ export default {
   name: 'MainPage',
   data() {
     return {
-      currentUser: {
-        login: ""
-      },
       selectedMap: {},
       showNewMapWin: false,
       showEditMapWin: false,
@@ -76,7 +73,6 @@ export default {
       let map, request
       try {
         map = {
-          author: this.currentUser.id,
           title: title,
           creationDate: new Date(),
           changeDate: new Date(),
@@ -87,20 +83,7 @@ export default {
         request = new AxiosRequest('map/', 'post', map)
         await request.sendRequest()
         await this.getMaps()
-      } catch (e) {
-        this.error = e
-      }
-    },
-    async getUser() {
-      let response, request
-      try {
-        request = new AxiosRequest('user/', 'get')
-        response = await request.sendRequest()
-        if (response.user) this.currentUser = response.user
-        if (response.msg) {
-          this.error = response.msg
-          setTimeout(this.logOut, 5000)
-        }
+        this.showNewMapWin=false
       } catch (e) {
         this.error = e
       }
@@ -152,7 +135,6 @@ export default {
   },
   async created() {
     if (!localStorage.getItem('TOKEN')) await this.logOut()
-    await this.getUser()
     await this.getMaps()
   }
 }

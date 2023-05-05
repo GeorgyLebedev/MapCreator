@@ -5,7 +5,7 @@
       <div class="userAvatar">
       <img src="@/assets/images/defaultAvatar.png" class="c-pointer" alt="" v-if="user">
       </div>
-    <b>{{user?user.login:""}}</b>
+    <b>{{user}}</b>
     <a href="/Login">
       <button type="button" class="buttonLight" @click="logOut()">Выход</button>
     </a>
@@ -19,14 +19,9 @@ export default {
   name: 'NavBar',
   data(){
     return {
-      avatar: ""
+      avatar: "",
+      user:""
     }
-  },
-  props:{
-    user: {
-      type: Object,
-    },
-
   },
   methods:{
     async logOut(){
@@ -42,6 +37,7 @@ export default {
   },
   created() {
     this.avatar="@/assets/images/"
+    this.user=localStorage.getItem('USER')?localStorage.getItem('USER'):""
   }
 }
 </script>
