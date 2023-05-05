@@ -62,7 +62,7 @@ export default {
     async logOut() {
       localStorage.clear()
       try {
-        await new AxiosRequest('/auth/logout', 'post').sendRequest()
+        await new AxiosRequest('auth/logout', 'post').sendRequest()
         this.currentUser = null
         this.$router.push('/Login')
       } catch (e) {
@@ -93,8 +93,12 @@ export default {
       try {
         request = new AxiosRequest('map/', 'get')
         response = await request.sendRequest()
-        if (response.maps)
+        console.log("Респонс приходящий в Main: ")
+        console.log(response)
+        if (response && response.maps)
           this.mapList = response.maps
+        if(response && response.msg)
+          this.error=response.msg
       } catch (e) {
         this.error = e
       }

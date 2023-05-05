@@ -17,7 +17,7 @@
         <img src="@/assets/images/plug.jpg" class="topImg" alt="...">
       </div>
       <div class="mapData">
-        <div style="padding-block: 5px"><b>{{ map.title }}</b></div>
+        <div style="padding-block: 5px; text-overflow: ellipsis"><b>{{ map.title }}</b></div>
         <div style="text-align: right">
           <div>
             Создана: {{ new Date(map.creationDate).toLocaleString().slice(0, -3) }}

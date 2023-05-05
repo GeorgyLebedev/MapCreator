@@ -51,7 +51,7 @@ header{
   border-bottom: 2px solid #dcdcdc;
   padding-block: 10px;
   padding-inline: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .userPanel{
   display: flex;

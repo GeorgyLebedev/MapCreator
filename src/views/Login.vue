@@ -154,6 +154,11 @@ export default {
       error: "",
     }
   },
+  created() {
+    if(localStorage.getItem('TOKEN') && localStorage.getItem('USER')){
+      this.$router.push('/Main')
+    }
+  },
   methods: {
     async confirmEmail(email, src) {
       let request, response

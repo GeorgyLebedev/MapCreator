@@ -9,8 +9,9 @@ export default class AxiosRequest {
 	this.data = data;
     }
     async sendRequest() {
+        let response
 	try {
-	    const response = (await axios({
+            response = (await axios({
 		method: this.method,
 		url: this.url,
 		headers: {
@@ -19,15 +20,24 @@ export default class AxiosRequest {
 		data: this.data
 	    })).data
 	    if(response.newToken) {
+	        alert("Token Update")
 		localStorage.setItem('TOKEN', response.newToken)
 		localStorage.setItem('USER', response.username)
 		this.authHeader=`Bearer ${localStorage.getItem('TOKEN')}`
-		await this.sendRequest()
+		let responseRepeat = (await axios({
+		    method: this.method,
+		    url: this.url,
+		    headers: {
+			authorization: this.authHeader,
+		    },
+		    data: this.data,
+		})).data;
+		return responseRepeat
 	    }
 	    else
 	    return response
 	} catch (e) {
-	    console.log(e.message);
+	    return {msg:e.message}
 	}
     }
 }

@@ -14,14 +14,15 @@ const authenticateJWT = (req, res, next) => {
 	    }
 	    else if(err.name=="TokenExpiredError"){
 	        try {
-		    let newToken = (await axios({
+	            const refToken=req.cookies.jwt
+		    let request = (await axios({
 			url: "http://localhost:1111/auth/token",
 			method: 'post',
 			data: {
-			    token: req.cookies.jwt
+			    token: refToken
 			}
-		    })).data.token
-		    return res.json({newToken: newToken})
+		    })).data
+		    return res.json({newToken: request.token, username:request.username})
 		}
 		catch (e){
 	            return res.json({msg:"Ошибка авторизации. Вы будете перенаправлены на страницу авторизации для повторного входа."})
