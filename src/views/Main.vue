@@ -93,8 +93,6 @@ export default {
       try {
         request = new AxiosRequest('map/', 'get')
         response = await request.sendRequest()
-        console.log("Респонс приходящий в Main: ")
-        console.log(response)
         if (response && response.maps)
           this.mapList = response.maps
         if(response && response.msg)

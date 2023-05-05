@@ -19,7 +19,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/MapCanvas',
+    path: '/MapCanvas/:id',
     name: 'MapCanvas',
     component: MapCanvas,
     props: true

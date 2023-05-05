@@ -7,7 +7,7 @@
             Меню
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <a class="dropdown-item" href="#">Изменить информацию о карте</a>
+            <a class="dropdown-item" @click="this.$emit('showMapEditWindow')">Изменить информацию о карте</a>
             <a class="dropdown-item" href="#">Сохранить</a>
             <div class="accordion" id="MenuAccordion">
               <button class="py-1 px-3 dropdown-item accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#block1"  >

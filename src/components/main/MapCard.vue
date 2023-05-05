@@ -1,6 +1,6 @@
 <template>
   <div class="cardlist d-flex flex-wrap">
-    <div class="map c-pointer" @click="this.$router.push('/MapCanvas')" @mouseenter="showOpt=true"
+    <div class="map c-pointer" @click="this.$router.push(`/MapCanvas/${map._id}`)" @mouseenter="showOpt=true"
          @mouseleave="showOpt=false">
       <transition name="show-opt">
         <div class="topOptions" v-if="showOpt">

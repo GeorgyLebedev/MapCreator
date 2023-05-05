@@ -1,11 +1,23 @@
 <template>
+  <ErrorComponent
+  :error="error"
+  @clearError="error=''"/>
   <StampsWindow
-      :window-visible="this.stampsWinVisible"
-      @showStampsWindow="showStampsWin"
-  ></StampsWindow>
+      :window-visible="showStampsWin"
+      @showStampsWindow="(flag)=>{ showStampsWin = flag }"/>
+  <MapEditWindow
+      :map-name="this.currentMap.title"
+      :map-desc="this.currentMap.description"
+      :show-window="showEditMapWin"
+      @closeWindow="()=>{this.showEditMapWin = false}"
+      @updateName="(val)=>{this.currentMap.title=val}"
+      @updateDesc="(val)=>{this.currentMap.description=val}"
+      @updateMapMetadata="updateMapMetadata(this.currentMap)"
+  />
   <div class="MainContainer" @contextmenu.prevent>
     <TopMenu
         @saveAs="exportAs"
+        @showMapEditWindow="()=>{this.showEditMapWin = true}"
     />
     <Accordion/>
     <ToolsPanel
@@ -14,7 +26,7 @@
         @newSelect="setSelected"
         @update="updateItem"
         @removeSelect="removeSelect"
-        @showStampsWindow="showStampsWin"
+        @showStampsWindow="(flag)=>{ showStampsWin = flag }"
         :recent-colors="recentColors"
         :selected-obj="cursorOpt.selectedObj"
         :rotation="Number(rotation)"
@@ -45,22 +57,33 @@ import Accordion from "@/components/mapCanvas/Accordion";
 import BotMenu from "@/components/mapCanvas/BotMenu";
 import ToolsPanel from "@/components/mapCanvas/ToolsPanel";
 import StampsWindow from "@/components/mapCanvas/StampsWindow";
+import MapEditWindow from "@/components/MapEditWindow";
+import AxiosRequest from "@/services/axiosController";
+import ErrorComponent from "@/components/Error";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
 import { saveAs } from 'file-saver';
+
 const {jsPDF}=require("jspdf")
 export default {
   name: "MapCanvas",
   components: {
+    ErrorComponent,
     TopMenu,
     Accordion,
     BotMenu,
     ToolsPanel,
-    StampsWindow
+    StampsWindow,
+    MapEditWindow,
   },
   data() {
     return {
+      error: "",
+      currentMap:{
+        title: "",
+        description: ""
+      },
       canvasObj: {
         ref: null,
         resoX: 1920,
@@ -79,7 +102,8 @@ export default {
         toolRef: null
       },
       currentItem: null,
-      stampsWinVisible: false,
+      showEditMapWin: false,
+      showStampsWin: false,
       rotation: 0,
       OBJECT_STORAGE: [],
       styleCursor: "default",
@@ -154,9 +178,6 @@ export default {
     }
   },
   methods: {
-    showStampsWin(flag) {
-      this.stampsWinVisible = flag
-    },
     zoom(e, step = 0, mode = null) {
       let event = window.event || e
       let newX, newY
@@ -642,7 +663,7 @@ export default {
                 to: event.point,
                 strokeColor: options.strokeColor,
                 fillColor: options.fillColor,
-                strokeWidth: options.strokeWidth == 1 ? options.strokeWidth * 2 : options.strokeWidth,
+                strokeWidth: options.strokeWidth,
                 opacity: options.opacity,
                 rotation: options.rotation
               })
@@ -1057,6 +1078,17 @@ export default {
       }
       //this.setDefaultSizes()
     },
+    async updateMapMetadata(map){
+      let request
+      try{
+        request=new AxiosRequest(`map/${map._id}`, "put", {title:map.title, description:map.description})
+        await request.sendRequest()
+        this.showEditMapWin=false
+      }
+      catch (e){
+        this.error=e
+      }
+    }
   },
   mounted() {
     this.canvasObj.ref = document.getElementById("map")
@@ -1112,9 +1144,21 @@ export default {
       return "";
     }*/
   },
-  created() {
+  async created() {
+    let ID=this.$route.params.id
     window.addEventListener("resize", this.setDefaultSizes);
     window.addEventListener("resize", this.resetCoords);
+    try{
+      let request= new AxiosRequest(`map/${ID}`, 'get')
+      let response=(await request.sendRequest())
+      if(response && response.map) this.currentMap=response.map
+    }
+    catch (e){
+      this.error=e.message
+      this.$router.push("/Main")
+    }
+    if(!this.currentMap || !this.currentMap.title)
+      this.$router.push("/Main")
   },
   watch: {
     'currentTool.name'(val) {
