@@ -458,8 +458,8 @@
               <hr>
               <div title="Размер шрифта">
                 <img src="@/assets/images/Tools/Options/font-size.png" height="20" alt="">
-                <input type="range" step="1" min="5" max="50" v-model="textOpt.fontSize">
-                <input type="number" step="1" min="5" max="50" class="input-number-style" v-model="textOpt.fontSize">
+                <input type="range" step="5" min="5" max="500" v-model="textOpt.fontSize">
+                <input type="number" step="1" min="5" max="500" class="input-number-style" v-model="textOpt.fontSize">
               </div>
               <hr>
               <div title="Непрозрачность текста">
@@ -624,7 +624,7 @@ export default {
       textOpt: {
         content: "Текст",
         fontFamily: "Cambria",
-        fontSize: 10,
+        fontSize: 50,
         justification: "left",
         fillColor: "#ffffff",
         strokeColor: "#000000",

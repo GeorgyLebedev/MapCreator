@@ -2,6 +2,15 @@
   <ErrorComponent
   :error="error"
   @clearError="error=''"/>
+  <ContextMenu ref="rightClickMenu"
+               :style="{
+      top: cursorOpt.contextMenuPos.top? cursorOpt.contextMenuPos.top + 'px': 'auto',
+      right: cursorOpt.contextMenuPos.right? cursorOpt.contextMenuPos.right  + 'px': 'auto',
+     left: cursorOpt.contextMenuPos.left? cursorOpt.contextMenuPos.left  + 'px':'auto',
+     bottom: cursorOpt.contextMenuPos.bottom? cursorOpt.contextMenuPos.bottom  + 'px':'auto',
+
+  }"
+      :show-menu="cursorOpt.showContextMenu"/>
   <StampsWindow
       :window-visible="showStampsWin"
       @showStampsWindow="(flag)=>{ showStampsWin = flag }"/>
@@ -60,6 +69,7 @@ import StampsWindow from "@/components/mapCanvas/StampsWindow";
 import MapEditWindow from "@/components/MapEditWindow";
 import AxiosRequest from "@/services/axiosController";
 import ErrorComponent from "@/components/Error";
+import ContextMenu from "@/components/mapCanvas/ContextMenu";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
@@ -76,6 +86,7 @@ export default {
     ToolsPanel,
     StampsWindow,
     MapEditWindow,
+    ContextMenu
   },
   data() {
     return {
@@ -105,14 +116,15 @@ export default {
       showEditMapWin: false,
       showStampsWin: false,
       rotation: 0,
-      OBJECT_STORAGE: [],
       styleCursor: "default",
       recentColors: Array(8).fill("#ffffff"),
       colorChanged: false,
       activeLayer: null,
       cursorTool: new paper.Tool(),
       cursorOpt: {
-        selectedObj: null
+        selectedObj: null,
+        showContextMenu: false,
+        contextMenuPos:{}
       },
       brushTool: new paper.Tool(),
       brushOpt: {
@@ -158,7 +170,7 @@ export default {
       textOpt: {
         content: "Текст",
         fontFamily: "Cambria",
-        fontSize: 10,
+        fontSize: 50,
         justification: "left",
         fillColor: "#ffffff",
         strokeColor: "#000000",
@@ -178,6 +190,26 @@ export default {
     }
   },
   methods: {
+    contextMenuVisible(flag, position=null){
+        this.cursorOpt.showContextMenu=flag
+        let windowX=document.documentElement.clientWidth
+        let windowY=document.documentElement.clientHeight
+        if(flag) {
+          this.cursorOpt.contextMenuPos={}
+        }
+        if((windowX-position.clientX)<300){
+          this.cursorOpt.contextMenuPos.right=windowX-position.clientX
+        }
+        else{
+          this.cursorOpt.contextMenuPos.left=position.clientX
+        }
+      if((windowY-position.clientY)<300){
+        this.cursorOpt.contextMenuPos.bottom=windowY-position.clientY
+      }
+      else{
+        this.cursorOpt.contextMenuPos.top=position.clientY
+      }
+    },
     zoom(e, step = 0, mode = null) {
       let event = window.event || e
       let newX, newY
@@ -273,12 +305,6 @@ export default {
       this.setTranslate(((area.width - this.canvasObj.defaultWidth) / 2), ((area.height - this.canvasObj.defaultHeight) / 2))
       this.resetCoords()
     },
-    /*hardRemove(item){
-      this.OBJECT_STORAGE=this.OBJECT_STORAGE.filter((elem)=>{
-        return elem.id==item.id
-      })
-      item.remove()
-    },*/
     getBoundGroup(group, item) {
       let rotateStart, rotateEnd, angle = 0
       this.rotation = item.rotation
@@ -553,11 +579,17 @@ export default {
     },
     setCursor(cursor, options) {
       cursor.onMouseDown = (event) => {
+        if(event.event.which==1 && options.showContextMenu) this.contextMenuVisible(false)
         let obj = event.item
+        if(options.selectedObj  && (obj.id==options.selectedObj.id) && (event.event.which==3))
+          this.contextMenuVisible(true, event.event)
+        else if(options.showContextMenu)
+          this.contextMenuVisible(false)
         if (obj && options.selectedObj && obj.id == options.selectedObj.selectionGroup.id) return
         if (options.selectedObj && obj != options.selectedObj) {
           this.removeSelect()
         }
+
         if (!obj || this.activeLayer.children.indexOf(obj) == -1 || obj.type=="brush" || !obj.type) return
         if (!options.selectedObj) {
           console.log(obj.type)
@@ -567,6 +599,7 @@ export default {
       cursor.onKeyDown = (event) => {
         if (event.key == 'delete' && options.selectedObj) {
           options.selectedObj.remove()
+          this.styleCursor="default"
           this.removeSelect()
         }
       }
