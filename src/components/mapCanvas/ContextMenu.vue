@@ -1,21 +1,21 @@
 <template>
   <Transition name="popup-anim">
   <div class="contextMenu" @contextmenu.prevent v-show="showMenu">
-    <div class="contextMenuItem">
+    <div class="contextMenuItem" @click="this.$emit('copyItem')">
       <img src="@/assets/images/Service/copy.png" alt="">
       Копировать
     </div>
     <hr>
-    <div class="contextMenuItem">
+    <div class="contextMenuItem" @click="this.$emit('toFront')">
       <img src="@/assets/images/Service/toFront.png" alt="">
       На передний план
     </div>
-    <div class="contextMenuItem">
-      <img src="@/assets/images/Service/toBack.png" alt="">
+    <div class="contextMenuItem" @click="this.$emit('toBack')">
+      <img src="@/assets/images/Service/toBack.png" alt="" >
       На задний план
     </div>
     <hr>
-    <div class="contextMenuItem">
+    <div class="contextMenuItem" @click="this.$emit('removeItem')">
       <img src="@/assets/images/Service/delete.png" alt="">
       Удалить
     </div>

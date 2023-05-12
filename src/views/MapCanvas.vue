@@ -1,16 +1,27 @@
 <template>
   <ErrorComponent
-  :error="error"
-  @clearError="error=''"/>
+      :error="error"
+      @clearError="error=''"/>
   <ContextMenu ref="rightClickMenu"
                :style="{
       top: cursorOpt.contextMenuPos.top? cursorOpt.contextMenuPos.top + 'px': 'auto',
       right: cursorOpt.contextMenuPos.right? cursorOpt.contextMenuPos.right  + 'px': 'auto',
-     left: cursorOpt.contextMenuPos.left? cursorOpt.contextMenuPos.left  + 'px':'auto',
-     bottom: cursorOpt.contextMenuPos.bottom? cursorOpt.contextMenuPos.bottom  + 'px':'auto',
-
+      left: cursorOpt.contextMenuPos.left? cursorOpt.contextMenuPos.left  + 'px':'auto',
+      bottom: cursorOpt.contextMenuPos.bottom? cursorOpt.contextMenuPos.bottom  + 'px':'auto',
   }"
-      :show-menu="cursorOpt.showContextMenu"/>
+               :show-menu="cursorOpt.showContextMenu"
+               @copyItem="()=>{
+                 copyItem(cursorOpt.selectedObj)
+                 contextMenuVisible(false)}"
+                @removeItem="()=>{
+                  removeItem(cursorOpt.selectedObj)
+                  contextMenuVisible(false)}"
+               @toFront="()=>{
+                 setToFront(cursorOpt.selectedObj)
+                 contextMenuVisible(false)}"
+               @toBack="()=>{
+                 setToBack(cursorOpt.selectedObj)
+                 contextMenuVisible(false)}"/>
   <StampsWindow
       :window-visible="showStampsWin"
       @showStampsWindow="(flag)=>{ showStampsWin = flag }"/>
@@ -73,9 +84,9 @@ import ContextMenu from "@/components/mapCanvas/ContextMenu";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
-import { saveAs } from 'file-saver';
+import {saveAs} from 'file-saver';
 
-const {jsPDF}=require("jspdf")
+const {jsPDF} = require("jspdf")
 export default {
   name: "MapCanvas",
   components: {
@@ -91,7 +102,7 @@ export default {
   data() {
     return {
       error: "",
-      currentMap:{
+      currentMap: {
         title: "",
         description: ""
       },
@@ -124,7 +135,7 @@ export default {
       cursorOpt: {
         selectedObj: null,
         showContextMenu: false,
-        contextMenuPos:{}
+        contextMenuPos: {}
       },
       brushTool: new paper.Tool(),
       brushOpt: {
@@ -190,24 +201,20 @@ export default {
     }
   },
   methods: {
-    contextMenuVisible(flag, position=null){
-        this.cursorOpt.showContextMenu=flag
-        let windowX=document.documentElement.clientWidth
-        let windowY=document.documentElement.clientHeight
-        if(flag) {
-          this.cursorOpt.contextMenuPos={}
-        }
-        if((windowX-position.clientX)<300){
-          this.cursorOpt.contextMenuPos.right=windowX-position.clientX
-        }
-        else{
-          this.cursorOpt.contextMenuPos.left=position.clientX
-        }
-      if((windowY-position.clientY)<300){
-        this.cursorOpt.contextMenuPos.bottom=windowY-position.clientY
-      }
-      else{
-        this.cursorOpt.contextMenuPos.top=position.clientY
+    contextMenuVisible(flag, position = null) {
+      this.cursorOpt.showContextMenu = flag
+      let windowX = document.documentElement.clientWidth
+      let windowY = document.documentElement.clientHeight
+      if (flag) {
+        this.cursorOpt.contextMenuPos = {}
+        if ((windowX - position.clientX) < 300)
+          this.cursorOpt.contextMenuPos.right = windowX - position.clientX
+        else
+          this.cursorOpt.contextMenuPos.left = position.clientX
+        if ((windowY - position.clientY) < 300)
+          this.cursorOpt.contextMenuPos.bottom = windowY - position.clientY
+        else
+          this.cursorOpt.contextMenuPos.top = position.clientY
       }
     },
     zoom(e, step = 0, mode = null) {
@@ -314,15 +321,17 @@ export default {
         strokeWidth: 1,
         name: "rect"
       })
-      let boundCircle = new paper.Path.Circle({
+      let boundCircleFull = new paper.Path.Circle({
         center: boundRect.position,
         radius: Math.sqrt((item.strokeBounds.width * item.strokeBounds.width + item.strokeBounds.height * item.strokeBounds.height)) / 2,
         strokeColor: "#000000",
         fillColor: "#000000",
         strokeWidth: 0.001,
-        opacity: 0.000001,
+        opacity: 1e-6,
         name: "circle"
       })
+      let boundCircle=boundCircleFull.exclude(boundRect)
+      boundCircleFull.remove()
       item.onMouseEnter = () => {
         this.styleCursor = 'grab'
       }
@@ -373,19 +382,19 @@ export default {
           })
           switch (index) {
             case 0:
-              if(event.point.x>square.data.oppositeSq.x || event.point.y>square.data.oppositeSq.y )
+              if (event.point.x > square.data.oppositeSq.x || event.point.y > square.data.oppositeSq.y)
                 return
               break;
             case 1:
-              if(event.point.x<square.data.oppositeSq.x || event.point.y>square.data.oppositeSq.y )
+              if (event.point.x < square.data.oppositeSq.x || event.point.y > square.data.oppositeSq.y)
                 return
               break;
             case 2:
-              if(event.point.x<square.data.oppositeSq.x || event.point.y<square.data.oppositeSq.y )
+              if (event.point.x < square.data.oppositeSq.x || event.point.y < square.data.oppositeSq.y)
                 return
               break;
             case 3:
-              if(event.point.x>square.data.oppositeSq.x || event.point.y<square.data.oppositeSq.y )
+              if (event.point.x > square.data.oppositeSq.x || event.point.y < square.data.oppositeSq.y)
                 return
               break;
           }
@@ -432,11 +441,11 @@ export default {
       }
       boundCircle.onMouseUp = (event) => {
         angle = undefined
-            if(item.type=='stamp') {
-              item = this.reRender(item, item.size)
-              this.setSelected(item)
-             }
-          event.stop()
+        if (item.type == 'stamp') {
+          item = this.reRender(item, item.size)
+          this.setSelected(item)
+        }
+        event.stop()
       }
       boundCircle.onMouseDrag = (event) => {
         if (angle) {
@@ -459,7 +468,7 @@ export default {
       }
       group.addChild(boundRect)
       group.addChild(boundCircle)
-      group.insertBelow(item)
+      group.bringToFront()
       return group
     },
     setSelected(item) {
@@ -507,10 +516,40 @@ export default {
           item.rotation = options.rotation
           break
         case "stamp":
-          item.source=require('../assets/Stamps/' + item.data.set + '/' + item.data.stamp)
-              item.size=options.size
+          item.source = require('../assets/Stamps/' + item.data.set + '/' + item.data.stamp)
+          item.size = options.size
 
       }
+    },
+    copyItem(item) {
+      let newItem = item.clone()
+      newItem.position.x += 20
+      newItem.position.y += 20
+      if(item.type)
+      newItem.type=item.type
+      this.activeLayer.addChild(newItem)
+      this.removeSelect()
+      this.setSelected(newItem)
+    },
+    removeItem(item) {
+      if (item.id == this.cursorOpt.selectedObj.id) {
+        this.removeSelect()
+      }
+      item.remove()
+    },
+    setToFront(item){
+      if (item.id == this.cursorOpt.selectedObj.id) {
+        this.removeSelect()
+      }
+      item.bringToFront()
+      this.setSelected(item)
+    },
+    setToBack(item){
+      if (item.id == this.cursorOpt.selectedObj.id) {
+        this.removeSelect()
+      }
+      item.sendToBack()
+      this.setSelected(item)
     },
     reRender(item, size) {
       this.removeSelect()
@@ -579,18 +618,18 @@ export default {
     },
     setCursor(cursor, options) {
       cursor.onMouseDown = (event) => {
-        if(event.event.which==1 && options.showContextMenu) this.contextMenuVisible(false)
+        if (event.event.which == 1 && options.showContextMenu) this.contextMenuVisible(false)
         let obj = event.item
-        if(options.selectedObj  && (obj.id==options.selectedObj.id) && (event.event.which==3))
+        if (options.selectedObj && (obj.id == options.selectedObj.id) && (event.event.which == 3))
           this.contextMenuVisible(true, event.event)
-        else if(options.showContextMenu)
+        else if (options.showContextMenu)
           this.contextMenuVisible(false)
         if (obj && options.selectedObj && obj.id == options.selectedObj.selectionGroup.id) return
         if (options.selectedObj && obj != options.selectedObj) {
           this.removeSelect()
         }
 
-        if (!obj || this.activeLayer.children.indexOf(obj) == -1 || obj.type=="brush" || !obj.type) return
+        if (!obj || this.activeLayer.children.indexOf(obj) == -1 || obj.type == "brush" || !obj.type) return
         if (!options.selectedObj) {
           console.log(obj.type)
           this.setSelected(obj)
@@ -598,9 +637,9 @@ export default {
       }
       cursor.onKeyDown = (event) => {
         if (event.key == 'delete' && options.selectedObj) {
-          options.selectedObj.remove()
-          this.styleCursor="default"
-          this.removeSelect()
+          this.removeItem(options.selectedObj)
+          this.styleCursor = "default"
+
         }
       }
     },
@@ -1079,25 +1118,25 @@ export default {
         this.styleCursor = "move"
       }
     },
-    exportAs(Ext){
+    exportAs(Ext) {
       let imgData, docPDF, blob
-   /*   this.canvasObj.CSSheight=this.canvasObj.resoY
-      this.canvasObj.CSSwidth=this.canvasObj.resoX
-      this.resetCoords()*/
-      switch (Ext){
+      /*   this.canvasObj.CSSheight=this.canvasObj.resoY
+         this.canvasObj.CSSwidth=this.canvasObj.resoX
+         this.resetCoords()*/
+      switch (Ext) {
         case 'png':
-          this.canvasObj.ref.toBlob(function(blob) {
+          this.canvasObj.ref.toBlob(function (blob) {
             saveAs(blob, "MapName.png");
           });
           break
         case 'jpg':
-          this.canvasObj.ref.toBlob(function(blob) {
+          this.canvasObj.ref.toBlob(function (blob) {
             saveAs(blob, "MapName.jpg");
           });
           break
         case 'pdf':
-          imgData=this.canvasObj.ref.toDataURL('image/png')
-          docPDF = new jsPDF((this.canvasObj.XtoY>1)?'l':'p', 'px', [this.canvasObj.resoX, this.canvasObj.resoY]);
+          imgData = this.canvasObj.ref.toDataURL('image/png')
+          docPDF = new jsPDF((this.canvasObj.XtoY > 1) ? 'l' : 'p', 'px', [this.canvasObj.resoX, this.canvasObj.resoY]);
           docPDF.addImage(imgData, 'PNG', 0, 0);
           docPDF.output('save', 'MapName.pdf');
           break
@@ -1111,15 +1150,14 @@ export default {
       }
       //this.setDefaultSizes()
     },
-    async updateMapMetadata(map){
+    async updateMapMetadata(map) {
       let request
-      try{
-        request=new AxiosRequest(`map/${map._id}`, "put", {title:map.title, description:map.description})
+      try {
+        request = new AxiosRequest(`map/${map._id}`, "put", {title: map.title, description: map.description})
         await request.sendRequest()
-        this.showEditMapWin=false
-      }
-      catch (e){
-        this.error=e
+        this.showEditMapWin = false
+      } catch (e) {
+        this.error = e
       }
     }
   },
@@ -1140,13 +1178,19 @@ export default {
     paper.view.viewSize = new paper.Size(this.canvasObj.CSSwidth, this.canvasObj.CSSheight)
     paper.view.center = new paper.Point(0, 0)
     this.setDefaultSizes()
-    this.activeLayer = paper.project.activeLayer
-    let background= new paper.Path.Rectangle({
-      point: new paper.Point(-this.canvasObj.CSSwidth/2,-this.canvasObj.CSSheight/2),
-      size: paper.view.viewSize,
-      fillColor: "white",
+    let backgroundLayer=new paper.Layer({
+      children:[ new paper.Path.Rectangle({
+        point: new paper.Point(-this.canvasObj.CSSwidth / 2, -this.canvasObj.CSSheight / 2),
+        size: paper.view.viewSize,
+        fillColor: "white",
+      })],
+      position: paper.view.center
     })
-    background.sendToBack()
+    backgroundLayer.sendToBack()
+    let firstLayer=new paper.Layer()
+    firstLayer.bringToFront()
+    firstLayer.activate()
+    this.activeLayer = paper.project.activeLayer
     //------BRUSH------------------------
     this.brushOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
     this.brushOpt.cursor.name = "cursor"
@@ -1178,19 +1222,18 @@ export default {
     }*/
   },
   async created() {
-    let ID=this.$route.params.id
+    let ID = this.$route.params.id
     window.addEventListener("resize", this.setDefaultSizes);
     window.addEventListener("resize", this.resetCoords);
-    try{
-      let request= new AxiosRequest(`map/${ID}`, 'get')
-      let response=(await request.sendRequest())
-      if(response && response.map) this.currentMap=response.map
-    }
-    catch (e){
-      this.error=e.message
+    try {
+      let request = new AxiosRequest(`map/${ID}`, 'get')
+      let response = (await request.sendRequest())
+      if (response && response.map) this.currentMap = response.map
+    } catch (e) {
+      this.error = e.message
       this.$router.push("/Main")
     }
-    if(!this.currentMap || !this.currentMap.title)
+    if (!this.currentMap || !this.currentMap.title)
       this.$router.push("/Main")
   },
   watch: {
