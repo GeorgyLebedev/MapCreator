@@ -12,16 +12,20 @@
                :show-menu="cursorOpt.showContextMenu"
                @copyItem="()=>{
                  copyItem(cursorOpt.selectedObj)
-                 contextMenuVisible(false)}"
-                @removeItem="()=>{
+                 contextMenuVisible(false)
+                 cursorStyleReset()}"
+               @removeItem="()=>{
                   removeItem(cursorOpt.selectedObj)
-                  contextMenuVisible(false)}"
+                  contextMenuVisible(false)
+                  cursorStyleReset()}"
                @toFront="()=>{
                  setToFront(cursorOpt.selectedObj)
-                 contextMenuVisible(false)}"
+                 contextMenuVisible(false)
+                 cursorStyleReset()}"
                @toBack="()=>{
                  setToBack(cursorOpt.selectedObj)
-                 contextMenuVisible(false)}"/>
+                 contextMenuVisible(false)
+                 cursorStyleReset()}"/>
   <StampsWindow
       :window-visible="showStampsWin"
       @showStampsWindow="(flag)=>{ showStampsWin = flag }"/>
@@ -135,7 +139,8 @@ export default {
       cursorOpt: {
         selectedObj: null,
         showContextMenu: false,
-        contextMenuPos: {}
+        contextMenuPos: {},
+        selectionTypes: ['stamp', 'shape' , 'text']
       },
       brushTool: new paper.Tool(),
       brushOpt: {
@@ -330,7 +335,7 @@ export default {
         opacity: 1e-6,
         name: "circle"
       })
-      let boundCircle=boundCircleFull.exclude(boundRect)
+      let boundCircle = boundCircleFull.exclude(boundRect)
       boundCircleFull.remove()
       item.onMouseEnter = () => {
         this.styleCursor = 'grab'
@@ -416,7 +421,7 @@ export default {
         }
         square.onMouseUp = (event) => {
           twoLast = []
-          if (item.type == 'stamp') {
+          if (item.data.type == 'stamp') {
             let size = new paper.Size({
               width: brWidth,
               height: brHeight
@@ -441,7 +446,7 @@ export default {
       }
       boundCircle.onMouseUp = (event) => {
         angle = undefined
-        if (item.type == 'stamp') {
+        if (item.data.type == 'stamp') {
           item = this.reRender(item, item.size)
           this.setSelected(item)
         }
@@ -491,7 +496,7 @@ export default {
       this.cursorOpt.selectedObj = undefined
     },
     updateItem(item, options) {
-      switch (item.type) {
+      switch (item.data.type) {
         case "text":
           item.shadowColor = options.isShadow ? options.shadowColor : "transparent"
           item.shadowBlur = options.isShadow ? options.shadowBlur : 0
@@ -525,8 +530,8 @@ export default {
       let newItem = item.clone()
       newItem.position.x += 20
       newItem.position.y += 20
-      if(item.type)
-      newItem.type=item.type
+      if (item.data.type)
+        newItem.data.type = item.data.type
       this.activeLayer.addChild(newItem)
       this.removeSelect()
       this.setSelected(newItem)
@@ -537,14 +542,14 @@ export default {
       }
       item.remove()
     },
-    setToFront(item){
+    setToFront(item) {
       if (item.id == this.cursorOpt.selectedObj.id) {
         this.removeSelect()
       }
       item.bringToFront()
       this.setSelected(item)
     },
-    setToBack(item){
+    setToBack(item) {
       if (item.id == this.cursorOpt.selectedObj.id) {
         this.removeSelect()
       }
@@ -560,7 +565,7 @@ export default {
         opacity: item.opacity,
         rotation: item.rotation
       })
-      newItem.type = "stamp"
+      newItem.data.type = "stamp"
       newItem.data.set = item.data.set
       newItem.data.stamp = item.data.stamp
       item.remove()
@@ -574,9 +579,16 @@ export default {
     },
     setTool(tool) {
       this.currentTool.name = tool
+      console.log('--------------------------')
+      console.log(this.currentTool.name)
+      console.log('--------------------------')
       this.activeLayer.onDoubleClick = undefined
     },
     setOpt(opt) {
+      if (this.currentTool.name == "cursor") {
+        Object.assign(this.cursorOpt, opt)
+        this.setCursor(this.cursorTool, this.cursorOpt)
+      }
       if (this.currentTool.name == "brush") {
         if (this.brushOpt.color != opt.color)
           this.colorChanged = true
@@ -628,20 +640,23 @@ export default {
         if (options.selectedObj && obj != options.selectedObj) {
           this.removeSelect()
         }
-
-        if (!obj || this.activeLayer.children.indexOf(obj) == -1 || obj.type == "brush" || !obj.type) return
+        if (!obj || this.activeLayer.children.indexOf(obj) == -1) return
+        console.log('Click on:')
+        console.log(obj)
+        if(obj && options.selectionTypes.indexOf(obj.data.type)==-1) return
         if (!options.selectedObj) {
-          console.log(obj.type)
           this.setSelected(obj)
         }
       }
       cursor.onKeyDown = (event) => {
         if (event.key == 'delete' && options.selectedObj) {
           this.removeItem(options.selectedObj)
-          this.styleCursor = "default"
-
+          this.cursorStyleReset()
         }
       }
+    },
+    cursorStyleReset() {
+      this.styleCursor = "default"
     },
     setBrush(brush, options) {
       let path
@@ -671,6 +686,8 @@ export default {
       brush.onMouseUp = function (event) {
         path.add(event.point);
         path.smooth();
+        path.data.type=ref.currentTool.name
+        console.log(path.data.type)
       }
     },
     setStampTool(stampTool, options) {
@@ -1178,8 +1195,8 @@ export default {
     paper.view.viewSize = new paper.Size(this.canvasObj.CSSwidth, this.canvasObj.CSSheight)
     paper.view.center = new paper.Point(0, 0)
     this.setDefaultSizes()
-    let backgroundLayer=new paper.Layer({
-      children:[ new paper.Path.Rectangle({
+    let backgroundLayer = new paper.Layer({
+      children: [new paper.Path.Rectangle({
         point: new paper.Point(-this.canvasObj.CSSwidth / 2, -this.canvasObj.CSSheight / 2),
         size: paper.view.viewSize,
         fillColor: "white",
@@ -1187,15 +1204,17 @@ export default {
       position: paper.view.center
     })
     backgroundLayer.sendToBack()
-    let firstLayer=new paper.Layer()
+    let firstLayer = new paper.Layer()
     firstLayer.bringToFront()
     firstLayer.activate()
     this.activeLayer = paper.project.activeLayer
     //------BRUSH------------------------
     this.brushOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
-    this.brushOpt.cursor.name = "cursor"
+    this.brushOpt.cursor.name = "brushCursor"
     this.brushOpt.cursor.fillColor = 'transparent'
-    this.brushOpt.cursor.strokeColor = "black"
+    this.brushOpt.cursor.strokeColor = "white"
+    this.brushOpt.cursor.strokeWidth = 2
+    this.brushOpt.cursor.blendMode='difference'
     this.brushOpt.cursor.visible = false
     this.setBrush(this.brushTool, this.brushOpt)
     //-----STAMP-------------------------
@@ -1205,8 +1224,10 @@ export default {
     //-----PATH--------------------------
     this.pathOpt.cursor = new paper.Shape.Circle(new paper.Point(0, 0), 1)
     this.pathOpt.cursor.fillColor = 'transparent'
-    this.pathOpt.cursor.name = "cursor"
-    this.pathOpt.cursor.strokeColor = "black"
+    this.pathOpt.cursor.name = "pathCursor"
+    this.pathOpt.cursor.strokeColor = "white"
+    this.pathOpt.cursor.strokeWidth = 2
+    this.pathOpt.cursor.blendMode='difference'
     this.pathOpt.cursor.visible = false
     this.setPathTool(this.pathTool, this.pathOpt)
     //-----TEXT--------------------------
@@ -1288,18 +1309,21 @@ export default {
       }
     },
     'rotation'(val) {
-      if (this.cursorOpt.selectedObj.type != "shape")
+      if (this.cursorOpt.selectedObj.data.type != "shape")
         this.cursorOpt.selectedObj.rotation = val
     },
     'activeLayer.children.length'(val) {
+      //Скорее всего, дело в часто меняющихся объектах при смене тула. Как вариант - писать тип объекта сразу после его добавления на холст
       let obj = this.activeLayer.lastChild
       obj.applyMatrix = false
-      if (!obj.type)
-        obj.type = this.currentTool.name
-
+       // obj.data.type = this.currentTool.name
+      console.log(this.activeLayer)
       //console.log(paper.project.layers)
       //console.log(paper.project.getItems())
       console.log(val)
+    },
+    'currentItem'(item){
+      item.data.type=this.currentTool.name
     }
   }
 }

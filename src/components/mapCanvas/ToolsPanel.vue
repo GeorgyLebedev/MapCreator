@@ -19,16 +19,33 @@
               </div>
               <hr>
               Выбирать:<br>
-              <input id="selectAll" type="checkbox">
-              <label for="selectAll">Всё</label>
-              <input id="selectStamps" type="checkbox">
-              <label for="selectStamps">Штампы</label>
-              <input id="selectLabels" type="checkbox">
-              <label for="selectLabels">Текст</label>
-              <input id="selectCurves" type="checkbox">
-              <label for="selectCurves">Кривые</label>
-              <input id="selectShapes" type="checkbox">
-              <label for="selectShapes">Фигуры</label>
+              <div class="selectOptionsContainer">
+                <div class="selectOption"
+                     :class="{optionChecked: cursorOpt.selectionTypes.length==5 }"
+                     @click="setAllSelectTypes">Всё
+                </div>
+                <div class="selectOption" :class="{optionChecked: getSelectType('brush') }"
+                     @click="setSelectType('brush')">
+                  <img src="@/assets/images/Tools/brush.png" alt="">
+                </div>
+                <div class="selectOption" :class="{optionChecked: getSelectType('stamp') }"
+                     @click="setSelectType('stamp')">
+                  <img src="@/assets/images/Tools/stamp.png" alt="">
+                </div>
+                <div class="selectOption"
+                     :class="{optionChecked: getSelectType('shape') }"
+                     @click="setSelectType('shape')">
+                  <img src="@/assets/images/Tools/shapes.png" alt="">
+                </div>
+                <div class="selectOption" :class="{optionChecked: getSelectType('path') }"
+                     @click="setSelectType('path')">
+                  <img src="@/assets/images/Tools/path.png" alt="">
+                </div>
+                <div class="selectOption" :class="{optionChecked: getSelectType('text') }"
+                     @click="setSelectType('text')">
+                  <img src="@/assets/images/Tools/text.png" alt="">
+                </div>
+              </div>
             </div>
           </Transition>
         </div>
@@ -90,8 +107,8 @@
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер кисти">
                 <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                <input type="range" step="1" min="1" max="50" v-model="brushOpt.size">
-                <input type="number" step="1" min="1" max="50" class="input-number-style" v-model="brushOpt.size">
+                <input type="range" step="5" min="1" max="200" v-model="brushOpt.size">
+                <input type="number" step="1" min="1" max="200" class="input-number-style" v-model="brushOpt.size">
               </div>
               <hr>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Непрозрачность кисти">
@@ -111,7 +128,8 @@
             <img src="@/assets/images/Tools/stamp.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition name="show">
-            <div id="stampOpt" class="tools-options" v-if="(tool=='stamp' && optionVisible) || (selectedObj && selectedObj.type=='stamp')">
+            <div id="stampOpt" class="tools-options"
+                 v-if="(tool=='stamp' && optionVisible) || (selectedObj && selectedObj.data.type=='stamp')">
               <div class="d-flex justify-content-between">
                 <b> Штамп </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
@@ -120,24 +138,26 @@
               <hr>
               <div class="stampsContainer d-flex mb-2">
                 <div class="bigStampContainer">
-                <div class="bigStamp interactive">
-                  <img :src="require('@/assets/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp)" alt="">
-                </div>
-                <div class="switch d-flex justify-content-between">
-                  <img src="@/assets/images/leftArrow.png" class="interactive" height="20">
-                  <p>12/10</p>
-                  <img src="@/assets/images/rightArrow.png" class="interactive" height="20">
-                </div>
+                  <div class="bigStamp interactive">
+                    <img :src="require('@/assets/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp)"
+                         alt="">
+                  </div>
+                  <div class="switch d-flex justify-content-between">
+                    <img src="@/assets/images/leftArrow.png" class="interactive" height="20">
+                    <p>12/10</p>
+                    <img src="@/assets/images/rightArrow.png" class="interactive" height="20">
+                  </div>
                 </div>
                 <div class="stampsTable ms-1 d-flex flex-wrap">
                   <div class="smallStamp mb-1 me-1 interactive" v-for="i in 8" :key="i">
-                    <img :src="require('@/assets/Stamps/'+ stampOpt.currentSet + '/' + stampOpt.currentStamp)" alt="" >
+                    <img :src="require('@/assets/Stamps/'+ stampOpt.currentSet + '/' + stampOpt.currentStamp)" alt="">
                   </div>
                 </div>
               </div>
-              <button class="btn btn-outline-dark w-100" @click="this.$emit('showStampsWindow', true)">Открыть каталог</button>
+              <button class="btn btn-outline-dark w-100" @click="this.$emit('showStampsWindow', true)">Открыть каталог
+              </button>
               <hr>
-              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок" >
+              <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок">
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
                 <input type="range" step="10" min="10" max="500" v-model="stampOpt.size">
                 <input type="number" step="1" min="10" max="500" class="input-number-style" v-model="stampOpt.size">
@@ -152,7 +172,8 @@
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Поворот иконок">
                 <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
                 <input type="range" step="1" min="-180" max="180" v-model="stampOpt.rotation">
-                <input type="number" step="1" min="-180" max="180" v-model="stampOpt.rotation" class="input-number-style">
+                <input type="number" step="1" min="-180" max="180" v-model="stampOpt.rotation"
+                       class="input-number-style">
               </div>
             </div>
           </Transition>
@@ -166,61 +187,62 @@
             <img src="@/assets/images/Tools/shapes.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition name="show">
-            <div id="shapesOpt" class="tools-options" v-if="(tool=='shape' && optionVisible) || (selectedObj && selectedObj.type=='shape')">
+            <div id="shapesOpt" class="tools-options"
+                 v-if="(tool=='shape' && optionVisible) || (selectedObj && selectedObj.data.type=='shape')">
               <div class="d-flex justify-content-between">
                 <b> Фигуры </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
                      v-on:click="closePanel">
               </div>
               <hr>
-              <div v-if="!(selectedObj && selectedObj.type=='shape')">
-              <p> Вид фигуры:</p>
-              <div class="d-flex">
-                <div class="card radio-icon me-2">
-                  <input id="shapeRectId" type="radio" value="rectangle" name="shapeTypeRadio"
-                         :disabled="shapeOpt.isArbitrary"
-                         v-model="shapeOpt.shapeType">
-                  <label for="shapeRectId" title="Прямоугольник">
-                    <img src="@/assets/images/Tools/Options/rectangle.png" class="card-img-top p-1 icon-sm" alt="">
-                  </label>
+              <div v-if="!(selectedObj && selectedObj.data.type=='shape')">
+                <p> Вид фигуры:</p>
+                <div class="d-flex">
+                  <div class="card radio-icon me-2">
+                    <input id="shapeRectId" type="radio" value="rectangle" name="shapeTypeRadio"
+                           :disabled="shapeOpt.isArbitrary"
+                           v-model="shapeOpt.shapeType">
+                    <label for="shapeRectId" title="Прямоугольник">
+                      <img src="@/assets/images/Tools/Options/rectangle.png" class="card-img-top p-1 icon-sm" alt="">
+                    </label>
+                  </div>
+                  <div class="card radio-icon mx-2">
+                    <input id="shapeTriaId" type="radio" value="triangle" name="shapeTypeRadio"
+                           :disabled="shapeOpt.isArbitrary"
+                           v-model="shapeOpt.shapeType">
+                    <label for="shapeTriaId" title="Треугольник">
+                      <img src="@/assets/images/Tools/Options/triangle.png" class="card-img-top p-1 icon-sm" alt="">
+                    </label>
+                  </div>
+                  <div class="card radio-icon mx-2">
+                    <input id="shapeCircId" type="radio" value="circle" name="shapeTypeRadio"
+                           :disabled="shapeOpt.isArbitrary"
+                           v-model="shapeOpt.shapeType">
+                    <label for="shapeCircId" title="Круг">
+                      <img src="@/assets/images/Tools/Options/circle.png" class="card-img-top p-1 icon-sm" alt="">
+                    </label>
+                  </div>
+                  <div class="card radio-icon mx-2">
+                    <input id="polygonId" type="radio" value="polygon" name="shapeTypeRadio"
+                           :disabled="shapeOpt.isArbitrary"
+                           v-model="shapeOpt.shapeType">
+                    <label for="polygonId" title="Многоугольник">
+                      <img src="@/assets/images/Tools/Options/polygon.png" class="card-img-top p-1 icon-sm" alt="">
+                    </label>
+                  </div>
                 </div>
-                <div class="card radio-icon mx-2">
-                  <input id="shapeTriaId" type="radio" value="triangle" name="shapeTypeRadio"
-                         :disabled="shapeOpt.isArbitrary"
-                         v-model="shapeOpt.shapeType">
-                  <label for="shapeTriaId" title="Треугольник">
-                    <img src="@/assets/images/Tools/Options/triangle.png" class="card-img-top p-1 icon-sm" alt="">
-                  </label>
+                <div class="d-flex mt-3">
+                  <input type="checkbox" class="form-check-input me-2" id="arbitraryShapeChbx"
+                         v-model="shapeOpt.isArbitrary" @change="setArbitraryShape(shapeOpt.isArbitrary)">
+                  <label for="arbitraryShapeChbx">Произвольная</label>
                 </div>
-                <div class="card radio-icon mx-2">
-                  <input id="shapeCircId" type="radio" value="circle" name="shapeTypeRadio"
-                         :disabled="shapeOpt.isArbitrary"
-                         v-model="shapeOpt.shapeType">
-                  <label for="shapeCircId" title="Круг">
-                    <img src="@/assets/images/Tools/Options/circle.png" class="card-img-top p-1 icon-sm" alt="">
-                  </label>
+                <div v-if="shapeOpt.shapeType=='polygon'">
+                  <hr>
+                  Число сторон: <br>
+                  <input type="range" step="1" min="5" max="20" v-model="shapeOpt.sides">
+                  <input type="number" step="1" min="5" max="20" v-model="shapeOpt.sides" class="input-number-style">
                 </div>
-                <div class="card radio-icon mx-2">
-                  <input id="polygonId" type="radio" value="polygon" name="shapeTypeRadio"
-                         :disabled="shapeOpt.isArbitrary"
-                         v-model="shapeOpt.shapeType">
-                  <label for="polygonId" title="Многоугольник">
-                    <img src="@/assets/images/Tools/Options/polygon.png" class="card-img-top p-1 icon-sm" alt="">
-                  </label>
-                </div>
-              </div>
-              <div class="d-flex mt-3">
-                <input type="checkbox" class="form-check-input me-2" id="arbitraryShapeChbx"
-                       v-model="shapeOpt.isArbitrary" @change="setArbitraryShape(shapeOpt.isArbitrary)">
-                <label for="arbitraryShapeChbx">Произвольная</label>
-              </div>
-              <div v-if="shapeOpt.shapeType=='polygon'">
                 <hr>
-                Число сторон: <br>
-                <input type="range" step="1" min="5" max="20" v-model="shapeOpt.sides">
-                <input type="number" step="1" min="5" max="20" v-model="shapeOpt.sides" class="input-number-style">
-              </div>
-              <hr>
               </div>
               Цвета:
               <table class=" options-table">
@@ -276,7 +298,8 @@
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Поворот фигуры">
                 <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
                 <input type="range" step="1" min="-180" max="180" v-model="shapeOpt.rotation">
-                <input type="number" step="1" min="-180" max="180" v-model="shapeOpt.rotation" class="input-number-style">
+                <input type="number" step="1" min="-180" max="180" v-model="shapeOpt.rotation"
+                       class="input-number-style">
               </div>
             </div>
           </Transition>
@@ -414,7 +437,8 @@
             <img src="@/assets/images/Tools/text.png" class="card-img-top p-1 icon-mid" alt="...">
           </label>
           <Transition name="show">
-            <div id="textOpt" class="tools-options" v-if="(tool=='text' && optionVisible) || (selectedObj && selectedObj.type=='text')">
+            <div id="textOpt" class="tools-options"
+                 v-if="(tool=='text' && optionVisible) || (selectedObj && selectedObj.data.type=='text')">
               <div class="d-flex justify-content-between">
                 <b> Надпись </b>
                 <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
@@ -471,7 +495,8 @@
               <div title="Поворот текста">
                 <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
                 <input type="range" step="1" min="-180" max="180" v-model="textOpt.rotation">
-                <input type="number" step="1" min="-180" max="180" v-model="textOpt.rotation" class="input-number-style">
+                <input type="number" step="1" min="-180" max="180" v-model="textOpt.rotation"
+                       class="input-number-style">
               </div>
               <hr>
               Положение текста:
@@ -530,24 +555,24 @@
               </div>
               <Transition name="stretch" mode="out-in">
                 <div v-if="textOpt.isShadow">
-                <div title="Смещение тени по Х" class="mt-3">
-                  <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                  <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetX">
-                  <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetX"
-                         class="input-number-style">
-                </div>
-                <div title="Смещение тени по Y" class="mt-3">
-                  <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                  <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetY">
-                  <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetY"
-                         class="input-number-style">
-                </div>
-                <div title="Размытие тени" class="mt-3">
-                  <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
-                  <input type="range" step="1" min="1" max="10" v-model="textOpt.shadowBlur">
-                  <input type="number" step="1" min="1" max="10" v-model="textOpt.shadowBlur"
-                         class="input-number-style">
-                </div>
+                  <div title="Смещение тени по Х" class="mt-3">
+                    <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                    <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetX">
+                    <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetX"
+                           class="input-number-style">
+                  </div>
+                  <div title="Смещение тени по Y" class="mt-3">
+                    <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                    <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetY">
+                    <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetY"
+                           class="input-number-style">
+                  </div>
+                  <div title="Размытие тени" class="mt-3">
+                    <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                    <input type="range" step="1" min="1" max="10" v-model="textOpt.shadowBlur">
+                    <input type="number" step="1" min="1" max="10" v-model="textOpt.shadowBlur"
+                           class="input-number-style">
+                  </div>
                 </div>
               </Transition>
             </div>
@@ -570,10 +595,10 @@ export default {
     recentColors: {
       type: Array,
     },
-    selectedObj:{
+    selectedObj: {
       type: Object
     },
-    rotation:{
+    rotation: {
       type: Number
     },
   },
@@ -582,13 +607,16 @@ export default {
       tool: "cursor",
       optionVisible: false,
       fontsCollection: ["Cambria", "Comfortaa", "Arial", "Comic Sans MS"],
+      cursorOpt: {
+        selectionTypes: ['stamp', 'shape' , 'text']
+      },
       brushOpt: {
-        size: 1,
+        size: 5,
         opacity: 1,
         color: "#000000",
         brushType: "color"
       },
-      stampOpt:{
+      stampOpt: {
         size: 50,
         opacity: 1,
         rotation: 0,
@@ -630,7 +658,7 @@ export default {
         strokeColor: "#000000",
         strokeWidth: 1,
         shadowColor: "#000000",
-        shadowBlur:1,
+        shadowBlur: 1,
         shOffsetX: 0,
         shOffsetY: 0,
         opacity: 1,
@@ -647,7 +675,7 @@ export default {
     },
     setFill(opt) {
       opt.fillColor = opt.isFill ? "#ffffff" : "transparent"
-      if(opt.isShadow && !opt.isFill) opt.isShadow=false
+      if (opt.isShadow && !opt.isFill) opt.isShadow = false
     },
     setBorder(opt) {
       opt.strokeColor = opt.isBorder ? "#000000" : "transparent"
@@ -655,26 +683,42 @@ export default {
     setShadow(opt) {
       opt.shadowColor = opt.isShadow ? "#000000" : "transparent"
     },
-    closePanel(){
-      this.optionVisible=false
-      if(this.selectedObj)
+    closePanel() {
+      this.optionVisible = false
+      if (this.selectedObj)
         this.$emit("removeSelect")
+    },
+    getSelectType(type) {
+      if (this.cursorOpt.selectionTypes.indexOf(type) !== -1)
+        return true
+      else return false
+    },
+    setSelectType(type) {
+      let index = this.cursorOpt.selectionTypes.indexOf(type)
+      if (index !== -1)
+        this.cursorOpt.selectionTypes.splice(index, 1)
+      else
+        this.cursorOpt.selectionTypes.push(type)
+    },
+    setAllSelectTypes() {
+      if (this.cursorOpt.selectionTypes.length == 5)
+        this.cursorOpt.selectionTypes = []
+      else
+        this.cursorOpt.selectionTypes = ['brush', 'stamp', 'shape', 'path', 'text']
     }
   },
   watch: {
-    tool(tool) {
-      this.$emit('toolChange', this.tool)
-      switch (tool) {
+    tool(val) {
+      this.$emit('toolChange', val)
+      switch (val) {
         case "cursor":
-          //!!!!
-          //this.$emit('optChange', this.brushOpt)
-          //!!!!
+          this.$emit('optChange', this.cursorOpt)
           break
         case "brush":
           this.$emit('optChange', this.brushOpt)
           break;
         case "stamp":
-          this.stampOpt.currentStampPath='../assets/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
+          this.stampOpt.currentStampPath = '../assets/Stamps/' + this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
           console.log(this.stampOpt.currentStampPath)
           this.$emit('optChange', this.stampOpt)
           break
@@ -691,56 +735,61 @@ export default {
           return
       }
     },
-    selectedObj:{
-    handler(val){
-      if(val) {
-        this.optionVisible=false
-        if(val.type=="text"){
-          this.textOpt.content=val.content
-          this.textOpt.fontFamily=val.fontFamily
-          this.textOpt.fontSize=val.fontSize
-          this.textOpt.justification=val.justification
-          this.textOpt.fillColor=val.data.isFill? val.fillColor.toCSS(true) : "transparent"
-          this.textOpt.strokeColor=val.data.isBorder? val.strokeColor.toCSS(true) : "transparent"
-          this.textOpt.strokeWidth=val.data.isBorder? val.strokeWidth : 0
-          this.textOpt.shadowColor=val.data.isShadow? val.shadowColor.toCSS(true) : "transparent"
-          this.textOpt.shadowBlur=val.data.isShadow? val.shadowBlur : 0
-          this.textOpt.shOffsetX=val.data.shOffsetX
-          this.textOpt.shOffsetY=val.data.shOffsetY
-          this.textOpt.opacity=val.opacity
-          this.textOpt.isBorder=val.data.isBorder
-          this.textOpt.isFill=val.data.isFill
-          this.textOpt.isShadow=val.data.isShadow
-        }
-        if(val.type=="shape"){
-          this.shapeOpt.strokeColor=val.data.isBorder? val.strokeColor.toCSS(true) : "transparent"
-          this.shapeOpt.fillColor=val.data.isFill? val.fillColor.toCSS(true) : "transparent"
-          this.shapeOpt.strokeWidth=val.data.isBorder? val.strokeWidth : 0
-          this.shapeOpt.opacity=val.opacity
-          this.shapeOpt.isBorder=val.data.isBorder
-          this.shapeOpt.isFill=val.data.isFill
-        }
-        if(val.type=="stamp"){
-          this.stampOpt.size=val.size.width
+    selectedObj: {
+      handler(val) {
+        if (val) {
+          this.optionVisible = false
+          if (val.data.type == "text") {
+            this.textOpt.content = val.content
+            this.textOpt.fontFamily = val.fontFamily
+            this.textOpt.fontSize = val.fontSize
+            this.textOpt.justification = val.justification
+            this.textOpt.fillColor = val.data.isFill ? val.fillColor.toCSS(true) : "transparent"
+            this.textOpt.strokeColor = val.data.isBorder ? val.strokeColor.toCSS(true) : "transparent"
+            this.textOpt.strokeWidth = val.data.isBorder ? val.strokeWidth : 0
+            this.textOpt.shadowColor = val.data.isShadow ? val.shadowColor.toCSS(true) : "transparent"
+            this.textOpt.shadowBlur = val.data.isShadow ? val.shadowBlur : 0
+            this.textOpt.shOffsetX = val.data.shOffsetX
+            this.textOpt.shOffsetY = val.data.shOffsetY
+            this.textOpt.opacity = val.opacity
+            this.textOpt.isBorder = val.data.isBorder
+            this.textOpt.isFill = val.data.isFill
+            this.textOpt.isShadow = val.data.isShadow
+          }
+          if (val.data.type == "shape") {
+            this.shapeOpt.strokeColor = val.data.isBorder ? val.strokeColor.toCSS(true) : "transparent"
+            this.shapeOpt.fillColor = val.data.isFill ? val.fillColor.toCSS(true) : "transparent"
+            this.shapeOpt.strokeWidth = val.data.isBorder ? val.strokeWidth : 0
+            this.shapeOpt.opacity = val.opacity
+            this.shapeOpt.isBorder = val.data.isBorder
+            this.shapeOpt.isFill = val.data.isFill
+          }
+          if (val.data.type == "stamp") {
+            this.stampOpt.size = val.size.width
+          }
         }
       }
-    }
     },
-    rotation:{
-      handler(val){
-        if(!val) return
-        switch (this.selectedObj.type) {
+    rotation: {
+      handler(val) {
+        if (!val) return
+        switch (this.selectedObj.data.type) {
           case "text":
             this.textOpt.rotation = Math.round(val)
-                break
+            break
           case "shape":
             this.shapeOpt.rotation = Math.round(val)
-                break
+            break
           case "stamp":
             this.stampOpt.rotation = Math.round(val)
-                break
+            break
         }
       }
+    },
+    cursorOpt: {
+      handler() {
+        this.$emit('optChange', this.cursorOpt)
+      }, deep: true
     },
     brushOpt: {
       handler() {
@@ -749,9 +798,9 @@ export default {
     },
     stampOpt: {
       handler() {
-        if(this.selectedObj) {
+        if (this.selectedObj) {
           Object.assign(this.selectedObj, this.stampOpt)
-          this.$emit("update",this.selectedObj, this.stampOpt)
+          this.$emit("update", this.selectedObj, this.stampOpt)
           this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.stampOpt)
@@ -759,9 +808,9 @@ export default {
     },
     shapeOpt: {
       handler() {
-        if(this.selectedObj) {
+        if (this.selectedObj) {
           //Object.assign(this.selectedObj, this.shapeOpt)
-          this.$emit("update",this.selectedObj, this.shapeOpt)
+          this.$emit("update", this.selectedObj, this.shapeOpt)
           this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.shapeOpt)
@@ -774,9 +823,9 @@ export default {
     },
     textOpt: {
       handler() {
-        if(this.selectedObj) {
+        if (this.selectedObj) {
           Object.assign(this.selectedObj, this.textOpt)
-          this.$emit("update",this.selectedObj, this.textOpt)
+          this.$emit("update", this.selectedObj, this.textOpt)
           this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.textOpt)
@@ -789,13 +838,52 @@ export default {
 #toolsPanel {
   grid-area: ToolsPanel;
   position: fixed;
-  left:0;
+  left: 0;
   z-index: 4;
 }
 
 #text {
   width: 235px;
   height: 75px;
+}
+
+.selectOptionsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 40px;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.selectOption{
+  display: flex;
+  align-items: center;
+  height: inherit;
+  padding: 10px;
+  cursor: pointer;
+}
+.selectOption:nth-last-child(n+2){
+  border-right: 1px solid #dcdcdc;
+}
+.selectOption img {
+  height: 100%;
+  object-fit: contain;
+}
+
+.optionChecked {
+  background-color: #232323;
+  color: #dcdcdc;
+}
+.optionChecked:nth-last-child(1){
+  border-radius: 0 10px 10px 0;
+}
+.optionChecked:nth-child(1){
+  border-radius: 10px 0 0 10px;
+}
+.optionChecked img {
+  filter: invert(100%);
 }
 
 hr {
@@ -828,46 +916,54 @@ hr {
 .options-table {
   width: 100%;
 }
-.stampsContainer{
-  max-width:240px;
+
+.stampsContainer {
+  max-width: 240px;
   max-height: 120px;
 }
-.bigStamp{
+
+.bigStamp {
   border: 1px solid gainsboro;
   border-radius: 5px;
 }
-.bigStampContainer{
+
+.bigStampContainer {
   width: 45%;
   height: 100%;
 }
-.bigStamp img{
+
+.bigStamp img {
   object-fit: contain;
   width: 100%;
   height: 100%;
 }
-.smallStamp{
+
+.smallStamp {
   width: 30%;
   height: 30%;
   border: 1px solid gainsboro;
   border-radius: 5px;
 }
-.smallStamp img{
+
+.smallStamp img {
   object-fit: contain;
   width: 100%;
   height: 100%;
 }
-.stampsTable{
+
+.stampsTable {
   width: 55%;
   max-width: 60%;
   max-height: 100%;
   height: 100%;
 }
+
 .dropdown-item:active {
   background: #232323;
   color: white;
 }
 
-.interactive{
+.interactive {
   cursor: pointer;
 }
 
