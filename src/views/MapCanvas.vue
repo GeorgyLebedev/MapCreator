@@ -494,6 +494,7 @@ export default {
       obj.selectionGroup.remove()
       obj.selectionGroup = undefined
       this.cursorOpt.selectedObj = undefined
+      this.styleCursor='default'
     },
     updateItem(item, options) {
       switch (item.data.type) {
@@ -652,6 +653,9 @@ export default {
         if (event.key == 'delete' && options.selectedObj) {
           this.removeItem(options.selectedObj)
           this.cursorStyleReset()
+        }
+        if(event.key=='escape'&& options.selectedObj){
+          this.removeSelect()
         }
       }
     },
@@ -915,7 +919,7 @@ export default {
               this.currentItem = new paper.Path.Line({
                 from: initPoint,
                 to: event.point,
-                strokeWidth: options.size,
+                strokeWidth: options.size*2,
                 strokeCap: options.roundCap ? "round" : "square",
                 strokeColor: options.color,
                 opacity: options.opacity
@@ -955,7 +959,7 @@ export default {
               )
               this.currentItem = new paper.Path({
                 segments: segments.concat(lastSegment),
-                strokeWidth: options.size,
+                strokeWidth: options.size*2,
                 strokeJoin: "round",
                 strokeCap: options.roundCap ? "round" : "square",
                 strokeColor: options.color,
@@ -1041,7 +1045,7 @@ export default {
               segments[segments.length - 1].selected = true*/
               this.currentItem = new paper.Path({
                 segments: segments.concat(lastSegment),
-                strokeWidth: options.size,
+                strokeWidth: options.size*2,
                 strokeJoin: "round",
                 strokeCap: options.roundCap ? "round" : "square",
                 strokeColor: options.color,
