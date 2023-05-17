@@ -289,12 +289,12 @@ export default {
     },
     setDefaultSizes() {
       let area = this.getCanvasArea()
-      if (this.canvasObj.XtoY > 1) {
-        this.canvasObj.defaultWidth = area.width
-        this.canvasObj.defaultHeight = this.canvasObj.defaultWidth / this.canvasObj.XtoY
-      } else {
+      if (this.canvasObj.XtoY >= 1) {
         this.canvasObj.defaultHeight = area.height
         this.canvasObj.defaultWidth = this.canvasObj.defaultHeight * this.canvasObj.XtoY
+      } else {
+        this.canvasObj.defaultWidth = area.width
+        this.canvasObj.defaultHeight = this.canvasObj.defaultWidth * this.canvasObj.XtoY
       }
       this.canvasReset()
     },
@@ -1140,10 +1140,12 @@ export default {
       }
     },
     exportAs(Ext) {
-      let imgData, docPDF, blob
-      /*   this.canvasObj.CSSheight=this.canvasObj.resoY
-         this.canvasObj.CSSwidth=this.canvasObj.resoX
-         this.resetCoords()*/
+      let imgData, docPDF, blob, step
+      /*this.canvasReset() //сбросил зум
+      if(this.canvasObj.defaultWidth<this.canvasObj.resoX)
+      step=this.canvasObj.resoX/this.canvasObj.defaultWidth
+      else step=this.canvasObj.defaultWidth/this.canvasObj.resoX
+      this.zoom(null, step , "=")*/
       switch (Ext) {
         case 'png':
           this.canvasObj.ref.toBlob(function (blob) {
