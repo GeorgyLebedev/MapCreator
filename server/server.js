@@ -18,6 +18,7 @@ app.use(express.urlencoded({extended: false}))
 app.use('/user', require("./controllers/userController"))
 app.use('/auth', require("./controllers/authController"))
 app.use('/map', require("./controllers/mapController"))
+app.use('/options', require("./controllers/optionsController"))
 app.use('/', express.static(path.join(__dirname, '../dist')))
 app.listen(app.get('port'), () => {
     console.log(`[OK] Server is running on localhost:${app.get('port')}`);

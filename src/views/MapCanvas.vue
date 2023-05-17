@@ -61,7 +61,7 @@
         @resetScale="resetScale"
         :scale-prop="Number(this.canvasObj.scale)"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2)">
-      <canvas id="map" :width="this.canvasObj.resoX" :height="this.canvasObj.resoY"
+      <canvas id="map" :width="this.canvasObj.CSSwidth" :height="this.canvasObj.CSSheight"
               :style="{cursor: this.styleCursor, width:this.canvasObj.CSSwidth+'px', height:this.canvasObj.CSSheight+'px' }"
               @mouseout="()=>{
                 if(this.currentItem) this.currentItem.visible=false
@@ -112,10 +112,10 @@ export default {
       },
       canvasObj: {
         ref: null,
-        resoX: 1920,
+        resoX: 0,
         CSSwidth: 1,
         defaultWidth: 1,
-        resoY: 1080,
+        resoY: 0,
         CSSheight: 1,
         defaultHeight: 1,
         scale: 1,
@@ -256,7 +256,6 @@ export default {
         paper.view.zoom = scale
         paper.view.viewSize = new paper.Size(cObj.CSSwidth, cObj.CSSheight)
         paper.view.center = new paper.Point(0, 0)
-        paper.view.update()
         cObj.scale = scale
         this.setTranslate(cObj.offsetLeft + newX, cObj.offsetTop + newY)
       }
@@ -1140,38 +1139,56 @@ export default {
       }
     },
     exportAs(Ext) {
-      let imgData, docPDF, blob, step
-      /*this.canvasReset() //сбросил зум
+      let imgData, docPDF, blob, svgStr, link, step
+      this.canvasReset()
+      let filename=this.currentMap.title
       if(this.canvasObj.defaultWidth<this.canvasObj.resoX)
       step=this.canvasObj.resoX/this.canvasObj.defaultWidth
       else step=this.canvasObj.defaultWidth/this.canvasObj.resoX
-      this.zoom(null, step , "=")*/
+      this.zoom(null, step, "=")
+      paper.view.update()
       switch (Ext) {
         case 'png':
           this.canvasObj.ref.toBlob(function (blob) {
-            saveAs(blob, "MapName.png");
+            saveAs(blob, `${filename}.png`);
           });
           break
         case 'jpg':
           this.canvasObj.ref.toBlob(function (blob) {
-            saveAs(blob, "MapName.jpg");
+            saveAs(blob, `${filename}.jpg`);
           });
           break
         case 'pdf':
           imgData = this.canvasObj.ref.toDataURL('image/png')
-          docPDF = new jsPDF((this.canvasObj.XtoY > 1) ? 'l' : 'p', 'px', [this.canvasObj.resoX, this.canvasObj.resoY]);
-          docPDF.addImage(imgData, 'PNG', 0, 0);
-          docPDF.output('save', 'MapName.pdf');
+          docPDF = new jsPDF((this.canvasObj.XtoY > 1) ? 'l' : 'p', 'px',[this.canvasObj.resoX,this.canvasObj.resoY]);
+          docPDF.addImage(imgData, 'PNG', 0, 0,this.canvasObj.resoX,this.canvasObj.resoY);
+          docPDF.save(`${this.currentMap.title}.pdf`);
           break
         case 'json':
           blob = new Blob([paper.project.exportJSON()], {type: "application/json"});
-          saveAs(blob, "MapName.json");
+          saveAs(blob, `${this.currentMap.title}.json`);
           break
         case 'svg':
-          blob = new Blob([paper.project.exportSVG()]);
-          saveAs(blob, "MapName.svg");
+          svgStr = paper.project.exportSVG({ asString: true });
+          link = document.createElement("a");
+          link.href = "data:image/svg+xml," + encodeURIComponent(svgStr);
+          link.download = `${this.currentMap.title}.svg`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
       }
-      //this.setDefaultSizes()
+      this.canvasReset()
+    },
+    async getCurrentMap(){
+      let ID = this.$route.params.id
+      try {
+        let request = new AxiosRequest(`map/${ID}`, 'get')
+        let response = (await request.sendRequest())
+        if (response && response.map) return response.map
+      } catch (e) {
+        this.error = e.message
+        this.$router.push("/Main")
+      }
     },
     async updateMapMetadata(map) {
       let request
@@ -1184,28 +1201,23 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.canvasObj.ref = document.getElementById("map")
+    this.currentMap= await this.getCurrentMap()
+    if (!this.currentMap || !this.currentMap.title)
+      this.$router.push("/Main")
+    this.canvasObj.resoX = this.currentMap.resolution.split('x',2)[0]
+    this.canvasObj.resoY= this.currentMap.resolution.split('x',2)[1]
     this.canvasObj.XtoY = this.canvasObj.resoX / this.canvasObj.resoY
-    if (this.canvasObj.XtoY > 1) {
-      this.canvasObj.CSSwidth = document.getElementById("canvasBox").offsetWidth
-      this.canvasObj.CSSheight = this.canvasObj.CSSwidth / this.canvasObj.XtoY
-    } else {
-      this.canvasObj.CSSheight = document.getElementById("canvasBox").offsetHeight
-      this.canvasObj.CSSwidth = this.canvasObj.CSSheight * this.canvasObj.XtoY
-    }
-    this.canvasObj.defaultWidth = this.canvasObj.CSSwidth
-    this.canvasObj.defaultHeight = this.canvasObj.CSSheight
-
     paper.setup(this.canvasObj.ref)
+    this.setDefaultSizes()
     paper.view.viewSize = new paper.Size(this.canvasObj.CSSwidth, this.canvasObj.CSSheight)
     paper.view.center = new paper.Point(0, 0)
-    this.setDefaultSizes()
     let backgroundLayer = new paper.Layer({
       children: [new paper.Path.Rectangle({
         point: new paper.Point(-this.canvasObj.CSSwidth / 2, -this.canvasObj.CSSheight / 2),
         size: paper.view.viewSize,
-        fillColor: "white",
+        fillColor: "#f5f5f5",
       })],
       position: paper.view.center
     })
@@ -1248,20 +1260,9 @@ export default {
       return "";
     }*/
   },
-  async created() {
-    let ID = this.$route.params.id
+   created() {
     window.addEventListener("resize", this.setDefaultSizes);
     window.addEventListener("resize", this.resetCoords);
-    try {
-      let request = new AxiosRequest(`map/${ID}`, 'get')
-      let response = (await request.sendRequest())
-      if (response && response.map) this.currentMap = response.map
-    } catch (e) {
-      this.error = e.message
-      this.$router.push("/Main")
-    }
-    if (!this.currentMap || !this.currentMap.title)
-      this.$router.push("/Main")
   },
   watch: {
     'currentTool.name'(val) {

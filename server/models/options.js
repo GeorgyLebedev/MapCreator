@@ -3,9 +3,12 @@ const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId
 const Options = new Schema({
     id: ObjectId,
-    userId: Number,
-    palette: JSON,
-
+    user:  {
+        type:String,
+        required: true
+    },
+    palette: {},
+    stamps:{}
 });
 
 module.exports = mongoose.model('Options', Options);

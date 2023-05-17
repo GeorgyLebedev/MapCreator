@@ -16,7 +16,7 @@
               <div id="block1" class="accordion-collapse collapse" data-bs-parent="#MenuAccordion">
                 <div class="py-0 accordion-body text-end">
                   <a class="dropdown-item" href="#">Фоновое изображение</a>
-                  <a class="dropdown-item" href="#">Файл с картой</a>
+                  <a class="dropdown-item" href="#">Файл с картой (.JSON)</a>
                 </div>
               </div>
               <button class="py-1 px-3 dropdown-item accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acBlock2">
@@ -28,7 +28,7 @@
                   <a class="dropdown-item" @click="this.$emit('saveAs','jpg')">JPEG</a>
                   <a class="dropdown-item" @click="this.$emit('saveAs','pdf')">PDF</a>
                   <a class="dropdown-item" @click="this.$emit('saveAs','svg')">SVG</a>
-                  <a class="dropdown-item" @click="this.$emit('saveAs','json')">Файл с картой</a>
+                  <a class="dropdown-item" @click="this.$emit('saveAs','json')">JSON</a>
                 </div>
               </div>
             </div>

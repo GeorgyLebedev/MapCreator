@@ -73,12 +73,12 @@ router.post('/', async (req, res) => {
 	    req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
 	    let activeRecord = new userModel(req.body)
 	    await activeRecord.save();
-	    let query = await userModel.find({email: req.body.email})
+	 /*   let query = await userModel.find({email: req.body.email})
 	    let dirPath=path.join(__dirname,'../users/')
 	    fs.mkdirSync(`${dirPath}/${query[0]._id}`)
 	    fs.mkdirSync(`${dirPath}/${query[0]._id}/stamps`)
 	    fs.mkdirSync(`${dirPath}/${query[0]._id}/data`)
-	    fs.mkdirSync(`${dirPath}/${query[0]._id}/maps`)
+	    fs.mkdirSync(`${dirPath}/${query[0]._id}/maps`)*/
 	    res.json({status: "success"})
 	}
 	catch (e) {
