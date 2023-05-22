@@ -1,39 +1,40 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); //подключение ODM
 const Schema = mongoose.Schema;
 const ObjectId=Schema.ObjectId
 const Map = new Schema({
-    id: ObjectId,
-    user: {
+    id: ObjectId, //код карты
+    user: { //код пользователя
         type:String,
         required: true
     },
-    title: {
+    title: { //название карты
         type:String,
         required: true
     },
-    creationDate: {
+    creationDate: { //название карты
         type:Date,
         required: true
     },
-    changeDate: {
+    changeDate: {  //название карты
         type: Date,
         required: true
     },
-    description: {
+    description: { //описание карты
         type: String,
-        default: ""
+        default: "",
+        required: true
     },
-    resolution: {
+    resolution: { //разрешение холста
         type: String,
         required: true
     },
-    smallPicture: {
-        type: String
+    smallPicture: {//миниатюра карты (код изображения)
+        type: String,
+        required: true
     },
-    objects: {
+    objects: { //объекты карты
         type:{},
-        required:true
+        required:false
     }
 });
-
 module.exports = mongoose.model('Map', Map);

@@ -1,10 +1,9 @@
 <template>
-  <router-view/>
+  <router-view :id="$route.params.id"/>
 </template>
 <script>
 export default {
   name: 'App',
-
 }
 </script>
 <style>

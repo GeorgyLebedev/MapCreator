@@ -73,7 +73,7 @@
               </div>
               <div id="brushColors" v-if="brushOpt.brushType=='color'">
                 Цвет кисти: <br>
-                <input type="color" v-model="brushOpt.color">
+                <input type="color" v-model="brushOpt.color" @input="colorUpdate(brushOpt.color)">
                 <div class="mb-3">
                   Последние цвета:
                   <table class="colorTable">
@@ -252,7 +252,7 @@
                     <label for="shapeFillChbx">Заливка</label>
                   </td>
                   <td>
-                    <input type="color" v-model="shapeOpt.fillColor" v-if="shapeOpt.isFill">
+                    <input type="color" v-model="shapeOpt.fillColor" v-if="shapeOpt.isFill" @input="colorUpdate(shapeOpt.fillColor)">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!shapeOpt.isFill">
                   </td>
@@ -264,7 +264,7 @@
                     <label for="shapeBorderChbx">Контур</label>
                   </td>
                   <td>
-                    <input type="color" v-model="shapeOpt.strokeColor" v-if="shapeOpt.isBorder">
+                    <input type="color" v-model="shapeOpt.strokeColor" v-if="shapeOpt.isBorder" @input="colorUpdate(shapeOpt.strokeColor)">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!shapeOpt.isBorder">
                   </td>
@@ -393,7 +393,7 @@
               </Transition>
               <hr>
               Цвет линии: <br>
-              <input type="color" v-model="pathOpt.color">
+              <input type="color" v-model="pathOpt.color"  @input="colorUpdate(pathOpt.color)">
               <div class="mb-3">
                 Последние цвета:
                 <table class="colorTable">
@@ -475,7 +475,7 @@
                          v-model="textOpt.isFill" @change="setFill(textOpt)">
                   <label for="textFillChbx">Цвет текста</label>
                 </div>
-                <input type="color" v-model="textOpt.fillColor" v-if="textOpt.isFill">
+                <input type="color" v-model="textOpt.fillColor" v-if="textOpt.isFill"  @input="colorUpdate(textOpt.fillColor)">
                 <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                      v-if="!textOpt.isFill">
               </div>
@@ -530,7 +530,7 @@
                          v-model="textOpt.isBorder" @change="setBorder(textOpt)">
                   <label for="shapeFillChbx">Обводка</label>
                 </div>
-                <input type="color" v-model="textOpt.strokeColor" v-if="textOpt.isBorder">
+                <input type="color" v-model="textOpt.strokeColor" v-if="textOpt.isBorder"  @input="colorUpdate(textOpt.strokeColor)">
                 <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                      v-if="!textOpt.isBorder">
               </div>
@@ -549,26 +549,26 @@
                          @change="setShadow(textOpt)" :disabled="!textOpt.isFill">
                   <label for="shapeBorderChbx">Тень</label>
                 </div>
-                <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow">
+                <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow"  @input="colorUpdate(textOpt.shadowColor)">
                 <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                      v-if="!textOpt.isShadow">
               </div>
               <Transition name="stretch" mode="out-in">
                 <div v-if="textOpt.isShadow">
                   <div title="Смещение тени по Х" class="mt-3">
-                    <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                    <img src="@/assets/images/Tools/Options/shOffsetX.png" alt="" width="20">
                     <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetX">
                     <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetX"
                            class="input-number-style">
                   </div>
                   <div title="Смещение тени по Y" class="mt-3">
-                    <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                    <img src="@/assets/images/Tools/Options/shOffsetY.png" alt="" width="20">
                     <input type="range" step="1" min="-10" max="10" v-model="textOpt.shOffsetY">
                     <input type="number" step="1" min="-10" max="10" v-model="textOpt.shOffsetY"
                            class="input-number-style">
                   </div>
                   <div title="Размытие тени" class="mt-3">
-                    <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+                    <img src="@/assets/images/Tools/Options/shBlur.png" alt="" height="20">
                     <input type="range" step="1" min="1" max="10" v-model="textOpt.shadowBlur">
                     <input type="number" step="1" min="1" max="10" v-model="textOpt.shadowBlur"
                            class="input-number-style">
@@ -592,9 +592,6 @@
 export default {
   name: "ToolsPanel",
   props: {
-    recentColors: {
-      type: Array,
-    },
     selectedObj: {
       type: Object
     },
@@ -605,11 +602,13 @@ export default {
   data() {
     return {
       tool: "cursor",
+      lastColor: "",
       optionVisible: false,
       fontsCollection: ["Cambria", "Comfortaa", "Arial", "Comic Sans MS"],
       cursorOpt: {
         selectionTypes: ['stamp', 'shape' , 'text']
       },
+      recentColors: Array(8).fill("#ffffff"),
       brushOpt: {
         size: 5,
         opacity: 1,
@@ -705,7 +704,27 @@ export default {
         this.cursorOpt.selectionTypes = []
       else
         this.cursorOpt.selectionTypes = ['brush', 'stamp', 'shape', 'path', 'text']
-    }
+    },
+    colorUpdate(color){
+      if(this.lastColor!=color){
+        this.lastColor = color;
+        setTimeout(() => {
+          if (color == this.lastColor) {
+              this.updateRecentColors(this.lastColor)
+          }
+        }, 2000);
+      }
+    },
+    updateRecentColors(newColor) {
+      if (newColor == "transparent") return
+      if (this.recentColors.indexOf(newColor) != -1) return
+      if (this.recentColors.length < 8)
+        this.recentColors.unshift(newColor)
+      else {
+        this.recentColors = this.recentColors.slice(0, 7)
+        this.recentColors.unshift(newColor)
+      }
+    },
   },
   watch: {
     tool(val) {
@@ -719,7 +738,6 @@ export default {
           break;
         case "stamp":
           this.stampOpt.currentStampPath = '../assets/Stamps/' + this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
-          console.log(this.stampOpt.currentStampPath)
           this.$emit('optChange', this.stampOpt)
           break
         case "shape":
@@ -730,6 +748,9 @@ export default {
           break
         case "text":
           this.$emit('optChange', this.textOpt)
+          break
+        case "zoom":
+          this.$emit('optChange')
           break
         default:
           return
@@ -801,7 +822,6 @@ export default {
         if (this.selectedObj) {
           Object.assign(this.selectedObj, this.stampOpt)
           this.$emit("update", this.selectedObj, this.stampOpt)
-          this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.stampOpt)
       }, deep: true
@@ -811,7 +831,6 @@ export default {
         if (this.selectedObj) {
           //Object.assign(this.selectedObj, this.shapeOpt)
           this.$emit("update", this.selectedObj, this.shapeOpt)
-          this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.shapeOpt)
       }, deep: true
@@ -826,7 +845,6 @@ export default {
         if (this.selectedObj) {
           Object.assign(this.selectedObj, this.textOpt)
           this.$emit("update", this.selectedObj, this.textOpt)
-          this.$emit("newSelect", this.selectedObj)
         }
         this.$emit('optChange', this.textOpt)
       }, deep: true

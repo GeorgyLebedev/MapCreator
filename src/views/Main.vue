@@ -45,7 +45,7 @@ import NewMapWindow from "@/components/main/NewMapWindow";
 import MapEditWindow from "@/components/MapEditWindow";
 import MapDeleteWindow from "@/components/main/MapDeleteWindow";
 import ErrorComponent from "@/components/Error"
-import AxiosRequest from "@/services/axiosController";
+import AxiosRequest from "@/modules/services/axiosRequest";
 export default {
   name: 'MainPage',
   data() {
@@ -88,14 +88,14 @@ export default {
         this.error = e
       }
     },
-    async getMaps() {
+    async getMaps() { //получение карт пользователя
       let response, request
-      try {
+      try {//запрос на сервер с использованием AxiosRequest
         request = new AxiosRequest('map/', 'get')
-        response = await request.sendRequest()
-        if (response && response.maps)
-          this.mapList = response.maps
-        if(response && response.msg)
+        response = await request.sendRequest() //ожидание ответа
+        if (response && response.maps) //если карты получены
+          this.mapList = response.maps //передать их в массив
+        if(response && response.msg) //если есть сообщение об ошибке - вывести его
           this.error=response.msg
       } catch (e) {
         this.error = e

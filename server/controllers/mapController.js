@@ -1,7 +1,7 @@
 const express = require('express');
-const router = express.Router();
-const mapModel = require('../models/map');
-const authenticateJWT = require("../authenticateJWT")
+const router = express.Router(); //создание роутера для обработки запросов внутри контроллера
+const mapModel = require('../models/map'); //подключение объектной модели для работы с картами
+const authenticateJWT = require("../authenticateJWT") //подключение функции JWT-аутентификации
 router.get('/', authenticateJWT, async (req, res) => {
     try {
 	res.json({maps: await mapModel.find({user: req.user.id})})

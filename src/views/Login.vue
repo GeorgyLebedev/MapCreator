@@ -119,7 +119,7 @@
   </div>
 </template>
 <script>
-import AxiosRequest from "@/services/axiosController";
+import AxiosRequest from "@/modules/services/axiosRequest";
 import ErrorComponent from '@/components/Error.vue'
 export default {
   name: 'LoginPage',

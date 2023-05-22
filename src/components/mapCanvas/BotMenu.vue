@@ -6,7 +6,7 @@
       <img src="@/assets/images/Tools/save.png" alt="" class="card-img-top p-1 icon-mid hoverinv" height="40">
     </button>
     <span class="me-2">
-    <u><b>Изменений: 11</b></u></span>
+    <u><b>Изменений: 0</b></u></span>
     <span class="text-muted">Не сохранено</span>
   </div>
   <div class="d-flex align-items-center pe-2">
