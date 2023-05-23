@@ -598,6 +598,9 @@ export default {
     rotation: {
       type: Number
     },
+    size:{
+      type: Number
+    }
   },
   data() {
     return {
@@ -805,6 +808,12 @@ export default {
             this.stampOpt.rotation = Math.round(val)
             break
         }
+      }
+    },
+    size:{
+      handler(val){
+        if(!val || this.selectedObj.data.type!="stamp") return
+        this.stampOpt.size=val
       }
     },
     cursorOpt: {

@@ -55,6 +55,7 @@
         @showStampsWindow="(flag)=>{ showStampsWin = flag }"
         :selected-obj="selection.selectedObject"
         :rotation="selection.selectedObject? Number(selection.selectedObject.rotation):0"
+        :size="selection.selectedObject&&selection.selectedObject.size? Number(selection.selectedObject.size.width):0"
     />
     <BotMenu
         @resetAlign="canvas.hardReset()"
@@ -282,10 +283,10 @@ export default {
           break
       }
     },
-    'activeLayer.children.length'(val) {
-      let obj = this.activeLayer.lastChild
-      obj.applyMatrix = false
-      console.log(val)
+    'activeLayer.children.length'() {
+      /*let obj = this.activeLayer.lastChild
+      obj.applyMatrix = false*/
+      console.log(paper.project.activeLayer)
     },
     'currentItem'(item) {
       item.data.type = this.currentTool.name

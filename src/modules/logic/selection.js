@@ -81,8 +81,6 @@ export default class selection {
             group.addChild(boundSq)
         })
         let sqArray = [group.children['1corner'], group.children['2corner'], group.children['3corner'], group.children['4corner']]
-       /* let brWidth = 0
-        let brHeight = 0*/
         sqArray.forEach((square, index) => {
             square.onMouseDrag = (event) => {
                 square.position = event.point
@@ -126,11 +124,11 @@ export default class selection {
                 twoLast = []
                 if (item.data.type == 'stamp') {
                     let oldSize=item.bounds.size
-                    item.set({
-                        matrix: new paper.Matrix()
-                    });
+                    let rotate=item.rotation?item.rotation:0
+                    item.matrix= new paper.Matrix()
                     item.source = require('@/assets/Stamps/firstSet/stampEx.svg')
                     item.position=group.position
+                    item.rotation=rotate
                     item.size=oldSize
                 }
             }
@@ -149,11 +147,6 @@ export default class selection {
         }
         boundCircle.onMouseUp = () => {
             angle = undefined
-         /*   if (item.data.type == 'stamp') {
-                item = this.reRender(item, item.size)
-                this.setSelected(item)
-            }
-            event.stop()*/
         }
         boundCircle.onMouseDrag = (event) => {
             if (angle) {
