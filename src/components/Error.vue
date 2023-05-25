@@ -32,22 +32,23 @@ export default {
   margin-right: auto;
   left: 0;
   right: 0;
-  border: 2px solid #a73853;
+  border: 2px solid #ea5c41;
   border-radius: 10px;
-  background: #dcdcdc;
+  background: #e3e9f4;
+  color: #3d4551;
   min-width: 400px;
   max-width: 400px;
 }
 .errorHeader{
   padding-top: 5px;
   padding-inline: 5px;
-  border-bottom: 2px solid #a73853;
+  border-bottom: 2px solid #ea5c41;
   display: flex;
   justify-content: space-between;
 }
 .errorContent{
   padding: 5px;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 75px;
 }
 .error-anim-enter-active,

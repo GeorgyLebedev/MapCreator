@@ -3,9 +3,9 @@ const router = express.Router();
 const optionsModel = require('../models/options');
 const authenticateJWT = require("../authenticateJWT")
 
-router.get('/:id', authenticateJWT, async (req, res) => {
+router.get('/', authenticateJWT, async (req, res) => {
     try {
-	res.json({options: await optionsModel.findById(req.params.id)})
+	res.json({options: await optionsModel.findById(req.user.id)})
     } catch (e) {
 	res.json({msg: e.message})
     }
@@ -21,12 +21,12 @@ router.post('/', authenticateJWT, async (req, res) => {
     }
 
 });
-router.put('/:id', authenticateJWT, async (req, res) => {
+router.put('/:type', authenticateJWT, async (req, res) => {
 	try {
-	    await optionsModel.findByIdAndUpdate(req.params.id, {title: req.body.title})
-	    await optionsModel.findByIdAndUpdate(req.params.id, {changeDate: new Date()})
-	    if (req.body.description)
-		await optionsModel.findByIdAndUpdate(req.params.id, {description: req.body.description})
+	    if(req.params.type=="stamps")
+		await optionsModel.findByIdAndUpdate(req.user.id, {stamps: req.body.stamps})
+	    if(req.params.type=="colors")
+		await optionsModel.findByIdAndUpdate(req.user.id, {stamps: req.body.colors})
 	    res.json({state: 'updated'});
 	} catch (e) {
 	    res.json({msg: e.message})

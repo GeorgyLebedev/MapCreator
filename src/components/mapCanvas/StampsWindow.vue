@@ -10,10 +10,10 @@
         <hr>
         <div class="modalBody">
           <div class="sideMenu">
-            <div class="stampKit c-pointer" :class="{selectedKit:(kit==this.selectedKit)}"
-                 v-for="kit in stampsList" :key=kit
-                 @click="this.selectedKit=kit">
-              <div class="stampKitName" :title="kit">{{ kit }}</div>
+            <div class="stampKit c-pointer" :class="{selectedKit:(key==this.selectedKit)}"
+                 v-for="(val, key) in stamps" :key=key
+                 @click="this.selectedKit=key">
+              <div class="stampKitName" :title="key">{{ key }}</div>
             </div>
             <div class="stampKit " v-if="addNewKit">
               <div class="stampKitName addNewKit">
@@ -28,7 +28,8 @@
                   <img class="c-pointer" src="@/assets/images/Service/tick.png" alt=""
                        @click="()=>{
                      if(this.newKitName.length>=5){
-                       this.stampsList.push(this.newKitName)
+                       this.stamps[this.newKitName]={}
+                       this.selectedKit=this.newKitName
                      this.newKitName=''
                      this.addNewKit=false
                      }
@@ -39,16 +40,15 @@
             <div class="stampKit c-pointer">
               <div class="stampKitName c-pointer addNewKit" @click="()=>{
               this.addNewKit=true
-              this.$refs.newKitInput.focus()
             }">
                 Создать новый набор
                 <img src="@/assets/images/new.png" alt="" width="30" height="30">
               </div>
             </div>
           </div>
-          <div class="stampList">
-            <div class="stampIcon" v-for="i in 0" :key=i @click="this.$emit('showStampsWindow', false)">
-              <img class="stampImage c-pointer" src='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0naXNvLTg4NTktMSc/Pgo8IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiMwMDAwMDAiIGhlaWdodD0iODAwcHgiIHdpZHRoPSI4MDBweCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NjMuMDAxIDQ2My4wMDEiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA0NjMuMDAxIDQ2My4wMDEiPgogIDxnPgogICAgPHBhdGggZD0ibTQ1NS41LDI5Mi4wMDFoLTczLjgzOGwyNC4wOS0zNi4zNTdjMC41MTktMC43ODIgMC44ODUtMS42NTQgMS4wODItMi41NzFsMTMuNzE0LTYzLjk5OWMwLjg2Ny00LjA1LTEuNzEyLTguMDM3LTUuNzYzLTguOTA1LTQuMDQtMC44NjctOC4wMzYsMS43MTEtOC45MDUsNS43NjJsLTEzLjQxNiw2Mi42MS0yOC43OTUsNDMuNDU5aC0xNjUuMzM5bDQ1LjY5LTM0LjUxNmMwLjkyMi0wLjY5NiAxLjY3MS0xLjU5NyAyLjE4OC0yLjYzbDQ2LjUyNC05My4wNDkgNDEuNDE4LTExLjgzNC0xMy43NDksODIuNDkyLTIyLjkwMSwzMC41MzhjLTIuNDg1LDMuMzEzLTEuODEzLDguMDE1IDEuNSwxMC41IDEuMzUsMS4wMTIgMi45MjksMS41IDQuNDk0LDEuNSAyLjI4LDAgNC41MzItMS4wMzYgNi4wMDYtM2wyNC0zMmMwLjcyMS0wLjk2MSAxLjItMi4wODIgMS4zOTgtMy4yNjdsMTUuNTI4LTkzLjE2OSAzNi4wNjItMjguODQ5IDY5Ljg0LTcuNzZjNC4xMTctMC40NTggNy4wODMtNC4xNjYgNi42MjYtOC4yODJzLTQuMTYtNy4wODMtOC4yODItNi42MjZsLTcyLDhjLTEuNDExLDAuMTU3LTIuNzQ4LDAuNzExLTMuODU3LDEuNTk4bC0zOC44MjMsMzEuMDU5LTU0LjU1MiwxNS41ODZjLTIuMDIxLDAuNTc4LTMuNzA3LDEuOTc3LTQuNjQ3LDMuODU3bC0xNy45NDMsMzUuODg2Yy0wLjAzMiwwLjAwMy0wLjA2MywwLjAwMS0wLjA5NSwwLjAwNWwtODAsOGMtMi41NjEsMC4yNTYtNC44MTIsMS44MDctNS45NjIsNC4xMDlsLTE0LjY4MywyOS4zNjUtNjEuMjQzLDIyLjk2NmMtMS41OTQsMC41OTgtMi45MzcsMS43Mi0zLjgwOCwzLjE4MmwtMjEuNjY3LDM2LjM0MWgtNjcuODkyYy00LjE0MywwLTcuNSwzLjM1OC03LjUsNy41czMuMzU3LDcuNSA3LjUsNy41aDQ0OGM0LjE0MywwIDcuNS0zLjM1OCA3LjUtNy41cy0zLjM1Ny03LjUwMS03LjUtNy41MDF6bS0yNjcuMTQxLTgxLjQ0OWw2Ni41NTctNi42NTYtMjEuMzQsNDIuNjc5LTYwLjEzMiw0NS40MjVoLTM1LjgzOGwxOS4xOTctMTkuMTk3YzAuNTY5LTAuNTcgMS4wNDQtMS4yMjggMS40MDQtMS45NDlsMzAuMTUyLTYwLjMwMnptLTc5Ljc2Myw1NS4wNDhsNDMuNjU1LTE2LjM3LTYuOTE1LDEzLjgyOS0yOC45NDMsMjguOTQyaC0yMy41MzlsMTUuNzQyLTI2LjQwMXoiLz4KICAgIDxwYXRoIGQ9Im0zMTEuNSwzMjQuMDAxaC0xNDRjLTQuMTQzLDAtNy41LDMuMzU4LTcuNSw3LjVzMy4zNTcsNy41IDcuNSw3LjVoMTQ0YzQuMTQzLDAgNy41LTMuMzU4IDcuNS03LjVzLTMuMzU3LTcuNS03LjUtNy41eiIvPgogICAgPHBhdGggZD0ibTEzNS41LDMyNC4wMDFoLTY0Yy00LjE0MywwLTcuNSwzLjM1OC03LjUsNy41czMuMzU3LDcuNSA3LjUsNy41aDY0YzQuMTQzLDAgNy41LTMuMzU4IDcuNS03LjVzLTMuMzU3LTcuNS03LjUtNy41eiIvPgogICAgPHBhdGggZD0ibTM1OS41LDMyNC4wMDFoLTE2Yy00LjE0MywwLTcuNSwzLjM1OC03LjUsNy41czMuMzU3LDcuNSA3LjUsNy41aDE2YzQuMTQzLDAgNy41LTMuMzU4IDcuNS03LjVzLTMuMzU3LTcuNS03LjUtNy41eiIvPgogICAgPHBhdGggZD0ibTI5NS41LDM1Ni4wMDFoLTc5Ljk5OGMtNC4xNDMsMC03LjUsMy4zNTgtNy41LDcuNXMzLjM1Nyw3LjUgNy41LDcuNWg3OS45OThjNC4xNDMsMCA3LjUtMy4zNTggNy41LTcuNXMtMy4zNTctNy41LTcuNS03LjV6Ii8+CiAgICA8cGF0aCBkPSJtMTgzLjUwMSwzNTYuMDAxaC0xNi4wMDFjLTQuMTQzLDAtNy41LDMuMzU4LTcuNSw3LjVzMy4zNTcsNy41IDcuNSw3LjVoMTYuMDAxYzQuMTQzLDAgNy41LTMuMzU4IDcuNS03LjVzLTMuMzU3LTcuNS03LjUtNy41eiIvPgogICAgPHBhdGggZD0ibTQxNi4xNjYsMTM3LjkyOWwtMy40MjksMTYuMDAyYy0wLjg2Nyw0LjA1IDEuNzEzLDguMDM3IDUuNzYzLDguOTA1IDAuNTI5LDAuMTE0IDEuMDU4LDAuMTY4IDEuNTc5LDAuMTY4IDMuNDYsMCA2LjU3MS0yLjQxIDcuMzI2LTUuOTNsMy40MjktMTYuMDAyYzAuODY3LTQuMDUtMS43MTMtOC4wMzctNS43NjMtOC45MDUtNC4wMzctMC44NjctOC4wMzYsMS43MTEtOC45MDUsNS43NjJ6Ii8+CiAgPC9nPgo8L3N2Zz4=' alt="">
+          <div class="stampList" v-if="this.selectedKit">
+            <div class="stampIcon" v-for="(val,key) in this.stamps[this.selectedKit]" :key=key @click="this.$emit('showStampsWindow', false)">
+              <img class="stampImage c-pointer" :src=val alt="">
             </div>
             <div class="stampIcon">
               <input type="file"
@@ -65,20 +65,25 @@
   </transition>
 </template>
 <script>
+import AxiosRequest from "@/modules/services/axiosRequest";
 export default {
   name: 'StampsWindow',
   props: {
     windowVisible: {
       type: Boolean,
       default: false
+    },
+    stampsProp:{
+      type: Object,
     }
   },
   data() {
     return {
-      stampsList: null,
+      stamps:{},
       addNewKit: false,
       newKitName: "",
-      selectedKit: null
+      selectedKit: null,
+      selectedStamp: null,
     }
   },
   methods:{
@@ -86,13 +91,29 @@ export default {
       this.$refs.fileInput.click()
     },
     getFile(event){
-      const fileList = event.target.files;
-      console.log(fileList);
-    }
+      const reader = new FileReader();
+      const file = event.target.files[0];
+      let base64, kitLength
+      reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          base64=reader.result
+          kitLength=Object.keys(this.stamps[this.selectedKit]).length
+          this.stamps[this.selectedKit][`stamp${kitLength+1}`]=base64
+          console.log(this.stamps)
+          //this.kitUpdate()
+        };
+    },
+    async kitUpdate(){
+      let response, request
+        request=await new AxiosRequest("/options/stamps","post", this.stamps)
+        response=request.sendRequest()
+        console.log(response)
+      }
   },
   mounted() {
-    if (this.stampsList)
-      this.selectedKit = this.stampsList[0]
+    if (this.stampsProp)
+      this.stamps=this.stampsProp
+      this.selectedKit = this.stamps[0]
   }
 }
 </script>

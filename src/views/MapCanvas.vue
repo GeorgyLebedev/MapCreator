@@ -1,7 +1,7 @@
 <template>
   <ErrorComponent
-      :error="error"
-      @clearError="error=''"/>
+      :error="canvas.error"
+      @clearError="canvas.error=''"/>
   <ContextMenu
                :style="{
       top: cursorTool.contextMenuPos.top? cursorTool.contextMenuPos.top + 'px': 'auto',
@@ -28,20 +28,27 @@
                  canvas.styleCursor='default'}"/>
   <StampsWindow
       :window-visible="showStampsWin"
+      :stamps-prop="options&&options.stamps?options.stamps:{}"
       @showStampsWindow="(flag)=>{ showStampsWin = flag }"/>
   <MapEditWindow
-      :map-name="this.currentMap.title"
-      :map-desc="this.currentMap.description"
+      :map-name="currentMap.title"
+      :map-desc="currentMap.description"
       :show-window="showEditMapWin"
-      @closeWindow="()=>{this.showEditMapWin = false}"
-      @updateName="(val)=>{this.currentMap.title=val}"
-      @updateDesc="(val)=>{this.currentMap.description=val}"
-      @updateMapMetadata="updateMapMetadata(this.currentMap)"
+      @closeWindow="()=>{showEditMapWin = false}"
+      @updateName="(val)=>{currentMap.title=val}"
+      @updateDesc="(val)=>{currentMap.description=val}"
+      @updateMapMetadata="updateMapMetadata(currentMap)"
   />
   <div class="MainContainer" @contextmenu.prevent>
     <TopMenu
-        @saveAs="(ext)=>{exportAs(ext, canvas, currentMap.title)}"
-        @showMapEditWindow="()=>{this.showEditMapWin = true}"
+        @saveAs="(ext)=>{
+          if(selection.selectedObject) selection.remove()
+          exportAs(ext, canvas, currentMap.title)
+        }"
+        @showMapEditWindow="()=>{showEditMapWin = true}"
+        @errorAlert="(message)=>canvas.error=message"
+        @loadJson="canvas.loadProject"
+        @loadImg="canvas.loadBackgroundImage"
     />
     <Accordion/>
     <ToolsPanel
@@ -118,11 +125,11 @@ export default {
   },
   data() {
     return {
-      error: "",
       currentMap: {
         title: "",
         description: ""
       },
+      options: {},
       canvas: null,
       currentTool: {
         name: "cursor",
@@ -179,8 +186,17 @@ export default {
         let response = (await request.sendRequest())
         if (response && response.map) return response.map
       } catch (e) {
-        this.error = e.message
+        this.canvas.error = e.message
         this.$router.push("/Main")
+      }
+    },
+    async getOptions(){
+      try {
+        let request = new AxiosRequest(`options/`, 'get')
+        let response = (await request.sendRequest())
+        if (response && response.options) return response.options
+      } catch (e) {
+        this.canvas.error = e.message
       }
     },
     async updateMapMetadata(map) { //обновление названия/описания карты
@@ -190,12 +206,13 @@ export default {
         await request.sendRequest()
         this.showEditMapWin = false
       } catch (e) {
-        this.error = e
+        this.canvas.error = e
       }
     }
   },
   async mounted() {
     this.currentMap = await this.getCurrentMap()
+    this.options=await this.getOptions()
     if (!this.currentMap || !this.currentMap.title)
       this.$router.push("/Main")
     this.canvas.setup(this.currentMap.resolution, document.getElementById("map"))

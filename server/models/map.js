@@ -22,7 +22,7 @@ const Map = new Schema({
     description: { //описание карты
         type: String,
         default: "",
-        required: true
+        required: false
     },
     resolution: { //разрешение холста
         type: String,
@@ -30,7 +30,8 @@ const Map = new Schema({
     },
     smallPicture: {//миниатюра карты (код изображения)
         type: String,
-        required: true
+        required: false,
+        default:""
     },
     objects: { //объекты карты
         type:{},

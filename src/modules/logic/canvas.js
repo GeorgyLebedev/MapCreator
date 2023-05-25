@@ -3,6 +3,7 @@ import paper from "paper";
 export default class canvas {
     constructor() {
 	this.ref= null
+	this.error=""
 	this.resoX= 0
 	this.CSSwidth= 1
 	this.defaultWidth= 1
@@ -97,5 +98,23 @@ export default class canvas {
     }
     removeBackground(){
 	if(this.background)this.background.remove()
+    }
+    loadBackgroundImage(file){
+	const img = new Image();
+	img.onload = function() {
+	    console.log(img)
+	};
+	img.src = URL.createObjectURL(file);
+    }
+    loadProject(jsonData){
+        try{
+            paper.project.importJSON(jsonData)
+	}
+	catch (e) {
+            this.error=e
+	    return
+	}
+	paper.project.clear()
+	paper.project.importJSON(jsonData)
     }
 }

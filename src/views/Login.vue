@@ -1,5 +1,5 @@
 <template>
-  <div id="parentDivId">
+  <div class="parentDiv">
     <ErrorComponent
     :error=this.error
     @clearError="()=>{this.error=''}"/>
@@ -370,7 +370,7 @@ export default {
   color: silver !important;
 }
 
-#parentDivId {
+.parentDiv {
   height: 100vh;
   width: 100vw;
   background-image: url("../assets/images/background.png");

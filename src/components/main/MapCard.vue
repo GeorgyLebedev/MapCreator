@@ -14,7 +14,7 @@
         </div>
       </transition>
       <div class="topImgBox">
-        <img src="@/assets/images/plug.jpg" class="topImg" alt="...">
+        <img src="@/assets/images/plug.png" class="topImg" alt="...">
       </div>
       <div class="mapData">
         <div style="padding-block: 5px; text-overflow: ellipsis"><b>{{ map.title }}</b></div>
@@ -106,6 +106,7 @@ export default {
   object-fit: cover;
   width: 100%;
   height: 100%;
+  border-radius: 5px 5px 0  0;
 }
 
 .option {
