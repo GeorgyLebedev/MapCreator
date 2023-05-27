@@ -106,6 +106,7 @@ export default class canvas {
 		})],
 		position: paper.view.center
 	    })
+	    this.background.children["backgroundRectangle"].scale(this.defaultWidth/this.resoX, this.defaultHeight/this.resoY)
 	    if(background.loadMode=="stretch") {
 		this.background.children["backgroundRectangle"].scale(
 		    this.resoX/background.width,
@@ -118,15 +119,21 @@ export default class canvas {
     }
     updateBackground(){
         if(!this.background) return
-        let color=this.background.children["backgroundRectangle"].fillColor
-	this.background.children["backgroundRectangle"].remove()
-	let newRectangle= new paper.Path.Rectangle({
-	    point: new paper.Point(-this.CSSwidth / 2, -this.CSSheight / 2),
-	    size: paper.view.viewSize,
-	    fillColor: color,
-	    name: "backgroundRectangle"
-	})
-      	this.background.addChild(newRectangle)
+	if(this.background.children["backgroundRectangle"].fillColor) {
+	    let color = this.background.children["backgroundRectangle"].fillColor
+	    this.background.children["backgroundRectangle"].remove()
+	    let newRectangle = new paper.Path.Rectangle({
+		point: new paper.Point(-this.CSSwidth / 2, -this.CSSheight / 2),
+		size: paper.view.viewSize,
+		fillColor: color,
+		name: "backgroundRectangle"
+	    })
+	    this.background.addChild(newRectangle)
+	}
+	if(this.background.children["backgroundRectangle"].source){
+	    this.background.children["backgroundRectangle"].matrix= new paper.Matrix()
+	    this.background.children["backgroundRectangle"].scale(this.defaultWidth/this.resoX, this.defaultHeight/this.resoY)
+	}
     }
     removeBackground(){
 	if(this.background)this.background.remove()
