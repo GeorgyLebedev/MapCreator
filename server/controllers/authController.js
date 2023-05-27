@@ -48,8 +48,10 @@ router.post('/token', (req, res) => {
 
 router.post('/logout', (req, res) => {
     const { token } = req.cookies.jwt
-    refreshTokens = refreshTokens.filter(t => t !== token);
-    res.cookie('jwt', '', {expires: new Date(0)});
+    if(token) {
+	refreshTokens = refreshTokens.filter(t => t !== token);
+	res.cookie('jwt', '', {expires: new Date(0)});
+    }
     res.sendStatus(200)
 });
 

@@ -25,7 +25,7 @@ export default {
 </script>
 <style>
 .errorNotice{
-  z-index: 100;
+  z-index: 6;
   position: absolute;
   top: 100px;
   margin-left: auto;

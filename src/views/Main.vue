@@ -20,7 +20,9 @@
       @closeWindow="()=>{modalFlags.showDelMapWin = false}"
       @deleteMap="deleteMap(this.selectedMap)"
   />
-  <Header />
+  <Header
+      @errorAlert="(message)=>{this.error=message}"
+  />
   <div class="d-flex flex-wrap">
     <MapCard v-for="map in this.mapList" :key="map._id"
              :map="map"

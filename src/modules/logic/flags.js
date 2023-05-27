@@ -3,5 +3,6 @@ export const flags ={
     showStampsWin: false,
     showImgLoadWin: false,
     showNewMapWin: false,
-    showDelMapWin: false
+    showDelMapWin: false,
+    showProfile: false
 }

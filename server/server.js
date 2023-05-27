@@ -13,8 +13,10 @@ app.use(cookieParser()) //подключение cookieParser для устан�
 mongoose.connect('mongodb://127.0.0.1:27017/mapcreator' ) //подключение к базе данных
     .then(()=> console.log('[OK] DB is connected'))
     .catch(err => console.error(err));
-app.use(express.json());
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ limit: '1mb',
+    extended: true
+}));
+app.use(express.json({ limit: '1mb' }));
 app.use('/user', require("./controllers/userController")) //подключение контроллеров
 app.use('/auth', require("./controllers/authController"))
 app.use('/map', require("./controllers/mapController"))

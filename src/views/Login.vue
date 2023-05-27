@@ -263,7 +263,6 @@ export default {
       else if(response.token)
         {
           localStorage.setItem('TOKEN', response.token)
-          localStorage.setItem('USER', response.username)
           this.error = ""
           this.$router.push({path: "/Main"})
         }

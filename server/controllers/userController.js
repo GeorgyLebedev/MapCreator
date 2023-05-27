@@ -4,8 +4,6 @@ const userModel = require('../models/user');
 const nodemailer=require('nodemailer')
 const bcrypt = require('bcryptjs')
 const authenticateJWT=require("../authenticateJWT")
-const fs=require("fs")
-const path=require("path")
 async function sendMsg(email, subject, message){
     let code=""
     for (let i = 0; i < 4; i++) {
@@ -39,8 +37,10 @@ router.get('/', authenticateJWT, async (req, res) => {
 	res.json({
 	    user: {
 	        id: req.user.id,
-	        login: query.email,
+	        email: query.email,
+		login:query.login,
 		avatar: query.avatar,
+		regDate: query.regDate
 	    }
 	});
     }
@@ -73,12 +73,6 @@ router.post('/', async (req, res) => {
 	    req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
 	    let activeRecord = new userModel(req.body)
 	    await activeRecord.save();
-	 /*   let query = await userModel.find({email: req.body.email})
-	    let dirPath=path.join(__dirname,'../users/')
-	    fs.mkdirSync(`${dirPath}/${query[0]._id}`)
-	    fs.mkdirSync(`${dirPath}/${query[0]._id}/stamps`)
-	    fs.mkdirSync(`${dirPath}/${query[0]._id}/data`)
-	    fs.mkdirSync(`${dirPath}/${query[0]._id}/maps`)*/
 	    res.json({status: "success"})
 	}
 	catch (e) {
@@ -92,7 +86,15 @@ router.put('/:id', async (req, res) => {
     await userModel.findByIdAndUpdate(req.params.id, {password: req.body.password});
     res.json({state: 'updated'});
 });
-
+router.put('/', authenticateJWT, async (req, res) => {
+    try {
+	await userModel.updateOne({_id: req.user.id}, req.body);
+	res.json({state: 'updated'});
+    }
+    catch (e) {
+	res.json({msg:e.message})
+    }
+});
 router.delete('/:id', async (req, res) => {
     await userModel.findByIdAndRemove(req.params.id);
     res.json({state: 'deleted'});

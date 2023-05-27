@@ -10,7 +10,7 @@
     <span class="text-muted">Не сохранено</span>
   </div>
   <div class="d-flex align-items-center pe-2">
-    <button type="button" id="resetscale" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip" data-bs-placement="top" title="Сбросить" v-on:click="$emit('resetScale')" v-if="scale!=1">
+    <button type="button" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip" data-bs-placement="top" title="Сбросить" v-on:click="$emit('resetScale')" v-if="scale!=1">
       <img src="@/assets/images/Service/reset.png" alt="" class="hoverinv" :height="25">
     </button>
     <img src="@/assets/images/Tools/zoom.png" :height="20">
@@ -18,7 +18,7 @@
       <input class="me-2" type="range" step="0.2" min="0.2"  max="5" v-model="scale" @input="doZoom">
       <input type="number" min="0.2" max="5" step="0.2" v-model="scale" @input="doZoom">
     </div>
-    <button type="button" id="fitbtn" class="btn btn-sm btn-outline-dark me-2" @click="$emit('resetAlign')">Выровнять</button>
+    <button type="button" class="btn btn-sm btn-outline-dark me-2" @click="$emit('resetAlign')">Выровнять</button>
   </div>
 </div>
 </div>
