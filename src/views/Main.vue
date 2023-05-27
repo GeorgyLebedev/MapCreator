@@ -2,22 +2,22 @@
   <ErrorComponent
       :error=this.error
       @clearError="()=>{this.error=''}"/>
-  <NewMapWindow :showWindow="showNewMapWin"
-                @closeWindow="()=>{this.showNewMapWin = false}"
+  <NewMapWindow v-if="modalFlags.showNewMapWin"
+                @closeWindow="()=>{modalFlags.showNewMapWin = false}"
                 @newMap="addNewMap"/>
   <MapEditWindow
+      v-if="modalFlags.showEditMapWin"
       :map-name="this.selectedMap.title"
       :map-desc="this.selectedMap.description"
-      :show-window="showEditMapWin"
-      @closeWindow="()=>{this.showEditMapWin = false}"
+      @closeWindow="()=>{modalFlags.showEditMapWin = false}"
       @updateName="(val)=>{this.selectedMap.title=val}"
       @updateDesc="(val)=>{this.selectedMap.description=val}"
       @updateMapMetadata="updateMapMetadata(this.selectedMap)"
   />
   <MapDeleteWindow
+      v-if="modalFlags.showDelMapWin"
       :map-name="this.selectedMap.title"
-      :show-window="showDelMapWin"
-      @closeWindow="()=>{this.showDelMapWin = false}"
+      @closeWindow="()=>{modalFlags.showDelMapWin = false}"
       @deleteMap="deleteMap(this.selectedMap)"
   />
   <Header />
@@ -26,12 +26,12 @@
              :map="map"
              @showEditMapWin="()=>{
                this.selectedMap=map
-               this.showEditMapWin = true}"
+               modalFlags.showEditMapWin = true}"
              @showDelMapWin="()=>{
                this.selectedMap=map
-               this.showDelMapWin = true}"/>
+               modalFlags.showDelMapWin = true}"/>
     <div class="map">
-      <div class="newMap" id="newMapCard" @click="this.showNewMapWin=true">
+      <div class="newMap" id="newMapCard" @click="modalFlags.showNewMapWin=true">
         <img src="@/assets/images/new.png" :width="70">
         <p class="fs-5" style="color: #909090">Создать новую карту </p>
       </div>
@@ -46,14 +46,21 @@ import MapEditWindow from "@/components/MapEditWindow";
 import MapDeleteWindow from "@/components/main/MapDeleteWindow";
 import ErrorComponent from "@/components/Error"
 import AxiosRequest from "@/modules/services/axiosRequest";
+import {flags} from "@/modules/logic/flags";
 export default {
   name: 'MainPage',
+  components: {
+    Header,
+    MapCard,
+    NewMapWindow,
+    MapEditWindow,
+    MapDeleteWindow,
+    ErrorComponent
+  },
   data() {
     return {
+      modalFlags: flags,
       selectedMap: {},
-      showNewMapWin: false,
-      showEditMapWin: false,
-      showDelMapWin: false,
       error: "",
       mapList: [],
     }
@@ -83,7 +90,7 @@ export default {
         request = new AxiosRequest('map/', 'post', map)
         await request.sendRequest()
         await this.getMaps()
-        this.showNewMapWin=false
+        this.modalFlags.showNewMapWin=false
       } catch (e) {
         this.error = e
       }
@@ -108,7 +115,7 @@ export default {
         await request.sendRequest()
         map={}
         await this.getMaps()
-        this.showDelMapWin=false
+        this.modalFlags.showDelMapWin=false
       }
       catch (e) {
         this.error = e
@@ -120,20 +127,12 @@ export default {
         request=new AxiosRequest(`map/${map._id}`, "put", {title:map.title, description:map.description})
         await request.sendRequest()
         await this.getMaps()
-        this.showEditMapWin=false
+        this.modalFlags.showEditMapWin=false
       }
       catch (e){
         this.error=e
       }
     }
-  },
-  components: {
-    Header,
-    MapCard,
-    NewMapWindow,
-    MapEditWindow,
-    MapDeleteWindow,
-    ErrorComponent
   },
   async created() {
     if (!localStorage.getItem('TOKEN')) await this.logOut()

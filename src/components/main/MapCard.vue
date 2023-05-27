@@ -111,22 +111,24 @@ export default {
 
 .option {
   object-fit: contain;
+  opacity: 0.8;
   width: 100%;
   height: 100%;
 }
-
+.option:hover{
+  opacity: 1;
+}
 .cardlist {
   margin-right: 20px
 }
 
 .show-opt-enter-active,
 .show-opt-leave-active {
-  transition: all 0.2s ease-out;
+  transition: all 0.4s cubic-bezier(0.785, 0.135, 0.15, 0.86);
 }
 
 .show-opt-enter-from,
 .show-opt-leave-to {
   opacity: 0;
-  transform: scale(0)
 }
 </style>

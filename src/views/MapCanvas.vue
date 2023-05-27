@@ -27,28 +27,42 @@
                  cursorTool.contextMenuVisible(false)
                  canvas.styleCursor='default'}"/>
   <StampsWindow
-      :window-visible="showStampsWin"
+      v-if="modalFlags.showStampsWin"
       :stamps-prop="options&&options.stamps?options.stamps:{}"
-      @showStampsWindow="(flag)=>{ showStampsWin = flag }"/>
+      @showStampsWindow="(flag)=>{ modalFlags.showStampsWin = flag }" />
   <MapEditWindow
+      v-if="modalFlags.showEditMapWin"
       :map-name="currentMap.title"
       :map-desc="currentMap.description"
-      :show-window="showEditMapWin"
-      @closeWindow="()=>{showEditMapWin = false}"
+      @closeWindow="()=>{modalFlags.showEditMapWin = false}"
       @updateName="(val)=>{currentMap.title=val}"
       @updateDesc="(val)=>{currentMap.description=val}"
       @updateMapMetadata="updateMapMetadata(currentMap)"
   />
+  <ImageLoadWindow
+      v-if="modalFlags.showImgLoadWin"
+      @closeWindow="()=>{modalFlags.showImgLoadWin=false}"
+      @setLoadMode="(mode)=>{
+        modalFlags.showImgLoadWin=false
+        canvas.backgroundOpt.loadMode=mode
+        canvas.setBackground(canvas.backgroundOpt)
+      }"
+  />
   <div class="MainContainer" @contextmenu.prevent>
     <TopMenu
+        :canvas-size="{width:canvas.resoX, height:canvas.resoY}"
         @saveAs="(ext)=>{
           if(selection.selectedObject) selection.remove()
           exportAs(ext, canvas, currentMap.title)
         }"
-        @showMapEditWindow="()=>{showEditMapWin = true}"
+        @showMapEditWindow="()=>{ modalFlags.showEditMapWin = true}"
+        @showImageLoadWindow="(background)=>{
+          canvas.backgroundOpt=background
+          modalFlags.showImgLoadWin = true
+        }"
+        @setCanvasBackground="(background)=>{canvas.setBackground(background)}"
         @errorAlert="(message)=>canvas.error=message"
         @loadJson="canvas.loadProject"
-        @loadImg="canvas.loadBackgroundImage"
     />
     <Accordion/>
     <ToolsPanel
@@ -59,7 +73,7 @@
           selection.set(item)
         }"
         @removeSelect="selection.remove()"
-        @showStampsWindow="(flag)=>{ showStampsWin = flag }"
+        @showStampsWindow="(flag)=>{ modalFlags.showStampsWin = flag }"
         :selected-obj="selection.selectedObject"
         :rotation="selection.selectedObject? Number(selection.selectedObject.rotation):0"
         :size="selection.selectedObject&&selection.selectedObject.size? Number(selection.selectedObject.size.width):0"
@@ -89,6 +103,7 @@ import BotMenu from "@/components/mapCanvas/BotMenu";
 import ToolsPanel from "@/components/mapCanvas/ToolsPanel";
 import StampsWindow from "@/components/mapCanvas/StampsWindow";
 import MapEditWindow from "@/components/MapEditWindow";
+import ImageLoadWindow from "@/components/mapCanvas/ImageLoadWindow";
 import AxiosRequest from "@/modules/services/axiosRequest";
 import ErrorComponent from "@/components/Error";
 import ContextMenu from "@/components/mapCanvas/ContextMenu";
@@ -101,6 +116,7 @@ import stampTool from "@/modules/tools/stampTool";
 import zoomTool from "@/modules/tools/zoomTool";
 import canvas from "@/modules/logic/canvas";
 import selection from "@/modules/logic/selection";
+import {flags} from "@/modules/logic/flags";
 import * as paper from "paper" ;
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
@@ -116,6 +132,7 @@ export default {
     ToolsPanel,
     StampsWindow,
     MapEditWindow,
+    ImageLoadWindow,
     ContextMenu
   },
   props:{
@@ -125,6 +142,7 @@ export default {
   },
   data() {
     return {
+      modalFlags: flags,
       currentMap: {
         title: "",
         description: ""
@@ -136,8 +154,6 @@ export default {
         toolRef: null
       },
       currentItem: null,
-      showEditMapWin: false,
-      showStampsWin: false,
       activeLayer: null,
       selection: null,
       cursorTool: null,

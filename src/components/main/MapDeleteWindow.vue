@@ -1,5 +1,5 @@
 <template>
-<div class="modalContainer" v-if="showWindow">
+<div class="modalContainer">
 <div class="modalWindow">
   <div class="modalHeader">
     Удаление карты
@@ -28,10 +28,6 @@ export default {
     }
   },
   props:{
-    showWindow:{
-      type: Boolean,
-      default: false
-    },
     mapName:{
       type:String,
     }

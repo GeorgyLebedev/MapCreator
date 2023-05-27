@@ -1,6 +1,6 @@
 <template>
   <transition name="popup-anim">
-    <div class="modalContainer" v-if="showWindow">
+    <div class="modalContainer">
         <div class="modalWindow">
           <div class="modalHeader">
             <b>Настройки холста</b>
@@ -40,12 +40,14 @@
                 Ширина холста: <small>(не менее 200 и не более 5000)</small><br>
                 <input  type="text" class="resOptInput" maxlength="4" placeholder="В пикселях"
                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resX">
+                px
               </div>
               <div class="resOptShell">
                 <img src="@/assets/images/NewMap/height.png" >
                 Высота холста: <small>(не менее 200 и не более 5000)</small> <br>
                 <input  type="text" class="resOptInput" maxlength="4" placeholder="В пикселях"
                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="mapData.resY">
+                px
               </div>
             </div>
             Выберите ориентацию:
@@ -85,12 +87,6 @@ export default {
     res:"hd",
     orient:"hor"
   }
-  },
-  props:{
-    showWindow:{
-      default: false,
-      type: Boolean
-    }
   },
   methods:{
     createCanvas(){
@@ -133,15 +129,16 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
 .resOptInput{
   border: 2px solid #dcdcdc;
   padding-inline: 10px;
   padding-block: 5px;
   font-size: 18px;
   border-radius: 10px;
-  max-width: 150px;
+  max-width: 100px;
   margin: 5px;
+  text-align: center;
 }
 .resOptShell{
   margin-block:10px;

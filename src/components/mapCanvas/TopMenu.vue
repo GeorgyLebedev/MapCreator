@@ -81,15 +81,32 @@
 <script>
 export default {
   name: "TopMenu",
+  props:{
+    canvasSize:{
+      type:Object
+    }
+  },
   methods: {
     imgLoad() {
       let extensions = ['png', 'jpeg', 'jpg', 'svg']
-      const img = event.target.files[0];
-      if (extensions.indexOf(img.name.split('.').pop().toLowerCase()) == -1) {
+      const imgFile = event.target.files[0];
+      if (extensions.indexOf(imgFile.name.split('.').pop().toLowerCase()) == -1) {
         this.$emit('errorAlert', "Расширение выбранного файла не поддерживается!")
         return
       }
-      else this.$emit("loadImg", img)
+      else{
+        const reader = new FileReader();
+        reader.readAsDataURL(imgFile);
+        reader.onload = () => {
+          try {
+            this.loadBackgroundImage(reader.result)
+            this.$refs.imgInput.value=""
+          }
+          catch (e){
+            this.$emit('errorAlert',e.message)
+          }
+        };
+      }
     },
     jsonLoad() {
       try {
@@ -102,6 +119,7 @@ export default {
           reader.onload = () => {
             try {
               const jsonData = JSON.parse(reader.result);
+              this.$refs.jsonInput.value=""
               this.$emit("loadJson", jsonData)
             }
             catch (e){
@@ -112,6 +130,22 @@ export default {
       }
       catch (e) {
         this.$emit('errorAlert',e.message)
+      }
+    },
+    loadBackgroundImage(base64){
+      let backgroundImage=new Image()
+      backgroundImage.src=base64
+      backgroundImage.onload=()=> {
+        const background={
+          type: "image",
+          source: base64,
+          width:backgroundImage.width,
+          height: backgroundImage.height
+        }
+        if(backgroundImage.width==this.canvasSize.width && backgroundImage.height==this.canvasSize.height) //если размер изображения соответствует размерам холста
+          this.$emit('setCanvasBackground', background)
+        else this.$emit("showImageLoadWindow", background)
+        backgroundImage=null
       }
     }
   }

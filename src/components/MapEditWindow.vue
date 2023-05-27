@@ -1,6 +1,6 @@
 <template>
   <transition name="popup-anim">
-    <div class="modalContainer" v-if="showWindow">
+    <div class="modalContainer">
       <div class="modalWindow">
         <div class="modalHeader">
           <b>Изменить информацию о карте</b>
@@ -32,10 +32,6 @@ export default {
     mapDesc: {
       type: String,
       default: ""
-    },
-    showWindow: {
-      default: false,
-      type: Boolean
     }
   },
   data() {

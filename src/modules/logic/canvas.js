@@ -1,5 +1,4 @@
 import paper from "paper";
-
 export default class canvas {
     constructor() {
 	this.ref= null
@@ -15,6 +14,7 @@ export default class canvas {
 	this.offsetLeft= 0
 	this.offsetTop= 0
 	this.background=null
+	this.backgroundOpt=null
     }
     setup(resolution, ref){
         this.ref=ref
@@ -59,20 +59,25 @@ export default class canvas {
     }
     setDefaultSizes(){
 	let area = this.getCanvasArea()
-	if (this.XtoY >= 1) {
+	if ((this.resoX>area.width || this.resoX<area.width ) && this.resoY>area.height) {
 	    this.defaultHeight = area.height
 	    this.defaultWidth = this.defaultHeight * this.XtoY
-	} else {
-	    this.defaultWidth = area.width
-	    this.defaultHeight = this.defaultWidth * this.XtoY
+	}
+	else if(this.resoX>area.width && this.resoY<area.height){
+	    this.defaultWidth=area.width
+	    this.defaultHeight=this.defaultWidth / this.XtoY
+	}
+	else {
+	    this.defaultHeight=this.resoY
+	    this.defaultWidth=this.resoX
 	}
 	this.hardReset()
 	if(this.background)
-		this.updateBackground()
+	    this.updateBackground()
     }
     setBackground(background){
+	if(this.background) this.background.remove()
         if(background.type=="color"){
-            if(this.background) this.background.remove()
 	    this.background = new paper.Layer({
 		children: [new paper.Path.Rectangle({
 		    point: new paper.Point(-this.CSSwidth / 2, -this.CSSheight / 2),
@@ -82,10 +87,37 @@ export default class canvas {
 		})],
 		position: paper.view.center
 	    })
+	    paper.project.addLayer(this.background)
+	    this.background.sendToBack()
+	}
+	if(background.type=="image"){
+	    if(background.loadMode=="integrate") {
+		this.removeBackground()
+		this.resoX=background.width
+		this.resoY=background.height
+		this.XtoY=this.resoX/this.resoY
+		this.setDefaultSizes()
+	    }
+	    this.background = new paper.Layer({
+		children: [new paper.Raster({
+		    source: background.source,
+		    position: paper.view.center,
+		    name: "backgroundRectangle"
+		})],
+		position: paper.view.center
+	    })
+	    if(background.loadMode=="stretch") {
+		this.background.children["backgroundRectangle"].scale(
+		    this.resoX/background.width,
+		    this.resoY/background.height,
+		    )
+	    }
+	    paper.project.addLayer(this.background)
 	    this.background.sendToBack()
 	}
     }
     updateBackground(){
+        if(!this.background) return
         let color=this.background.children["backgroundRectangle"].fillColor
 	this.background.children["backgroundRectangle"].remove()
 	let newRectangle= new paper.Path.Rectangle({
@@ -98,13 +130,6 @@ export default class canvas {
     }
     removeBackground(){
 	if(this.background)this.background.remove()
-    }
-    loadBackgroundImage(file){
-	const img = new Image();
-	img.onload = function() {
-	    console.log(img)
-	};
-	img.src = URL.createObjectURL(file);
     }
     loadProject(jsonData){
         try{

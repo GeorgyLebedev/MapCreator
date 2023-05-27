@@ -1,6 +1,6 @@
 <template>
   <transition name="popup-anim">
-    <div class="modalContainer" v-if="windowVisible">
+    <div class="modalContainer">
       <div id="stampsWindow">
         <div class="modalHeader">
           <b>Каталог штампов</b>
@@ -69,10 +69,6 @@ import AxiosRequest from "@/modules/services/axiosRequest";
 export default {
   name: 'StampsWindow',
   props: {
-    windowVisible: {
-      type: Boolean,
-      default: false
-    },
     stampsProp:{
       type: Object,
     }
