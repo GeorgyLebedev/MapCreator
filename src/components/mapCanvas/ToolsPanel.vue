@@ -14,7 +14,7 @@
             <div id="cursorOpt" class="tools-options" v-if="tool=='cursor' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Курсор </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt c-pointer" height="20" alt=""
                      v-on:click="closePanel">
               </div>
               <hr>
@@ -61,15 +61,15 @@
             <div id="brushOpt" class="tools-options" v-if="tool=='brush' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Кисть </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt c-pointer" height="20" alt=""
                      v-on:click="closePanel">
               </div>
               <hr>
               <div class="mb-3">
                 <input id="colorsTab" checked type="radio" name="brushType" value="color" v-model="brushOpt.brushType">
-                <label for="colorsTab" class="radio-text interactive">Цвета</label>
+                <label for="colorsTab" class="radio-text c-pointer">Цвета</label>
                 <input id="texturesTab" type="radio" name="brushType" value="texture" v-model="brushOpt.brushType">
-                <label for="texturesTab" class="ms-1 radio-text interactive">Текстуры</label>
+                <label for="texturesTab" class="ms-1 radio-text c-pointer">Текстуры</label>
               </div>
               <div id="brushColors" v-if="brushOpt.brushType=='color'">
                 Цвет кисти: <br>
@@ -79,7 +79,7 @@
                   <table class="colorTable">
                     <tr>
                       <td v-for="(color, index) in recentColors" :key="index"
-                          class="colorCell interactive"
+                          class="colorCell c-pointer"
                           :style="{ 'background-color': color}"
                           @click="brushOpt.color=color ">
                       </td>
@@ -90,13 +90,13 @@
                   Палитра:
                   <table id="palette" class="colorTable">
                     <tr>
-                      <td class="colorCell interactive" v-for="i in 8" :key="i"></td>
+                      <td class="colorCell c-pointer" v-for="i in 8" :key="i"></td>
                     </tr>
                     <tr>
-                      <td class="colorCell interactive" v-for="i in 8" :key="i"></td>
+                      <td class="colorCell c-pointer" v-for="i in 8" :key="i"></td>
                     </tr>
                     <tr>
-                      <td class="colorCell interactive" v-for="i in 8" :key="i"></td>
+                      <td class="colorCell c-pointer" v-for="i in 8" :key="i"></td>
                     </tr>
                   </table>
                 </div>
@@ -132,24 +132,24 @@
                  v-if="(tool=='stamp' && optionVisible) || (selectedObj && selectedObj.data.type=='stamp')">
               <div class="d-flex justify-content-between">
                 <b> Штамп </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt c-pointer" height="20" alt=""
                      v-on:click="closePanel">
               </div>
               <hr>
               <div class="stampsContainer d-flex mb-2">
                 <div class="bigStampContainer">
-                  <div class="bigStamp interactive">
+                  <div class="bigStamp c-pointer">
                     <img :src="require('@/assets/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp)"
                          alt="">
                   </div>
                   <div class="switch d-flex justify-content-between">
-                    <img src="@/assets/images/leftArrow.png" class="interactive" height="20">
+                    <img src="@/assets/images/leftArrow.png" class="c-pointer" height="20">
                     <p>12/10</p>
-                    <img src="@/assets/images/rightArrow.png" class="interactive" height="20">
+                    <img src="@/assets/images/rightArrow.png" class="c-pointer" height="20">
                   </div>
                 </div>
                 <div class="stampsTable ms-1 d-flex flex-wrap">
-                  <div class="smallStamp mb-1 me-1 interactive" v-for="i in 8" :key="i">
+                  <div class="smallStamp mb-1 me-1 c-pointer" v-for="i in 8" :key="i">
                     <img :src="require('@/assets/Stamps/'+ stampOpt.currentSet + '/' + stampOpt.currentStamp)" alt="">
                   </div>
                 </div>
@@ -191,7 +191,7 @@
                  v-if="(tool=='shape' && optionVisible) || (selectedObj && selectedObj.data.type=='shape')">
               <div class="d-flex justify-content-between">
                 <b> Фигуры </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt c-pointer" height="20" alt=""
                      v-on:click="closePanel">
               </div>
               <hr>
@@ -274,7 +274,7 @@
               <table class="colorTable">
                 <tr>
                   <td v-for="(color, index) in recentColors" :key="index"
-                      class="colorCell interactive"
+                      class="colorCell c-pointer"
                       :style="{ 'background-color': color}"
                       @click="shapeOpt.fillColor=color; shapeOpt.isFill=true"
                       @contextmenu="shapeOpt.strokeColor=color; shapeOpt.isBorder=true">
@@ -316,7 +316,7 @@
             <div id="pathOpt" class="tools-options" v-if="tool=='path' && optionVisible">
               <div class="d-flex justify-content-between">
                 <b> Пути/кривые </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt c-pointer" height="20" alt=""
                      v-on:click="closePanel">
               </div>
               <hr>
@@ -399,7 +399,7 @@
                 <table class="colorTable">
                   <tr>
                     <td v-for="(color, index) in recentColors" :key="index"
-                        class="colorCell interactive"
+                        class="colorCell c-pointer"
                         :style="{ 'background-color': color}"
                         @click="pathOpt.color=color">
                     </td>
@@ -441,7 +441,7 @@
                  v-if="(tool=='text' && optionVisible) || (selectedObj && selectedObj.data.type=='text')">
               <div class="d-flex justify-content-between">
                 <b> Надпись </b>
-                <img src="@/assets/images/arrow-left.png" class="closeOpt interactive" height="20" alt=""
+                <img src="@/assets/images/arrow-left.png" class="closeOpt c-pointer" height="20" alt=""
                      v-on:click="closePanel">
               </div>
               <hr>
@@ -990,9 +990,6 @@ hr {
   color: white;
 }
 
-.interactive {
-  cursor: pointer;
-}
 
 .dropdown-item:hover {
   cursor: pointer;

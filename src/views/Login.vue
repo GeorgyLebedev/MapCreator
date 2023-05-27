@@ -17,9 +17,9 @@
       <transition name="smooth" mode="out-in">
         <form class="loginForm" id="logIn" v-if="tab=='logIn'">
           <div>
-            Логин: <br>
+            Email: <br>
             <input type="email" class="loginPageInput" required  ref="enterEmail" v-model="userData.username"
-                   placeholder="Ваш логин">
+                   placeholder="Ваш email ">
           </div>
           <div>
             Пароль:<br>
@@ -155,7 +155,7 @@ export default {
     }
   },
   created() {
-    if(localStorage.getItem('TOKEN') && localStorage.getItem('USER')){
+    if(localStorage.getItem('TOKEN')){
       this.$router.push('/Main')
     }
   },

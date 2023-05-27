@@ -20,12 +20,12 @@
                 <input type="text" style="border: none; outline: none" placeholder="Минимум 5 символов"
                        ref="newKitInput" v-model="newKitName">
                 <div style="display: flex">
-                  <img class="c-pointer" src="@/assets/images/Service/close.png" alt=""
+                  <img class="c-pointer interactive" src="@/assets/images/Service/close.png" alt=""
                        @click="()=>{
                      this.newKitName=''
                      this.addNewKit=false
                    }">
-                  <img class="c-pointer" src="@/assets/images/Service/tick.png" alt=""
+                  <img class="c-pointer interactive" src="@/assets/images/Service/tick.png" alt=""
                        @click="()=>{
                      if(this.newKitName.length>=5){
                        this.stamps[this.newKitName]={}

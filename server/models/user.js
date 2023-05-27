@@ -5,11 +5,13 @@ const User = new Schema({
     id: ObjectId,
     email: {
         type:String,
-        required: true
+        required: true,
+        unique: true
     },
     login:{
         type: String,
-        default: ""
+        default: "",
+        unique: true
     },
     password: {
         type:String,
