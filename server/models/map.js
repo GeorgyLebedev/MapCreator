@@ -11,11 +11,11 @@ const Map = new Schema({
         type:String,
         required: true
     },
-    creationDate: { //название карты
+    creationDate: { //дата создания карты
         type:Date,
         required: true
     },
-    changeDate: {  //название карты
+    changeDate: {  //дата изменения карты
         type: Date,
         required: true
     },
@@ -28,10 +28,9 @@ const Map = new Schema({
         type: String,
         required: true
     },
-    smallPicture: {//миниатюра карты (код изображения)
+    miniature: {//миниатюра карты (код изображения)
         type: String,
         required: false,
-        default:""
     },
     objects: { //объекты карты
         type:{},

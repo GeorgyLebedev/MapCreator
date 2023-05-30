@@ -138,19 +138,23 @@
               <hr>
               <div class="stampsContainer d-flex mb-2">
                 <div class="bigStampContainer">
-                  <div class="bigStamp c-pointer">
-                    <img :src="require('@/assets/Stamps/'+ this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp)"
-                         alt="">
+                  <div class="bigStamp">
+                    <img :src="stampOpt.currentStamp" alt="">
                   </div>
                   <div class="switch d-flex justify-content-between">
-                    <img src="@/assets/images/leftArrow.png" class="c-pointer" height="20">
-                    <p>12/10</p>
-                    <img src="@/assets/images/rightArrow.png" class="c-pointer" height="20">
+                    <img src="@/assets/images/leftArrow.png" class="c-pointer" height="20" @click="stampKey--">
+                    <p>{{stampKey+1}}/{{ Object.keys(this.stamps[this.stampOpt.currentKit]).length }}</p>
+                    <img src="@/assets/images/rightArrow.png" class="c-pointer" height="20" @click="stampKey++">
                   </div>
                 </div>
                 <div class="stampsTable ms-1 d-flex flex-wrap">
-                  <div class="smallStamp mb-1 me-1 c-pointer" v-for="i in 8" :key="i">
-                    <img :src="require('@/assets/Stamps/'+ stampOpt.currentSet + '/' + stampOpt.currentStamp)" alt="">
+                  <div class="smallStamp mb-1 me-1 c-pointer"
+                       :class="{currentStamp:val==stampOpt.currentStamp}"
+                       v-for="(val,key) in stamps[stampOpt.currentKit]"
+                       :key="key"
+
+                       @click="stampOpt.currentStamp=val">
+                    <img :src="val" alt="">
                   </div>
                 </div>
               </div>
@@ -595,6 +599,9 @@ export default {
     selectedObj: {
       type: Object
     },
+    stamps:{
+      type: Object
+    },
     rotation: {
       type: Number
     },
@@ -606,8 +613,9 @@ export default {
     return {
       tool: "cursor",
       lastColor: "",
+      stampKey:0,
       optionVisible: false,
-      fontsCollection: ["Cambria", "Comfortaa", "Arial", "Comic Sans MS"],
+      fontsCollection: ["Cambria", "Roboto", "Neucha", "Comic Sans MS", "Consolas","Mason Chronicles", "Linux Biolinum", "Aniron"],
       cursorOpt: {
         selectionTypes: ['stamp', 'shape' , 'text']
       },
@@ -623,9 +631,8 @@ export default {
         opacity: 1,
         rotation: 0,
         revert: "none",
-        currentSet: "firstSet",
-        currentStamp: "stampEx.svg",
-        currentStampPath: undefined,
+        currentKit: {},
+        currentStamp: "",
         stampSetArray: []
       },
       pathOpt: {
@@ -729,7 +736,18 @@ export default {
       }
     },
   },
+  beforeUpdate() {
+    this.stampOpt.currentKit=Object.keys(this.stamps)[0]
+    this.stampOpt.currentStamp= this.stamps[this.stampOpt.currentKit][Object.keys(this.stamps[this.stampOpt.currentKit])[this.stampKey]]
+  },
   watch: {
+    stampKey(val){
+      if(val<0)
+        this.stampKey=Object.keys(this.stamps[this.stampOpt.currentKit]).length-1
+      if(val>Object.keys(this.stamps[this.stampOpt.currentKit]).length-1)
+        this.stampKey=0
+      this.stampOpt.currentStamp = this.stamps[this.stampOpt.currentKit][Object.keys(this.stamps[this.stampOpt.currentKit])[val]]
+    },
     tool(val) {
       this.$emit('toolChange', val)
       switch (val) {
@@ -740,7 +758,6 @@ export default {
           this.$emit('optChange', this.brushOpt)
           break;
         case "stamp":
-          this.stampOpt.currentStampPath = '../assets/Stamps/' + this.stampOpt.currentSet + '/' + this.stampOpt.currentStamp
           this.$emit('optChange', this.stampOpt)
           break
         case "shape":
@@ -964,14 +981,18 @@ hr {
   width: 100%;
   height: 100%;
 }
-
+.currentStamp{
+  border: 1px solid #232323;
+  background-color: rgba(0,0,0,0.15);
+}
 .smallStamp {
   width: 30%;
   height: 30%;
-  border: 1px solid gainsboro;
   border-radius: 5px;
 }
-
+.smallStamp:not(.currentStamp){
+  border: 1px solid gainsboro;
+}
 .smallStamp img {
   object-fit: contain;
   width: 100%;
@@ -979,18 +1000,15 @@ hr {
 }
 
 .stampsTable {
-  width: 55%;
-  max-width: 60%;
-  max-height: 100%;
-  height: 100%;
+  overflow-y: auto;
+  width: 150px;
+  height: 120px;
 }
 
 .dropdown-item:active {
   background: #232323;
   color: white;
 }
-
-
 .dropdown-item:hover {
   cursor: pointer;
 }

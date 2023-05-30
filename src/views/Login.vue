@@ -186,6 +186,20 @@ export default {
       } else {
         await this.sendNewUserData(data)
         await this.enter(data.email, data.regPassword)
+        await this.createUserOptions()
+      }
+    },
+    async createUserOptions(){
+      let request, response
+      try {
+        request = await new AxiosRequest('options/', "post", )
+        response= await request.sendRequest()
+        if(response.msg)
+          this.error = "Ошибка сервера: " + response.msg
+      }
+      catch (e) {
+        this.error = "Ошибка сервера: " + e
+        return
       }
     },
     async resetPassword(email) {

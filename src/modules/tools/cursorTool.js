@@ -93,7 +93,7 @@ export default class cursorTool {
 		item.rotation = options.rotation
 		break
 	    case "stamp":
-		item.source = require('@/assets/Stamps/' + item.data.set + '/' + item.data.stamp)
+		item.source= item.data.stamp
 		item.size = options.size
 	}
     }

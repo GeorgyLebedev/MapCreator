@@ -48,14 +48,13 @@
           </button>
           <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton1">
             <div class="form-check">
-              <input id="chbxborder" class="form-check-input" type="checkbox">
-              <label for="chbxborder">Рамка</label>
+              <input id="backgroundCheckbox" class="form-check-input" v-model="backgroundFlag" type="checkbox" @change="updateBackground()">
+              <label for="backgroundCheckbox">Цвет фона</label>
             </div>
+            <div v-if="backgroundFlag">
             <hr class="dropdown-divider">
-            Толщина рамки:<br><input id="borderwidth" type="number" class="w-50" max="50" min="1" value="1"
-                                     placeholder="В пикселях"> px
-            <hr class="dropdown-divider">
-            Цвет рамки:<br><input type="color">
+            Значение:<br><input type="color" v-model="backgroundColor" @input="this.$emit('setCanvasBackground', {type: 'color', value:backgroundColor})">
+            </div>
           </div>
         </div>
         <input type="file" :hidden="true" ref="imgInput" accept=".png, .jpg, .jpeg, .svg" @change="imgLoad">
@@ -86,7 +85,19 @@ export default {
       type:Object
     }
   },
+  data(){
+    return{
+      backgroundColor:"#eeeeee",
+      backgroundFlag: true
+    }
+  },
   methods: {
+    updateBackground(){
+      if(this.backgroundFlag)
+        this.$emit('setCanvasBackground', {type: 'color', value:this.backgroundColor})
+      else
+        this.$emit('removeCanvasBackground')
+    },
     imgLoad() {
       let extensions = ['png', 'jpeg', 'jpg', 'svg']
       const imgFile = event.target.files[0];
@@ -135,6 +146,7 @@ export default {
     loadBackgroundImage(base64){
       let backgroundImage=new Image()
       backgroundImage.src=base64
+      this.backgroundFlag=false
       backgroundImage.onload=()=> {
         const background={
           type: "image",

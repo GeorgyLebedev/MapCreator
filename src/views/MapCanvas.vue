@@ -29,7 +29,9 @@
   <StampsWindow
       v-if="modalFlags.showStampsWin"
       :stamps-prop="options&&options.stamps?options.stamps:{}"
-      @showStampsWindow="(flag)=>{ modalFlags.showStampsWin = flag }" />
+      @showStampsWindow="(flag)=> modalFlags.showStampsWin = flag"
+      @updateStamps="(stamps)=>options.stamps=stamps"
+      @errorAlert="(message)=>canvas.error=message"/>
   <MapEditWindow
       v-if="modalFlags.showEditMapWin"
       :map-name="currentMap.title"
@@ -61,6 +63,7 @@
           modalFlags.showImgLoadWin = true
         }"
         @setCanvasBackground="(background)=>{canvas.setBackground(background)}"
+        @removeCanvasBackground="canvas.removeBackground().bind(canvas)"
         @errorAlert="(message)=>canvas.error=message"
         @loadJson="canvas.loadProject"
     />
@@ -74,6 +77,7 @@
         }"
         @removeSelect="selection.remove()"
         @showStampsWindow="(flag)=>{ modalFlags.showStampsWin = flag }"
+        :stamps="options.stamps"
         :selected-obj="selection.selectedObject"
         :rotation="selection.selectedObject? Number(selection.selectedObject.rotation):0"
         :size="selection.selectedObject&&selection.selectedObject.size? Number(selection.selectedObject.size.width):0"
@@ -208,8 +212,9 @@ export default {
     },
     async getOptions(){
       try {
-        let request = new AxiosRequest(`options/`, 'get')
-        let response = (await request.sendRequest())
+        let request = new AxiosRequest('options/', 'get')
+        let response = await request.sendRequest()
+        console.log(response)
         if (response && response.options) return response.options
       } catch (e) {
         this.canvas.error = e.message

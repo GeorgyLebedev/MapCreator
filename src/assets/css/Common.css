@@ -51,7 +51,6 @@ input[type=checkbox]{
     font-weight: bolder;
     padding-block: 5px;
     padding-inline: 10px;
-    min-width: 100px;
     margin:5px;
     cursor: pointer;
 }
@@ -63,7 +62,6 @@ input[type=checkbox]{
     font-weight: bolder;
     padding-block: 5px;
     padding-inline: 10px;
-    min-width: 100px;
     margin:5px;
     cursor: pointer;
 }
@@ -113,7 +111,33 @@ html {
     border-radius: 6px;
     border: 3px solid var(--scrollbarBG);
 }
-
+/*CONTAINERS*/
+.flexRow{
+    display: flex;
+    flex-direction: row;
+}
+.flexColumn{
+    display: flex;
+    flex-direction: column;
+}
+.alignCenter{
+    align-items: center;
+}
+.alignStart{
+    align-items: flex-start;
+}
+.alignEnd{
+    align-items: flex-end;
+}
+.justifyCenter{
+    justify-items: center;
+}
+.justifyStart{
+    justify-items: flex-start;
+}
+.justifyEnd{
+    justify-items: flex-end;
+}
 /* MODAL BOXES STYLES */
 .modalContainer {
     min-width: 800px;
@@ -162,7 +186,15 @@ html {
 .popup-anim-leave-to {
     opacity: 0;
 }
+.scale-anim-enter-active,
+.scale-anim-leave-active {
+    transition: all 0.2s ease-out;
+}
 
+.scale-anim-enter-from,
+.scale-anim-leave-to {
+    transform: scale(0);
+}
 .mapNameInput{
     outline: none;
     display: table-cell;

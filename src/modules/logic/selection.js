@@ -126,7 +126,7 @@ export default class selection {
                     let oldSize=item.bounds.size
                     let rotate=item.rotation?item.rotation:0
                     item.matrix= new paper.Matrix()
-                    item.source = require('@/assets/Stamps/firstSet/stampEx.svg')
+                    item.source = item.data.stamp
                     item.position=group.position
                     item.rotation=rotate
                     item.size=oldSize

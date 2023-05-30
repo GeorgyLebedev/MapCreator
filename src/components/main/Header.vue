@@ -9,7 +9,7 @@
     </div>
   </header>
   <transition name="slide">
-    <div class="profileContainer" v-if="modalFlags.showProfile" @mousedown.self="modalFlags.showProfile=false">
+    <div class="profileContainer" v-if="modalFlags.showProfile" @mousedown.self="()=>{modalFlags.showProfile=false; createNewLogin=false}">
       <div class="userProfile" @click.stop>
         <div class="avatarContainer" @click="this.$refs.avatarInput.click()">
           <img class="userAvatar c-pointer" :src="user.avatar" alt="">
@@ -46,7 +46,7 @@ import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
 
 export default {
-  name: 'NavBar',
+  name: 'HeaderComponent',
   data() {
     return {
       modalFlags: flags,

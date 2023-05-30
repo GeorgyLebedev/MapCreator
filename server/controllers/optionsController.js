@@ -5,7 +5,7 @@ const authenticateJWT = require("../authenticateJWT")
 
 router.get('/', authenticateJWT, async (req, res) => {
     try {
-	res.json({options: await optionsModel.findById(req.user.id)})
+	res.json({options: await optionsModel.findOne({user: req.user.id})})
     } catch (e) {
 	res.json({msg: e.message})
     }
@@ -21,12 +21,9 @@ router.post('/', authenticateJWT, async (req, res) => {
     }
 
 });
-router.put('/:type', authenticateJWT, async (req, res) => {
+router.put('/', authenticateJWT, async (req, res) => {
 	try {
-	    if(req.params.type=="stamps")
-		await optionsModel.findByIdAndUpdate(req.user.id, {stamps: req.body.stamps})
-	    if(req.params.type=="colors")
-		await optionsModel.findByIdAndUpdate(req.user.id, {stamps: req.body.colors})
+	    await optionsModel.updateOne({user:req.user.id}, req.body)
 	    res.json({state: 'updated'});
 	} catch (e) {
 	    res.json({msg: e.message})
