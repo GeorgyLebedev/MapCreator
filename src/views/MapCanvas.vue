@@ -1,14 +1,9 @@
 <template>
-  <ErrorComponent
-      :error="canvas.error"
-      @clearError="canvas.error=''"/>
+  <Error
+      :error="this.error"
+      @clearError="this.error=''"/>
   <ContextMenu
-               :style="{
-      top: cursorTool.contextMenuPos.top? cursorTool.contextMenuPos.top + 'px': 'auto',
-      right: cursorTool.contextMenuPos.right? cursorTool.contextMenuPos.right  + 'px': 'auto',
-      left: cursorTool.contextMenuPos.left? cursorTool.contextMenuPos.left  + 'px':'auto',
-      bottom: cursorTool.contextMenuPos.bottom? cursorTool.contextMenuPos.bottom  + 'px':'auto',
-  }"
+               :style="contextMenuStyle"
                :show-menu="cursorTool.showContextMenu"
                @copyItem="()=>{
                  cursorTool.copyItem()
@@ -26,19 +21,13 @@
                  cursorTool.setToBack()
                  cursorTool.contextMenuVisible(false)
                  canvas.styleCursor='default'}"/>
-  <StampsWindow
-      v-if="modalFlags.showStampsWin"
-      :stamps-prop="options&&options.stamps?options.stamps:{}"
-      @showStampsWindow="(flag)=> modalFlags.showStampsWin = flag"
-      @updateStamps="(stamps)=>options.stamps=stamps"
-      @errorAlert="(message)=>canvas.error=message"/>
   <MapEditWindow
       v-if="modalFlags.showEditMapWin"
       :map-name="currentMap.title"
       :map-desc="currentMap.description"
-      @closeWindow="()=>{modalFlags.showEditMapWin = false}"
-      @updateName="(val)=>{currentMap.title=val}"
-      @updateDesc="(val)=>{currentMap.description=val}"
+      @closeWindow="()=>modalFlags.showEditMapWin=false"
+      @updateName="(val)=>currentMap.title=val"
+      @updateDesc="(val)=>currentMap.description=val"
       @updateMapMetadata="updateMapMetadata(currentMap)"
   />
   <ImageLoadWindow
@@ -64,7 +53,6 @@
         }"
         @setCanvasBackground="(background)=>{canvas.setBackground(background)}"
         @removeCanvasBackground="canvas.removeBackground().bind(canvas)"
-        @errorAlert="(message)=>canvas.error=message"
         @loadJson="canvas.loadProject"
     />
     <Accordion/>
@@ -76,8 +64,6 @@
           selection.set(item)
         }"
         @removeSelect="selection.remove()"
-        @showStampsWindow="(flag)=>{ modalFlags.showStampsWin = flag }"
-        :stamps="options.stamps"
         :selected-obj="selection.selectedObject"
         :rotation="selection.selectedObject? Number(selection.selectedObject.rotation):0"
         :size="selection.selectedObject&&selection.selectedObject.size? Number(selection.selectedObject.size.width):0"
@@ -90,12 +76,8 @@
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2, null, canvas)">
       <canvas id="map" :width="this.canvas.CSSwidth" :height="this.canvas.CSSheight"
               :style="{cursor: canvas.styleCursor, width:this.canvas.CSSwidth+'px', height:this.canvas.CSSheight+'px' }"
-              @mouseout="()=>{
-                toolSwitch('off')
-              }"
-              @mouseover="()=>{
-                toolSwitch('on')
-              }"
+              @mouseout="toolSwitch('off')"
+              @mouseover="toolSwitch('on')"
       ></canvas>
     </div>
   </div>
@@ -105,11 +87,10 @@ import TopMenu from "@/components/mapCanvas/TopMenu.vue"
 import Accordion from "@/components/mapCanvas/Accordion";
 import BotMenu from "@/components/mapCanvas/BotMenu";
 import ToolsPanel from "@/components/mapCanvas/ToolsPanel";
-import StampsWindow from "@/components/mapCanvas/StampsWindow";
 import MapEditWindow from "@/components/MapEditWindow";
 import ImageLoadWindow from "@/components/mapCanvas/ImageLoadWindow";
 import AxiosRequest from "@/modules/services/axiosRequest";
-import ErrorComponent from "@/components/Error";
+import Error from "@/components/Error";
 import ContextMenu from "@/components/mapCanvas/ContextMenu";
 import cursorTool from "@/modules/tools/cursorTool";
 import brushTool from "@/modules/tools/brushTool";
@@ -129,29 +110,23 @@ import {exportAs} from "@/modules/logic/export"
 export default {
   name: "MapCanvas",
   components: {
-    ErrorComponent,
+    Error,
     TopMenu,
     Accordion,
     BotMenu,
     ToolsPanel,
-    StampsWindow,
     MapEditWindow,
     ImageLoadWindow,
     ContextMenu
   },
-  props:{
-    id: {
-      type: String
-    },
-  },
   data() {
     return {
+      error:"",
       modalFlags: flags,
       currentMap: {
         title: "",
         description: ""
       },
-      options: {},
       canvas: null,
       currentTool: {
         name: "cursor",
@@ -169,6 +144,17 @@ export default {
       zoomTool: null,
       nullTool: new paper.Tool()
     }
+  },
+  computed: {
+    contextMenuStyle() {
+      const { top, right, left, bottom } = this.cursorTool.contextMenuPos;
+      return {
+        top: top ? `${top}px` : 'auto',
+        right: right ? `${right}px` : 'auto',
+        left: left ? `${left}px` : 'auto',
+        bottom: bottom ? `${bottom}px` : 'auto',
+      };
+    },
   },
   methods: {
     zoom: zoom,
@@ -202,24 +188,15 @@ export default {
     },
     async getCurrentMap() {
       try {
-        let request = new AxiosRequest(`map/${this.id}`, 'get')
+        let request = new AxiosRequest(`map/${this.$route.params.id}`, 'get')
         let response = (await request.sendRequest())
         if (response && response.map) return response.map
       } catch (e) {
-        this.canvas.error = e.message
+        this.error = e.message
         this.$router.push("/Main")
       }
     },
-    async getOptions(){
-      try {
-        let request = new AxiosRequest('options/', 'get')
-        let response = await request.sendRequest()
-        console.log(response)
-        if (response && response.options) return response.options
-      } catch (e) {
-        this.canvas.error = e.message
-      }
-    },
+
     async updateMapMetadata(map) { //обновление названия/описания карты
       let request
       try { //запрос на сервер с использованием AxiosRequest
@@ -227,13 +204,13 @@ export default {
         await request.sendRequest()
         this.showEditMapWin = false
       } catch (e) {
-        this.canvas.error = e
+        this.error = e
       }
+      this.modalFlags.showEditMapWin=false
     }
   },
   async mounted() {
     this.currentMap = await this.getCurrentMap()
-    this.options=await this.getOptions()
     if (!this.currentMap || !this.currentMap.title)
       this.$router.push("/Main")
     this.canvas.setup(this.currentMap.resolution, document.getElementById("map"))

@@ -1,5 +1,5 @@
 <template>
-  <router-view :id="$route.params.id"/>
+  <router-view />
 </template>
 <script>
 export default {

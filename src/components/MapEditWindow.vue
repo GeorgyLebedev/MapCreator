@@ -41,16 +41,6 @@ export default {
     }
   },
   watch: {
-    mapName: {
-      handler(val) {
-        this.name = val
-      }
-    },
-    mapDesc: {
-      handler(val) {
-        this.description = val
-      }
-    },
     name:{
       handler(val){
         this.$emit('updateName',val)
@@ -61,8 +51,13 @@ export default {
         this.$emit('updateDesc',val)
       }
     }
+  },
+  mounted() {
+    this.name=this.mapName
+    this.description=this.mapDesc
   }
 }
+
 </script>
 <style>
 .mapDescription{

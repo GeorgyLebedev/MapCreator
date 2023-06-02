@@ -36,12 +36,10 @@ router.post('/token', (req, res) => {
 	if (err) {
 	    return res.sendStatus(403);
 	}
-	let query=await userModel.find({_id:decoded.id})
 	const accessToken = jwt.sign({ id: decoded.id }, accessTokenSecret, { expiresIn: '10m' });
 
 	res.json({
 	    token: accessToken,
-	    username: query[0].login,
 	});
     })
 });

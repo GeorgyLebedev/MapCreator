@@ -55,10 +55,8 @@ export default {
 .error-anim-leave-active {
   transition: all 0.3s ease-out;
 }
-
 .error-anim-enter-from,
 .error-anim-leave-to {
   transform: translateY(-200px)
 }
-
 </style>

@@ -1,9 +1,9 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import Main from "@/views/Main";
-import Login from "@/views/Login"
-import MapCanvas from "@/views/MapCanvas"
-import NotFound from "@/views/NotFound"
-const routes = [
+import Main from "@/views/Main"; //компонент главной страницы
+import Login from "@/views/Login" //компонент страницы авторизации/регистрации
+import MapCanvas from "@/views/MapCanvas" //компонент страницы редактирования карт
+import NotFound from "@/views/NotFound" //компонент страницы 404
+const routes = [ //настройки маршрутов в зависимости от url
   {
     path: '/',
     redirect: '/Main'
@@ -11,7 +11,7 @@ const routes = [
   {
     path: '/Main',
     name: 'Main',
-    component: Main
+    component: Main,
   },
   {
     path: '/Login',
@@ -19,20 +19,19 @@ const routes = [
     component: Login
   },
   {
-    path: '/MapCanvas/:id',
+    path: '/MapCanvas/:id', //страница редактирования принимает url-параметр с id выбранной карты
     name: 'MapCanvas',
     component: MapCanvas,
-    props: true
   },
   {
-    path: "/:pathMatch(.*)*",
+    path: "/:pathMatch(.*)*", //если url не совпадает ни с одной страницей, выводим страницу 404
     name: "NotFound",
     component: NotFound
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(), //роутер будет запоминать предыдущие страницы
   routes
 })
 

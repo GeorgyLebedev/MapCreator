@@ -14,7 +14,7 @@
         </div>
       </transition>
       <div class="topImgBox">
-        <img src="@/assets/images/plug.png" class="topImg" alt="...">
+        <img src="@/assets/images/plug.jpg" class="topImg" alt="...">
       </div>
       <div class="mapData">
         <div style="padding-block: 5px; text-overflow: ellipsis"><b>{{ map.title }}</b></div>

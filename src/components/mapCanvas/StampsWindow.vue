@@ -1,4 +1,7 @@
 <template>
+  <Error
+      :error="this.error"
+      @clearError="this.error=''"/>
   <transition name="popup-anim">
     <div class="modalContainer">
       <div id="stampsWindow">
@@ -10,10 +13,10 @@
         <hr>
         <div class="modalBody">
           <div class="sideMenu">
-            <div class="stampKit c-pointer" :class="{selectedKit:(key==this.selectedKit)}"
+            <div class="stampKit c-pointer" :class="{selectedKit:(key==selectedKit)}"
                  v-for="(val, key) in stamps" :key=key>
-              <div class="stampInnerContainer" v-if="!editKit[key]" @click.self="this.selectedKit=key">
-              <div class="stampKitName" :title="key" @click.self="this.selectedKit=key" v-if="editKit[key]!==key">{{ key }}</div>
+              <div class="stampInnerContainer" v-if="!editKit[key]" @click.self="selectedKit=key">
+              <div class="stampKitName" :title="key" @click.self="selectedKit=key" v-if="editKit[key]!==key">{{ key }}</div>
               <div style="display: flex; flex-direction: row">
                 <div class="stampKitOptions">
                   <img class="stampKitButton" title="Удалить" src="@/assets/images/Service/delete.png" alt="" @click.prevent="showKitDeleteConfirm(key)">
@@ -21,9 +24,9 @@
                 <div class="stampKitOptions">
                   <img class="stampKitButton" title="Редактировать" src="@/assets/images/Service/edit.png" alt=""
                        @click.prevent="()=>{
-                         this.editKit={}
-                         this.editKit[key]=true
-                       this.editKitName=key}">
+                         editKit={}
+                         editKit[key]=true
+                       editKitName=key}">
                 </div>
               </div>
               <transition name="scale-anim">
@@ -43,8 +46,8 @@
                 <div style="display: flex">
                   <img class="c-pointer interactive" src="@/assets/images/Service/close.png" alt=""
                        @click="()=>{
-                     this.editKitName=''
-                     this.editKit={}
+                     editKitName=''
+                     editKit={}
                    }">
                   <img class="c-pointer interactive" src="@/assets/images/Service/tick.png" v-if="editKitName.length>=5" alt=""
                        @click="updateKitName(key)">
@@ -59,8 +62,8 @@
                 <div style="display: flex">
                   <img class="c-pointer interactive" src="@/assets/images/Service/close.png" alt=""
                        @click="()=>{
-                     this.newKitName=''
-                     this.addNewKit=false
+                     newKitName=''
+                     addNewKit=false
                    }">
                   <img class="c-pointer interactive" src="@/assets/images/Service/tick.png" v-if="newKitName.length>=5" alt=""
                        @click="addKit">
@@ -74,9 +77,9 @@
               </div>
             </div>
           </div>
-          <div class="stampList" v-if="this.selectedKit">
-            <div class="stampIcon" :class="{selectedIcon:val==selectedStamp, focusStamp:isFocusStamp[key]}"
-                 v-for="(val,key) in this.stamps[this.selectedKit]" :key=key>
+          <div class="stampList" v-if="selectedKit">
+            <div class="stampIcon" :class="{selectedIcon:val==selectedStampVal, focusStamp:isFocusStamp[key]}"
+                 v-for="(val,key) in stamps[selectedKit]" :key=key>
               <transition name="scale-anim">
                 <div class="deleteConfirm stampConfirm" v-if="stampDeleteConfirm[key]" :key=key>
                   Вы уверены, что хотите удалить данный штамп?
@@ -88,7 +91,7 @@
               </transition>
               <img class="deleteStampCross c-pointer" src="@/assets/images/Service/crossRounded.png"
                    @click.prevent="showStampDeleteConfirm(key)">
-              <img class="stampImage c-pointer" :src=val alt=""  @click.self="selectedStamp=val">
+              <img class="stampImage c-pointer" :src=val alt=""  @click.self="selectStamp(val,key)">
             </div>
             <div class="stampIcon">
               <input type="file" :hidden="true" ref="fileInput" accept="image/svg+xml" @change="getFile">
@@ -102,29 +105,51 @@
 </template>
 <script>
 import AxiosRequest from "@/modules/services/axiosRequest";
-
+import Error from "@/components/Error";
 export default {
   name: 'StampsWindow',
+  components:{
+    Error,
+  },
   props: {
     stampsProp: {
       type: Object,
-    }
+    },
+    selectedKitProp:{
+      type: String
+    },
+    selectedStampProp:{
+      type: String
+    },
   },
+  emits:[
+      'setStamp',
+      'setKit',
+      'showStampsWindow',
+  ],
   data() {
     return {
+      error: "",
       stamps: {},
       addNewKit: false,
       editKit: {},
       newKitName: "",
       editKitName: "",
       selectedKit: null,
-      selectedStamp: null,
+      selectedStampVal: null,
+      selectedStampKey: null,
       kitDeleteConfirm: {},
       stampDeleteConfirm: {},
       isFocusStamp: {},
     }
   },
   methods: {
+    selectStamp(val,key){
+      this.selectedStampVal=val
+      this.selectedStampKey=key
+      this.$emit('showStampsWindow', false)
+      this.$emit('setStamp', key)
+    },
     showStampDeleteConfirm(key){
       this.stampDeleteConfirm=this.kitDeleteConfirm=this.isFocusStamp={}
       this.stampDeleteConfirm[key]=true
@@ -168,7 +193,7 @@ export default {
       reader.onloadend = () => {
         base64 = reader.result
         if (Object.values(this.stamps[this.selectedKit]).includes(base64)) {
-          this.$emit('errorAlert', "В выбранном наборе уже есть такой штамп!")
+          this.error= "В выбранном наборе уже есть такой штамп!"
           return
         }
         if(Object.keys(this.stamps[this.selectedKit]).length==0)
@@ -188,20 +213,22 @@ export default {
       response = await request.sendRequest()
       if (!response.msg)
         this.$emit('updateStamps', this.stamps)
-      else this.$emit('errorAlert', response.msg)
+      else this.error=response.msg
     }
   },
   watch:{
     selectedKit(val){
-      if(Object.keys(this.stamps[val]).length>0)
-      this.selectedStamp = this.stamps[val][Object.keys(this.stamps[val])[0]]
+      this.$emit('setKit', val)
+    },
+    selectedStampKey(key){
+      this.$emit('setStamp', key)
     }
   },
   mounted() {
     if (this.stampsProp) {
       this.stamps = this.stampsProp
-      this.selectedKit = Object.keys(this.stamps)[0]
-      this.selectedStamp = this.stamps[this.selectedKit][Object.keys(this.stamps[this.selectedKit])[0]]
+      this.selectedKit =this.selectedKitProp?this.selectedKitProp: Object.keys(this.stamps)[0]
+      this.selectedStampVal =this.selectedStampProp?this.selectedStampProp: this.stamps[this.selectedKit][Object.keys(this.stamps[this.selectedKit])[0]]
     }
   }
 }
@@ -346,7 +373,7 @@ hr {
 .stampImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   padding: 5px;
 }
 

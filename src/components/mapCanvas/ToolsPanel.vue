@@ -1,4 +1,16 @@
 <template>
+  <Error
+      :error="this.error"
+      @clearError="this.error=''"/>
+  <StampsWindow
+      :stamps-prop="stamps"
+      :selected-kit-prop="stampOpt.currentKit"
+      :selected-stamp-prop="stampOpt.currentStamp"
+      v-if="modalFlags.showStampsWin"
+      @setStamp="setCurrentStampByKey"
+      @setKit="(kit)=>{stampOpt.currentKit=kit}"
+      @showStampsWindow="(flag)=> modalFlags.showStampsWin = flag"
+      />
   <div>
     <div class="h-100 bg-white " id="toolsPanel">
       <div class="radio-icon-group tools-group mb-auto text-center">
@@ -136,31 +148,32 @@
                      v-on:click="closePanel">
               </div>
               <hr>
+              <section v-if="!selectedObj">
               <div class="stampsContainer d-flex mb-2">
                 <div class="bigStampContainer">
                   <div class="bigStamp">
                     <img :src="stampOpt.currentStamp" alt="">
                   </div>
                   <div class="switch d-flex justify-content-between">
-                    <img src="@/assets/images/leftArrow.png" class="c-pointer" height="20" @click="stampKey--">
-                    <p>{{stampKey+1}}/{{ Object.keys(this.stamps[this.stampOpt.currentKit]).length }}</p>
-                    <img src="@/assets/images/rightArrow.png" class="c-pointer" height="20" @click="stampKey++">
+                    <img src="@/assets/images/leftArrow.png" class="c-pointer" height="20" @click="stampNumber--">
+                    <p>{{stampNumber+1}}/{{ currentKitLength }}</p>
+                    <img src="@/assets/images/rightArrow.png" class="c-pointer" height="20" @click="stampNumber++">
                   </div>
                 </div>
-                <div class="stampsTable ms-1 d-flex flex-wrap">
+                <div class="stampsTable">
                   <div class="smallStamp mb-1 me-1 c-pointer"
-                       :class="{currentStamp:val==stampOpt.currentStamp}"
-                       v-for="(val,key) in stamps[stampOpt.currentKit]"
+                       v-for="(key) in visibleStamps"
+                       :class="{currentStamp:stamps[stampOpt.currentKit][key]==stampOpt.currentStamp}"
                        :key="key"
-
-                       @click="stampOpt.currentStamp=val">
-                    <img :src="val" alt="">
+                       @click="setCurrentStampByKey(key)">
+                    <img :src="stamps[stampOpt.currentKit][key]" alt="">
                   </div>
                 </div>
               </div>
-              <button class="btn btn-outline-dark w-100" @click="this.$emit('showStampsWindow', true)">Открыть каталог
+              <button class="btn btn-outline-dark w-100" @click="modalFlags.showStampsWin=true">Открыть каталог
               </button>
               <hr>
+              </section>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок">
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
                 <input type="range" step="10" min="10" max="500" v-model="stampOpt.size">
@@ -593,13 +606,18 @@
   </div>
 </template>
 <script>
+import StampsWindow from "@/components/mapCanvas/StampsWindow";
+import Error from "@/components/Error";
+import AxiosRequest from "@/modules/services/axiosRequest";
+import {flags} from "@/modules/logic/flags";
 export default {
   name: "ToolsPanel",
+  components:{
+    StampsWindow,
+    Error
+  },
   props: {
     selectedObj: {
-      type: Object
-    },
-    stamps:{
       type: Object
     },
     rotation: {
@@ -609,11 +627,17 @@ export default {
       type: Number
     }
   },
+  emits:['toolChange','optChange','update','removeSelect'],
   data() {
     return {
+      error:"",
+      modalFlags:flags,
       tool: "cursor",
       lastColor: "",
-      stampKey:0,
+      stampNumber:0,
+      userOptions:{},
+      stamps: {},
+      colors:{},
       optionVisible: false,
       fontsCollection: ["Cambria", "Roboto", "Neucha", "Comic Sans MS", "Consolas","Mason Chronicles", "Linux Biolinum", "Aniron"],
       cursorOpt: {
@@ -715,6 +739,10 @@ export default {
       else
         this.cursorOpt.selectionTypes = ['brush', 'stamp', 'shape', 'path', 'text']
     },
+    setCurrentStampByKey(key){
+      this.stampOpt.currentStamp=this.currentKitObj[key]
+      this.stampNumber=Object.keys(this.currentKitObj).indexOf(key)
+    },
     colorUpdate(color){
       if(this.lastColor!=color){
         this.lastColor = color;
@@ -735,18 +763,54 @@ export default {
         this.recentColors.unshift(newColor)
       }
     },
+    async getOptions(){
+      try {
+        let request = new AxiosRequest('options/', 'get')
+        let response = await request.sendRequest()
+        if (response && response.options) return response.options
+      } catch (e) {
+        console.log(e)
+      }
+    },
   },
-  beforeUpdate() {
+  async mounted() {
+    this.userOptions=await this.getOptions()
+    this.stamps=this.userOptions.stamps
     this.stampOpt.currentKit=Object.keys(this.stamps)[0]
-    this.stampOpt.currentStamp= this.stamps[this.stampOpt.currentKit][Object.keys(this.stamps[this.stampOpt.currentKit])[this.stampKey]]
+    this.stampOpt.currentStamp= this.currentKitObj[Object.keys(this.currentKitObj)[this.stampNumber]]
+  },
+  computed:{
+    currentKitLength(){
+      return Object.keys(this.stamps[this.stampOpt.currentKit]).length
+    },
+    findRowEnd(){
+      if (this.stampNumber%3 < 0) {
+        return this.stampNumber + (3 - this.stampNumber%3);
+      } else {
+        return this.stampNumber - this.stampNumber%3;
+      }
+    },
+    currentKitObj(){
+      return this.stamps[this.stampOpt.currentKit]
+    },
+    visibleStamps(){
+      if(Object.keys(this.currentKitObj).length>9) {
+        if (this.stampNumber % 3 == 0)
+          return Object.keys(this.currentKitObj).slice(this.stampNumber, this.stampNumber + 9)
+        else
+          return Object.keys(this.currentKitObj).slice(this.findRowEnd, this.findRowEnd + 9)
+      }
+      else
+        return Object.keys(this.stamps[this.stampOpt.currentKit])
+    }
   },
   watch: {
-    stampKey(val){
+    stampNumber(val){
       if(val<0)
-        this.stampKey=Object.keys(this.stamps[this.stampOpt.currentKit]).length-1
-      if(val>Object.keys(this.stamps[this.stampOpt.currentKit]).length-1)
-        this.stampKey=0
-      this.stampOpt.currentStamp = this.stamps[this.stampOpt.currentKit][Object.keys(this.stamps[this.stampOpt.currentKit])[val]]
+        this.stampNumber=Object.keys(this.currentKitObj).length-1
+      if(val>Object.keys(this.currentKitObj).length-1)
+        this.stampNumber=0
+      this.stampOpt.currentStamp = this.currentKitObj[Object.keys(this.currentKitObj)[val]]
     },
     tool(val) {
       this.$emit('toolChange', val)
@@ -969,6 +1033,8 @@ hr {
 .bigStamp {
   border: 1px solid gainsboro;
   border-radius: 5px;
+  width: 100px;
+  height: 100px;
 }
 
 .bigStampContainer {
@@ -977,6 +1043,7 @@ hr {
 }
 
 .bigStamp img {
+  padding:5px;
   object-fit: contain;
   width: 100%;
   height: 100%;
@@ -1000,11 +1067,13 @@ hr {
 }
 
 .stampsTable {
-  overflow-y: auto;
   width: 150px;
   height: 120px;
+  display: flex;
+  align-content: flex-start;
+  margin-left: 5px;
+  flex-wrap: wrap;
 }
-
 .dropdown-item:active {
   background: #232323;
   color: white;

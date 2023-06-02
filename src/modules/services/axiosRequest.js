@@ -8,14 +8,14 @@ export default class AxiosRequest {
 	this.method = method; // GET, POST, PUT, DELETE
 	this.data = data; //данные
     }
-    async sendRequest() {
+    async sendRequest() { //отправить запрос
         let response
 	try {
-            response = (await axios({
+            response = (await axios({ //ожидание отправки запроса
 		method: this.method,
 		url: this.url,
 		headers: {
-		    authorization: this.authHeader,
+		    authorization: this.authHeader, //подстановка заголовка авторизации
 		},
 		data: this.data
 	    })).data

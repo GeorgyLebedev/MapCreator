@@ -1,4 +1,7 @@
 <template>
+  <Error
+      :error="this.error"
+      @clearError="this.error=''"/>
   <div class="d-flex flex-wrap border-bottom align-items-center topMenu" id="header">
     <div class="col-6 text-start">
       <div class="d-flex align-items-center " style="margin-left: 40px">
@@ -78,15 +81,28 @@
   </div>
 </template>
 <script>
+import Error from "@/components/Error";
 export default {
   name: "TopMenu",
+  components:{
+    Error
+  },
   props:{
     canvasSize:{
       type:Object
     }
   },
+  emits:[
+      'saveAs',
+    'showMapEditWindow',
+    'showImageLoadWindow',
+    'setCanvasBackground',
+    'removeCanvasBackground',
+    'loadJson'
+  ],
   data(){
     return{
+      error:"",
       backgroundColor:"#eeeeee",
       backgroundFlag: true
     }
@@ -102,7 +118,7 @@ export default {
       let extensions = ['png', 'jpeg', 'jpg', 'svg']
       const imgFile = event.target.files[0];
       if (extensions.indexOf(imgFile.name.split('.').pop().toLowerCase()) == -1) {
-        this.$emit('errorAlert', "Расширение выбранного файла не поддерживается!")
+        this.error="Расширение выбранного файла не поддерживается!"
         return
       }
       else{
@@ -114,7 +130,7 @@ export default {
             this.$refs.imgInput.value=""
           }
           catch (e){
-            this.$emit('errorAlert',e.message)
+            this.error=e.message
           }
         };
       }
@@ -123,7 +139,7 @@ export default {
       try {
         const jsonFile = event.target.files[0];
         if (jsonFile.name.split('.').pop().toLowerCase() !== "json") {
-          this.$emit('errorAlert', "Выбранный файл не является файлом формата JSON!")
+          this.error="Выбранный файл не является файлом формата JSON!"
         } else {
           const reader = new FileReader();
           reader.readAsText(jsonFile);
@@ -134,13 +150,13 @@ export default {
               this.$emit("loadJson", jsonData)
             }
             catch (e){
-              this.$emit('errorAlert',e.message)
+              this.error=e.message
             }
           };
         }
       }
       catch (e) {
-        this.$emit('errorAlert',e.message)
+        this.error=e.message
       }
     },
     loadBackgroundImage(base64){
