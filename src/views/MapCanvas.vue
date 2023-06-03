@@ -73,6 +73,7 @@
         @zoom="(event, step, mode)=>{zoom(event, step, mode, this.canvas)}"
         @resetScale="canvas.resetScale()"
         @saveMap="updateMapObjects(currentMap)"
+        :status-prop="this.saveStatus"
         :changes-prop="canvas.changes"
         :scale-prop="Number(canvas.scale)"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2, null, canvas)">
@@ -124,6 +125,7 @@ export default {
   data() {
     return {
       error:"",
+      saveStatus: "Нет изменений",
       modalFlags: flags,
       currentMap: {
         title: "",
@@ -220,6 +222,7 @@ export default {
         await request.sendRequest()
         this.error="Успешно сохранено!"
         this.canvas.changes=0
+        this.saveStatus="Сохранено"
       }
       catch (e) {
       this.error = e
@@ -321,13 +324,14 @@ export default {
           break
       }
     },
-    'activeLayer.children.length'(val) {
+    'activeLayer.children.length'(old, val) {
       if(val) {
         const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
         const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
         console.log(obj.data.type)
            if(obj&&obj.data&&obj.data.type&&['brush','path','stamp','text','shape'].includes(obj.data.type))
         this.canvas.changes++
+        this.saveStatus=this.canvas.changes>0?"Не сохранено":"Нет изменений"
       }
     },
     'currentItem'(item) {

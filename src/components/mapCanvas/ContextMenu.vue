@@ -5,7 +5,7 @@
       <img src="@/assets/images/Service/copy.png" alt="">
       Копировать
     </div>
-    <hr>
+    <hr class="contextMenuDivider">
     <div class="contextMenuItem" @click="this.$emit('toFront')">
       <img src="@/assets/images/Service/toFront.png" alt="">
       На передний план
@@ -14,7 +14,7 @@
       <img src="@/assets/images/Service/toBack.png" alt="" >
       На задний план
     </div>
-    <hr>
+    <hr class="contextMenuDivider">
     <div class="contextMenuItem" @click="this.$emit('removeItem')">
       <img src="@/assets/images/Service/delete.png" alt="">
       Удалить
@@ -42,21 +42,20 @@ export default {
   .contextMenu{
     user-select: none;
     z-index: 5;
-    position: absolute;
+    position: fixed;
     background-color: white;
     border: 1px solid #dcdcdc;
     border-radius: 10px;
     width: auto;
     height:auto;
-    padding-block:10px;
   }
   .contextMenuItem{
     display: flex;
     flex-direction: row;
     align-items: center;
     height: 40px;
-    padding-inline: 10px;
     padding-block: 5px;
+    padding-inline: 10px;
     color: #232323;
     cursor: pointer;
   }
@@ -68,5 +67,8 @@ export default {
     margin-right: 5px;
     object-fit: contain;
     height: 80%;
+  }
+  .contextMenuDivider{
+    margin:0!important;
   }
 </style>

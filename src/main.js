@@ -2,8 +2,7 @@ import { createApp } from 'vue'
 import {createStore} from 'vuex'
 import App from './App.vue'
 import router from './router'
-// eslint-disable-next-line no-unused-vars
-import axios from "axios";
+import vClickOutside from 'v-click-outside'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap"
 import "@/assets/css/Common.css"
@@ -14,6 +13,7 @@ const store = createStore({
 	}
     }
 })
+app.use(vClickOutside)
 app.use(router)
 app.use(store)
 app.mount('#app')

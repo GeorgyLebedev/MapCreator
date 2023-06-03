@@ -10,7 +10,7 @@
       @setStamp="setCurrentStampByKey"
       @setKit="(kit)=>{stampOpt.currentKit=kit}"
       @showStampsWindow="(flag)=> modalFlags.showStampsWin = flag"
-      />
+  />
   <div>
     <div class="h-100 bg-white " id="toolsPanel">
       <div class="radio-icon-group tools-group mb-auto text-center">
@@ -98,20 +98,33 @@
                     </tr>
                   </table>
                 </div>
-                <div>
-                  Палитра:
+                <details>
+                  <summary><u>Палитра:</u></summary>
                   <table id="palette" class="colorTable">
-                    <tr>
-                      <td class="colorCell c-pointer" v-for="i in 8" :key="i"></td>
-                    </tr>
-                    <tr>
-                      <td class="colorCell c-pointer" v-for="i in 8" :key="i"></td>
-                    </tr>
-                    <tr>
-                      <td class="colorCell c-pointer" v-for="i in 8" :key="i"></td>
+                    <tr v-for="row in 3" :key="row">
+                      <td class="colorCell"
+                          :class="{'c-pointer':paletteCellColor(row,column)!='unset'}"
+                          :tabindex="((row-1)*8+(column-1))"
+                          v-for="column in 8"
+                          :key="column"
+                          :style="{'background-color': paletteCellColor(row,column)}"
+                          @click.right="openPaletteContextMenu($event,row,column)">
+                        <img src="@/assets/images/Tools/Options/noColor.png" alt="" v-if="paletteCellColor(row,column)=='unset'">
+                        <div class="contextContainer" @click="showPaletteContext=false" v-if="showPaletteContext">
+                          <div class="contextMenu" :style="paletteContextStyle" @contextmenu.prevent>
+                            <div class="contextMenuItem" @click="showPaletteContext=false">
+                              Отмена
+                            </div>
+                            <hr class="contextMenuDivider">
+                            <div class="contextMenuItem" @click="updatePalette(brushOpt.color)">
+                              Записать текущий цвет
+                            </div>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                   </table>
-                </div>
+                </details>
               </div>
               <div id="brushTextures" v-if="brushOpt.brushType=='texture'">
                 Это раздел настройки текстур
@@ -149,30 +162,30 @@
               </div>
               <hr>
               <section v-if="!selectedObj">
-              <div class="stampsContainer d-flex mb-2">
-                <div class="bigStampContainer">
-                  <div class="bigStamp">
-                    <img :src="stampOpt.currentStamp" alt="">
+                <div class="stampsContainer d-flex mb-2">
+                  <div class="bigStampContainer">
+                    <div class="bigStamp">
+                      <img :src="stampOpt.currentStamp" alt="">
+                    </div>
+                    <div class="switch d-flex justify-content-between">
+                      <img src="@/assets/images/leftArrow.png" class="c-pointer" height="20" @click="stampNumber--">
+                      <p>{{ stampNumber + 1 }}/{{ currentKitLength }}</p>
+                      <img src="@/assets/images/rightArrow.png" class="c-pointer" height="20" @click="stampNumber++">
+                    </div>
                   </div>
-                  <div class="switch d-flex justify-content-between">
-                    <img src="@/assets/images/leftArrow.png" class="c-pointer" height="20" @click="stampNumber--">
-                    <p>{{stampNumber+1}}/{{ currentKitLength }}</p>
-                    <img src="@/assets/images/rightArrow.png" class="c-pointer" height="20" @click="stampNumber++">
+                  <div class="stampsTable">
+                    <div class="smallStamp mb-1 me-1 c-pointer"
+                         v-for="(key) in visibleStamps"
+                         :class="{currentStamp:stamps[stampOpt.currentKit][key]==stampOpt.currentStamp}"
+                         :key="key"
+                         @click="setCurrentStampByKey(key)">
+                      <img :src="stamps[stampOpt.currentKit][key]" alt="">
+                    </div>
                   </div>
                 </div>
-                <div class="stampsTable">
-                  <div class="smallStamp mb-1 me-1 c-pointer"
-                       v-for="(key) in visibleStamps"
-                       :class="{currentStamp:stamps[stampOpt.currentKit][key]==stampOpt.currentStamp}"
-                       :key="key"
-                       @click="setCurrentStampByKey(key)">
-                    <img :src="stamps[stampOpt.currentKit][key]" alt="">
-                  </div>
-                </div>
-              </div>
-              <button class="btn btn-outline-dark w-100" @click="modalFlags.showStampsWin=true">Открыть каталог
-              </button>
-              <hr>
+                <button class="btn btn-outline-dark w-100" @click="modalFlags.showStampsWin=true">Открыть каталог
+                </button>
+                <hr>
               </section>
               <div data-bs-toggle="tooltip" data-bs-placement="top" title="Размер иконок">
                 <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
@@ -269,7 +282,8 @@
                     <label for="shapeFillChbx">Заливка</label>
                   </td>
                   <td>
-                    <input type="color" v-model="shapeOpt.fillColor" v-if="shapeOpt.isFill" @input="colorUpdate(shapeOpt.fillColor)">
+                    <input type="color" v-model="shapeOpt.fillColor" v-if="shapeOpt.isFill"
+                           @input="colorUpdate(shapeOpt.fillColor)">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!shapeOpt.isFill">
                   </td>
@@ -281,7 +295,8 @@
                     <label for="shapeBorderChbx">Контур</label>
                   </td>
                   <td>
-                    <input type="color" v-model="shapeOpt.strokeColor" v-if="shapeOpt.isBorder" @input="colorUpdate(shapeOpt.strokeColor)">
+                    <input type="color" v-model="shapeOpt.strokeColor" v-if="shapeOpt.isBorder"
+                           @input="colorUpdate(shapeOpt.strokeColor)">
                     <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                          v-if="!shapeOpt.isBorder">
                   </td>
@@ -410,7 +425,7 @@
               </Transition>
               <hr>
               Цвет линии: <br>
-              <input type="color" v-model="pathOpt.color"  @input="colorUpdate(pathOpt.color)">
+              <input type="color" v-model="pathOpt.color" @input="colorUpdate(pathOpt.color)">
               <div class="mb-3">
                 Последние цвета:
                 <table class="colorTable">
@@ -492,7 +507,8 @@
                          v-model="textOpt.isFill" @change="setFill(textOpt)">
                   <label for="textFillChbx">Цвет текста</label>
                 </div>
-                <input type="color" v-model="textOpt.fillColor" v-if="textOpt.isFill"  @input="colorUpdate(textOpt.fillColor)">
+                <input type="color" v-model="textOpt.fillColor" v-if="textOpt.isFill"
+                       @input="colorUpdate(textOpt.fillColor)">
                 <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                      v-if="!textOpt.isFill">
               </div>
@@ -547,7 +563,8 @@
                          v-model="textOpt.isBorder" @change="setBorder(textOpt)">
                   <label for="shapeFillChbx">Обводка</label>
                 </div>
-                <input type="color" v-model="textOpt.strokeColor" v-if="textOpt.isBorder"  @input="colorUpdate(textOpt.strokeColor)">
+                <input type="color" v-model="textOpt.strokeColor" v-if="textOpt.isBorder"
+                       @input="colorUpdate(textOpt.strokeColor)">
                 <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                      v-if="!textOpt.isBorder">
               </div>
@@ -566,7 +583,8 @@
                          @change="setShadow(textOpt)" :disabled="!textOpt.isFill">
                   <label for="shapeBorderChbx">Тень</label>
                 </div>
-                <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow"  @input="colorUpdate(textOpt.shadowColor)">
+                <input type="color" v-model="textOpt.shadowColor" v-if="textOpt.isShadow"
+                       @input="colorUpdate(textOpt.shadowColor)">
                 <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
                      v-if="!textOpt.isShadow">
               </div>
@@ -610,9 +628,10 @@ import StampsWindow from "@/components/mapCanvas/StampsWindow";
 import Error from "@/components/Error";
 import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
+
 export default {
   name: "ToolsPanel",
-  components:{
+  components: {
     StampsWindow,
     Error
   },
@@ -623,25 +642,31 @@ export default {
     rotation: {
       type: Number
     },
-    size:{
+    size: {
       type: Number
     }
   },
-  emits:['toolChange','optChange','update','removeSelect'],
+  emits: ['toolChange', 'optChange', 'update', 'removeSelect'],
   data() {
     return {
-      error:"",
-      modalFlags:flags,
+      error: "",
+      showPaletteContext: false,
+      modalFlags: flags,
       tool: "cursor",
       lastColor: "",
-      stampNumber:0,
-      userOptions:{},
+      stampNumber: 0,
+      userOptions: {},
       stamps: {},
-      colors:{},
+      paletteOpt:{
+        paletteRow:0,
+        paletteColumn:0
+      },
+      paletteColors: Array(24).fill(null),
+      paletteContextStyle: {},
       optionVisible: false,
-      fontsCollection: ["Cambria", "Roboto", "Neucha", "Comic Sans MS", "Consolas","Mason Chronicles", "Linux Biolinum", "Aniron"],
+      fontsCollection: ["Cambria", "Roboto", "Neucha", "Comic Sans MS", "Consolas", "Mason Chronicles", "Linux Biolinum", "Aniron"],
       cursorOpt: {
-        selectionTypes: ['stamp', 'shape' , 'text']
+        selectionTypes: ['stamp', 'shape', 'text']
       },
       recentColors: Array(8).fill("#ffffff"),
       brushOpt: {
@@ -739,19 +764,28 @@ export default {
       else
         this.cursorOpt.selectionTypes = ['brush', 'stamp', 'shape', 'path', 'text']
     },
-    setCurrentStampByKey(key){
-      this.stampOpt.currentStamp=this.currentKitObj[key]
-      this.stampNumber=Object.keys(this.currentKitObj).indexOf(key)
+    setCurrentStampByKey(key) {
+      this.stampOpt.currentStamp = this.currentKitObj[key]
+      this.stampNumber = Object.keys(this.currentKitObj).indexOf(key)
     },
-    colorUpdate(color){
-      if(this.lastColor!=color){
+    colorUpdate(color) {
+      if (this.lastColor != color) {
         this.lastColor = color;
         setTimeout(() => {
           if (color == this.lastColor) {
-              this.updateRecentColors(this.lastColor)
+            this.updateRecentColors(this.lastColor)
           }
         }, 2000);
       }
+    },
+    openPaletteContextMenu(event, row, column) {
+      this.showPaletteContext = true;
+      this.paletteContextStyle = {
+        left: event.clientX + 'px',
+        top: event.clientY + 'px'
+      }
+      this.paletteOpt.paletteRow=row
+      this.paletteOpt.paletteColumn=column
     },
     updateRecentColors(newColor) {
       if (newColor == "transparent") return
@@ -763,53 +797,68 @@ export default {
         this.recentColors.unshift(newColor)
       }
     },
-    async getOptions(){
+    async getOptions() {
       try {
         let request = new AxiosRequest('options/', 'get')
         let response = await request.sendRequest()
         if (response && response.options) return response.options
       } catch (e) {
-        console.log(e)
+        this.error = e
       }
     },
+    async updatePalette(color) {
+      let index=((this.paletteOpt.paletteRow-1)*8+(this.paletteOpt.paletteColumn-1))
+      this.paletteColors[index] = color
+      try {
+        let request = new AxiosRequest('options/', 'put', {palette: this.paletteColors})
+        await request.sendRequest()
+      } catch (e) {
+        this.error = e
+      }
+    },
+    paletteCellColor(row, column) {
+      return this.paletteColors[((row - 1) * 8 + (column - 1))] ? this.paletteColors[((row - 1) * 8 + (column - 1))] : 'unset'
+    }
   },
   async mounted() {
-    this.userOptions=await this.getOptions()
-    this.stamps=this.userOptions.stamps
-    this.stampOpt.currentKit=Object.keys(this.stamps)[0]
-    this.stampOpt.currentStamp= this.currentKitObj[Object.keys(this.currentKitObj)[this.stampNumber]]
+    this.userOptions = await this.getOptions()
+    if (this.userOptions.stamps)
+      this.stamps = this.userOptions.stamps
+    if (this.userOptions.palette)
+      this.paletteColors = this.userOptions.palette
+    this.stampOpt.currentKit = Object.keys(this.stamps)[0]
+    this.stampOpt.currentStamp = this.currentKitObj[Object.keys(this.currentKitObj)[this.stampNumber]]
   },
-  computed:{
-    currentKitLength(){
+  computed: {
+    currentKitLength() {
       return Object.keys(this.stamps[this.stampOpt.currentKit]).length
     },
-    findRowEnd(){
-      if (this.stampNumber%3 < 0) {
-        return this.stampNumber + (3 - this.stampNumber%3);
+    findRowEnd() {
+      if (this.stampNumber % 3 < 0) {
+        return this.stampNumber + (3 - this.stampNumber % 3);
       } else {
-        return this.stampNumber - this.stampNumber%3;
+        return this.stampNumber - this.stampNumber % 3;
       }
     },
-    currentKitObj(){
+    currentKitObj() {
       return this.stamps[this.stampOpt.currentKit]
     },
-    visibleStamps(){
-      if(Object.keys(this.currentKitObj).length>9) {
+    visibleStamps() {
+      if (Object.keys(this.currentKitObj).length > 9) {
         if (this.stampNumber % 3 == 0)
           return Object.keys(this.currentKitObj).slice(this.stampNumber, this.stampNumber + 9)
         else
           return Object.keys(this.currentKitObj).slice(this.findRowEnd, this.findRowEnd + 9)
-      }
-      else
+      } else
         return Object.keys(this.stamps[this.stampOpt.currentKit])
-    }
+    },
   },
   watch: {
-    stampNumber(val){
-      if(val<0)
-        this.stampNumber=Object.keys(this.currentKitObj).length-1
-      if(val>Object.keys(this.currentKitObj).length-1)
-        this.stampNumber=0
+    stampNumber(val) {
+      if (val < 0)
+        this.stampNumber = Object.keys(this.currentKitObj).length - 1
+      if (val > Object.keys(this.currentKitObj).length - 1)
+        this.stampNumber = 0
       this.stampOpt.currentStamp = this.currentKitObj[Object.keys(this.currentKitObj)[val]]
     },
     tool(val) {
@@ -891,11 +940,11 @@ export default {
         }
       }
     },
-    size:{
-      handler(val){
+    size: {
+      handler(val) {
         console.log(val)
-        if(!val || this.selectedObj.data.type!="stamp") return
-        this.stampOpt.size=val
+        if (!val || this.selectedObj.data.type != "stamp") return
+        this.stampOpt.size = val
       }
     },
     cursorOpt: {
@@ -949,6 +998,7 @@ export default {
   position: fixed;
   left: 0;
   z-index: 4;
+  user-select: none;
 }
 
 #text {
@@ -966,16 +1016,18 @@ export default {
   user-select: none;
 }
 
-.selectOption{
+.selectOption {
   display: flex;
   align-items: center;
   height: inherit;
   padding: 10px;
   cursor: pointer;
 }
-.selectOption:nth-last-child(n+2){
+
+.selectOption:nth-last-child(n+2) {
   border-right: 1px solid #dcdcdc;
 }
+
 .selectOption img {
   height: 100%;
   object-fit: contain;
@@ -985,12 +1037,15 @@ export default {
   background-color: #232323;
   color: #dcdcdc;
 }
-.optionChecked:nth-last-child(1){
+
+.optionChecked:nth-last-child(1) {
   border-radius: 0 10px 10px 0;
 }
-.optionChecked:nth-child(1){
+
+.optionChecked:nth-child(1) {
   border-radius: 10px 0 0 10px;
 }
+
 .optionChecked img {
   filter: invert(100%);
 }
@@ -1044,23 +1099,27 @@ hr {
 }
 
 .bigStamp img {
-  padding:5px;
+  padding: 5px;
   object-fit: contain;
   width: 100%;
   height: 100%;
 }
-.currentStamp{
+
+.currentStamp {
   border: 1px solid #232323;
-  background-color: rgba(0,0,0,0.15);
+  background-color: rgba(0, 0, 0, 0.15);
 }
+
 .smallStamp {
   width: 30%;
   height: 30%;
   border-radius: 5px;
 }
-.smallStamp:not(.currentStamp){
+
+.smallStamp:not(.currentStamp) {
   border: 1px solid gainsboro;
 }
+
 .smallStamp img {
   object-fit: contain;
   width: 100%;
@@ -1075,10 +1134,12 @@ hr {
   margin-left: 5px;
   flex-wrap: wrap;
 }
+
 .dropdown-item:active {
   background: #232323;
   color: white;
 }
+
 .dropdown-item:hover {
   cursor: pointer;
 }
@@ -1123,20 +1184,27 @@ hr {
 }
 
 .colorTable {
-  border-collapse: collapse;
+  border-collapse: initial;
   border: 1px solid gainsboro;
 }
 
-.colorTable > tr {
-  border: 1px solid gainsboro;
-}
 
 .colorCell {
   max-height: 30px;
   height: 30px;
   width: 30px;
   min-width: 30px;
-  border: 1px solid gainsboro !important;
+  border: 1px solid gainsboro;
+}
+
+.colorCell:focus {
+  border: 1px solid black;
+}
+
+.colorCell img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .colorPlaceholder {
@@ -1169,7 +1237,14 @@ hr {
 .fontDropDown:after {
   content: none !important;
 }
-
+.contextContainer{
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 4;
+}
 .show-enter-active,
 .show-leave-active {
   transition: all 0.3s ease;

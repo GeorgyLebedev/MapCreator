@@ -10,7 +10,7 @@
         </button>
         <span class="me-2">
     <u><b>Изменений: {{ changes }}</b></u></span>
-        <span class="text-muted">Не сохранено</span>
+        <span class="text-muted">{{statusProp}}</span>
       </div>
       <div class="d-flex align-items-center pe-2">
         <button type="button" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip"
@@ -52,7 +52,8 @@ export default {
   },
   props: {
     scaleProp: Number,
-    changesProp: Number
+    changesProp: Number,
+    statusProp: String
   },
   emits:['resetAlign','zoom','resetScale','saveMap'],
   watch: {
