@@ -13,6 +13,7 @@ app.use(cookieParser()) //подключение cookieParser для устан�
 mongoose.connect('mongodb://127.0.0.1:27017/mapcreator' ) //подключение к базе данных
     .then(()=> console.log('[OK] DB is connected'))
     .catch(err => console.error(err));
+const db=mongoose.connection
 app.use(express.urlencoded({ limit: '1mb',
     extended: true
 }));
@@ -25,3 +26,8 @@ app.use('/', express.static(path.join(__dirname, '../dist')))
 app.listen(app.get('port'), () => { // вывод информации о запуске сервера
     console.log(`[OK] Server is running on localhost:${app.get('port')}`);
 });
+app.on('close', async ()=>{
+    await db.close(()=> {
+        console.log('Connection to MongoDB closed!');
+    });
+})

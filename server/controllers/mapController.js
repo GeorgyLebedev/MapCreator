@@ -29,10 +29,8 @@ router.post('/', authenticateJWT, async (req, res) => {
 });
 router.put('/:id', authenticateJWT, async (req, res) => {
 	try {
-	    await mapModel.findByIdAndUpdate(req.params.id, {title: req.body.title})
+	    await mapModel.updateOne({_id:req.params.id}, req.body)
 	    await mapModel.findByIdAndUpdate(req.params.id, {changeDate: new Date()})
-	    if ('description' in req.body)
-		await mapModel.findByIdAndUpdate(req.params.id, {description: req.body.description})
 	    res.json({state: 'updated'});
 	} catch (e) {
 	    res.json({msg: e.message})

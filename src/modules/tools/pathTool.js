@@ -13,6 +13,9 @@ export default class pathTool {
 	this.style = "default"
 	this.dashArray = [10, 5]
 	this.dotArray = [1, 5]
+    }
+    set(options) {
+        if(this.cursor) this.cursor.remove()
 	this.cursor= new paper.Shape.Circle({
 	    center: [0,0],
 	    radius:1,
@@ -21,11 +24,7 @@ export default class pathTool {
 	    strokeColor: "white",
 	    strokeWidth: 2,
 	    blendMode: "difference",
-	    visible: false
 	})
-	this.set()
-    }
-    set(options) {
 	if(options) Object.assign(this, options)
 	let initPoint = undefined
 	let vector, firstSegment, lastSegment
@@ -51,7 +50,6 @@ export default class pathTool {
 			else if (options.style == "dotted")
 			    this.currentItem.dashArray = this.dotArray.map((x) => (x * this.size))
 			else this.currentItem.dashArray = null
-			this.currentItem.data.type="path"
 			this.currentItem.insertBelow(this.cursor)
 		    }
 		}
@@ -60,6 +58,7 @@ export default class pathTool {
 			initPoint = event.point
 		    else {
 			this.currentItem = new paper.Path.Line(initPoint, event.point)
+			this.currentItem.data.type="path"
 			this.currentItem.insertBelow(this.cursor)
 			initPoint = undefined
 		    }
@@ -90,12 +89,12 @@ export default class pathTool {
 			    this.currentItem.dashArray = this.dotArray.map((x) => (x * this.size))
 			else this.currentItem.dashArray = null
 			this.currentItem.insertBelow(this.cursor)
+			this.currentItem.data.type="path"
 		    }
 		}
 		this.instance.onMouseDown = (event) => {
 		    if(clicker.doubleClick()) {
 			initPoint=undefined
-			this.currentItem.data.type="path"
 			this.currentItem.clone()
 			this.currentItem.remove()
 			return;
@@ -177,12 +176,12 @@ export default class pathTool {
 			    this.currentItem.dashArray = this.dotArray.map((x) => (x * this.size))
 			else this.currentItem.dashArray = null
 			this.currentItem.insertBelow(this.cursor)
+			this.currentItem.data.type="path"
 		    }
 		}
 		this.instance.onMouseDown = (event) => {
 		    if(clicker.doubleClick()){
 			initPoint=undefined
-			this.currentItem.data.type="path"
 			this.currentItem.clone()
 			this.currentItem.remove()
 			return;

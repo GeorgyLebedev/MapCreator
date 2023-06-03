@@ -46,10 +46,14 @@
 
 <script>
 import AxiosRequest from "@/modules/services/axiosRequest";
+import Error from "@/components/Error";
 import {flags} from "@/modules/logic/flags";
 
 export default {
   name: 'HeaderComponent',
+  components:{
+    Error
+  },
   data() {
     return {
       error:"",

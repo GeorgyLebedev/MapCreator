@@ -15,6 +15,7 @@ export default class canvas {
 	this.offsetTop= 0 //отступ сверху
 	this.background=null //фон холста
 	this.backgroundOpt=null //параметры фона
+	this.changes=0 //число изменений с последнего сохранения карты
     }
     setup(resolution, ref){
         this.ref=ref

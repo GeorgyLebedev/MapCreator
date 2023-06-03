@@ -72,6 +72,8 @@
         @resetAlign="canvas.hardReset()"
         @zoom="(event, step, mode)=>{zoom(event, step, mode, this.canvas)}"
         @resetScale="canvas.resetScale()"
+        @saveMap="updateMapObjects(currentMap)"
+        :changes-prop="canvas.changes"
         :scale-prop="Number(canvas.scale)"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2, null, canvas)">
       <canvas id="map" :width="this.canvas.CSSwidth" :height="this.canvas.CSSheight"
@@ -160,9 +162,9 @@ export default {
     zoom: zoom,
     exportAs: exportAs,
     toolSwitch(mode) {
-      if (mode == "on" && this.currentTool.toolRef) {
+      if (mode == "on" && this.currentTool.toolRef)
         this.currentTool.toolRef.activate()
-      } else
+      else
         this.nullTool.activate()
     },
     setTool(tool) {
@@ -196,7 +198,6 @@ export default {
         this.$router.push("/Main")
       }
     },
-
     async updateMapMetadata(map) { //обновление названия/описания карты
       let request
       try { //запрос на сервер с использованием AxiosRequest
@@ -207,6 +208,23 @@ export default {
         this.error = e
       }
       this.modalFlags.showEditMapWin=false
+    },
+    async updateMapObjects(map){
+      if(this.selection)
+        this.selection.remove()
+      this.toolSwitch('off')
+      const objects=paper.project.exportJSON()
+      let request
+      try{
+        request = new AxiosRequest(`map/${map._id}`, "put", {objects:objects}) //запрос
+        await request.sendRequest()
+        this.error="Успешно сохранено!"
+        this.canvas.changes=0
+      }
+      catch (e) {
+      this.error = e
+    }
+    this.toolSwitch('on')
     }
   },
   async mounted() {
@@ -214,9 +232,14 @@ export default {
     if (!this.currentMap || !this.currentMap.title)
       this.$router.push("/Main")
     this.canvas.setup(this.currentMap.resolution, document.getElementById("map"))
-    let firstLayer = new paper.Layer()
-    firstLayer.bringToFront()
-    firstLayer.activate()
+    if(this.currentMap.objects){
+      this.canvas.loadProject(this.currentMap.objects)
+    }
+    else {
+      let firstLayer = new paper.Layer()
+      firstLayer.bringToFront()
+      firstLayer.activate()
+    }
     this.activeLayer = paper.project.activeLayer
     this.brushTool = new brushTool()
     this.stampTool = new stampTool()
@@ -244,7 +267,7 @@ export default {
           if(this.selection.selectedObject) this.selection.remove()
           break
         case "brush":
-          paper.project.activeLayer.children["brushCursor"].visible = false
+          paper.project.activeLayer.children["brushCursor"].remove()
           break
         case "stamp":
           if(this.stampTool.currentItem) this.stampTool.currentItem.remove()
@@ -253,7 +276,7 @@ export default {
           if(this.shapeTool.currentItem) this.shapeTool.currentItem.remove()
           break
         case "path":
-          paper.project.activeLayer.children["pathCursor"].visible = false
+          paper.project.activeLayer.children["pathCursor"].remove()
           if(this.pathTool.currentItem) this.pathTool.currentItem.remove()
           break
         case "text":
@@ -298,10 +321,14 @@ export default {
           break
       }
     },
-    'activeLayer.children.length'() {
-      /*let obj = this.activeLayer.lastChild
-      obj.applyMatrix = false*/
-      console.log(paper.project.activeLayer)
+    'activeLayer.children.length'(val) {
+      if(val) {
+        const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
+        const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
+        console.log(obj.data.type)
+           if(obj&&obj.data&&obj.data.type&&['brush','path','stamp','text','shape'].includes(obj.data.type))
+        this.canvas.changes++
+      }
     },
     'currentItem'(item) {
       item.data.type = this.currentTool.name

@@ -5,7 +5,11 @@ export default class brushTool {
         this.size=1
 	this.opacity=1
 	this.color= ""
-	this.cursor= new paper.Shape.Circle({
+	this.cursor=null
+    }
+    set(options){
+	if(this.cursor) this.cursor.remove()
+	this.cursor=new paper.Shape.Circle({
 	    center: [0,0],
 	    radius:1,
 	    name:"brushCursor",
@@ -13,11 +17,7 @@ export default class brushTool {
 	    strokeColor: "white",
 	    strokeWidth: 2,
 	    blendMode: "difference",
-	    visible: false
 	})
-	this.set()
-    }
-    set(options){
         if(options) Object.assign(this, options)
 	let path
 	this.cursor.radius = this.size
@@ -32,6 +32,7 @@ export default class brushTool {
 	    path.strokeColor = this.color;
 	    path.opacity = this.opacity
 	    path.add(event.point);
+	    path.data.type="brush"
 	}
 	this.instance.onMouseDrag =  (event) => {
 	    path.add(event.point);
@@ -41,11 +42,9 @@ export default class brushTool {
 	this.instance.onMouseUp = (event) => {
 	    path.add(event.point);
 	    path.smooth();
-	    path.data.type="brush"
 	}
     }
     activate(){
-        this.cursor.visible=true
         this.instance.activate()
     }
 }

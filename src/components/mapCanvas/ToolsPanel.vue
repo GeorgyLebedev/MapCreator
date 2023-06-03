@@ -893,6 +893,7 @@ export default {
     },
     size:{
       handler(val){
+        console.log(val)
         if(!val || this.selectedObj.data.type!="stamp") return
         this.stampOpt.size=val
       }
