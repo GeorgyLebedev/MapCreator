@@ -1,15 +1,15 @@
 <template>
   <div class="cardlist d-flex flex-wrap">
-    <div class="map c-pointer" @click="this.$router.push(`/MapCanvas/${map._id}`)" @mouseenter="showOpt=true"
+    <div class="map cursorPointer" @click="this.$router.push(`/MapCanvas/${map._id}`)" @mouseenter="showOpt=true"
          @mouseleave="showOpt=false">
       <transition name="show-opt">
         <div class="topOptions" v-if="showOpt">
           <div class="w-50" style="border-right: gainsboro 1px solid;" @mousedown="this.$emit('showEditMapWin', map)">
-            <img src="@/assets/images/Service/edit.png" class="c-pointer option"
+            <img src="@/assets/images/Service/edit.png" class="cursorPointer option"
                  alt="">
           </div>
           <div class="w-50" style="border-left: gainsboro 1px solid;" @mousedown="this.$emit('showDelMapWin', map)">
-            <img src="@/assets/images/Service/delete.png" class="c-pointer option" alt="">
+            <img src="@/assets/images/Service/delete.png" class="cursorPointer option" alt="">
           </div>
         </div>
       </transition>
@@ -53,7 +53,7 @@ export default {
 <style scoped>
 .map {
   position: relative;
-  border: 2px solid #dcdcdc;
+  border: 2px solid #728391;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -94,7 +94,7 @@ export default {
   right: 10px;
   top: 10px;
   border-radius: 15px;
-  border: 2px solid gainsboro;
+  border: 2px solid #728391;
 }
 
 .topImgBox {

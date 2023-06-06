@@ -56,11 +56,11 @@ export default {
     height: 40px;
     padding-block: 5px;
     padding-inline: 10px;
-    color: #232323;
+    color: #3d4551;
     cursor: pointer;
   }
   .contextMenuItem:hover{
-    background-color: #232323;
+    background-color: #3d4551;
     color: white;
   }
   .contextMenuItem img{

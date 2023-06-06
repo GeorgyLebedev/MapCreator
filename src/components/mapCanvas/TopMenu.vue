@@ -2,115 +2,122 @@
   <Error
       :error="this.error"
       @clearError="this.error=''"/>
-  <div class="d-flex flex-wrap border-bottom align-items-center topMenu" id="header">
-    <div class="col-6 text-start">
-      <div class="d-flex align-items-center " style="margin-left: 40px">
-        <div class="dropdown">
-          <button class=" btn btn-sm btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuFile"
-                  data-bs-auto-close="outside" data-bs-toggle="dropdown">
-            Меню
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <span class="dropdown-item" @click="this.$emit('showMapEditWindow')">Изменить информацию о карте</span>
-            <span class="dropdown-item">Сохранить</span>
-            <div class="accordion" id="MenuAccordion">
-              <button class="py-1 px-3 dropdown-item accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#block1">
-                Открыть...
-              </button>
-              <div id="block1" class="accordion-collapse collapse" data-bs-parent="#MenuAccordion">
-                <div class="py-0 accordion-body text-end">
-                  <span class="dropdown-item" @click="this.$refs.imgInput.click()">Фоновое изображение</span>
-                  <span class="dropdown-item" @click="this.$refs.jsonInput.click()">Файл с картой (.JSON)</span>
-                </div>
-              </div>
-              <button class="py-1 px-3 dropdown-item accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#acBlock2">
-                Экспортировать как...
-              </button>
-              <div id="acBlock2" class="accordion-collapse collapse" data-bs-parent="#MenuAccordion">
-                <div class="py-0 accordion-body text-end">
-                  <span class="dropdown-item" @click="this.$emit('saveAs','png')">PNG</span>
-                  <span class="dropdown-item" @click="this.$emit('saveAs','jpg')">JPEG</span>
-                  <a class="dropdown-item" @click="this.$emit('saveAs','pdf')">PDF</a>
-                  <a class="dropdown-item" @click="this.$emit('saveAs','svg')">SVG</a>
-                  <a class="dropdown-item" @click="this.$emit('saveAs','json')">JSON</a>
-                </div>
-              </div>
-            </div>
-            <a class="dropdown-item">Дублировать карту</a>
-            <a class="dropdown-item">Изменить размер холста</a>
-            <hr class="dropdown-divider">
-            <a class="dropdown-item" href="/">На главную страницу</a>
-          </div>
-        </div>
-        <div class="dropdown ms-2 me-4">
-          <button class=" btn btn-sm btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuBorder"
-                  data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-expanded="false">
-            Холст
-          </button>
-          <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton1">
-            <div class="form-check">
-              <input id="backgroundCheckbox" class="form-check-input" v-model="backgroundFlag" type="checkbox" @change="updateBackground()">
-              <label for="backgroundCheckbox">Цвет фона</label>
-            </div>
-            <div v-if="backgroundFlag">
-            <hr class="dropdown-divider">
-            Значение:<br><input type="color" v-model="backgroundColor" @input="this.$emit('setCanvasBackground', {type: 'color', value:backgroundColor})">
-            </div>
-          </div>
-        </div>
-        <input type="file" :hidden="true" ref="imgInput" accept=".png, .jpg, .jpeg, .svg" @change="imgLoad">
-        <input type="file" :hidden="true" ref="jsonInput" accept=".json" @change="jsonLoad">
-        <button type="button" class="btn btn-outline-dark px-1 py-0 ms-1" data-bs-toggle="tooltip"
-                data-bs-placement="bottom" title="На шаг назад">
-          <img src="@/assets/images/undo.png" class="hoverinv" alt="" style="height: 15px;">
-        </button>
-        <button type="button" class="btn btn-outline-dark px-1 py-0 ms-1" data-bs-toggle="tooltip"
-                data-bs-placement="bottom" title="На шаг вперёд">
-          <img src="@/assets/images/redo.png" class="hoverinv" alt="" style="height: 15px; ">
-        </button>
+  <div id="header" class="flexRow alignCenter topMenu">
+    <div class="invisibleContainer" @click="showMenuOptions=showCanvasOptions=false" v-if="showMenuOptions||showCanvasOptions"></div>
+    <button class="buttonLight" @click="openMenuOptions">
+      <div class="flexRow alignCenter">
+        <svg fill="#3d4551" class="dropdownFlag" :class="{'openedFlag':showMenuOptions}" width="800px" height="800px"
+             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21,21H3L12,3Z"/>
+        </svg>
+        Меню
       </div>
+    </button>
+    <Transition name="popup-anim">
+    <div class="dropdownMenu" v-if="showMenuOptions">
+      <p class="" @click="this.$emit('showMapEditWindow')">Изменить информацию о карте</p>
+      <p>Сохранить</p>
+      <details>
+        <summary>
+          Открыть...
+        </summary>
+        <p @click="this.$refs.imgInput.click()" class="nestedDetails">Фоновое изображение</p>
+        <p @click="this.$refs.jsonInput.click()" class="nestedDetails">Файл с картой (.JSON)</p>
+      </details>
+      <details>
+        <summary>
+          Экспортировать как...
+        </summary>
+        <p @click="this.$emit('saveAs','png')" class="nestedDetails">PNG</p>
+        <p @click="this.$emit('saveAs','jpg')" class="nestedDetails">JPEG</p>
+        <p @click="this.$emit('saveAs','pdf')" class="nestedDetails">PDF</p>
+        <p @click="this.$emit('saveAs','svg')" class="nestedDetails">SVG</p>
+        <p @click="this.$emit('saveAs','json')" class="nestedDetails">JSON</p>
+      </details>
+      <hr>
+      <p>Дублировать карту</p>
+      <p>Изменить размер холста</p>
+      <hr>
+      <p @click="this.$router.push('/')">На главную страницу</p>
     </div>
-    <div class="col text-end me-3 position-fixed end-0">
-      <button type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
-              aria-controls="offcanvasScrolling" style="border: none; background-color: transparent;">
-        <img src="@/assets/images/arrow-left.png" alt="" style="height: 25px; ">
+    </Transition>
+    <div>
+      <button class="buttonLight" @click="openCanvasOptions">
+        <div class="flexRow alignCenter">
+          <svg fill="#3d4551" class="dropdownFlag" :class="{'openedFlag':showCanvasOptions}" width="800px"
+               height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21,21H3L12,3Z"/>
+          </svg>
+          Холст
+        </div>
       </button>
+      <Transition name="popup-anim">
+      <div class="dropdownMenu" v-if="showCanvasOptions">
+        <div class="flexRow alignCenter">
+          <input id="backgroundCheckbox" v-model="backgroundFlag" type="checkbox" @change="updateBackground()">
+          <label for="backgroundCheckbox">Цвет фона</label>
+        </div>
+        <div v-if="backgroundFlag">
+          <hr>
+          Значение:<br>
+          <input type="color" v-model="backgroundColor"
+                 @input="this.$emit('setCanvasBackground', {type: 'color', value:backgroundColor})">
+        </div>
+      </div>
+      </Transition>
     </div>
+    <input type="file" :hidden="true" ref="imgInput" accept=".png, .jpg, .jpeg, .svg" @change="imgLoad">
+    <input type="file" :hidden="true" ref="jsonInput" accept=".json" @change="jsonLoad">
+    <button type="button" class="buttonLight stepButton" title="На шаг назад" hidden>
+      <img src="@/assets/images/undo.png" class="hoverInvert" alt="">
+    </button>
+    <button type="button" class="buttonLight stepButton" title="На шаг вперёд" hidden>
+      <img src="@/assets/images/redo.png" class="hoverInvert" alt="">
+    </button>
   </div>
 </template>
 <script>
 import Error from "@/components/Error";
+
 export default {
   name: "TopMenu",
-  components:{
+  components: {
     Error
   },
-  props:{
-    canvasSize:{
-      type:Object
+  props: {
+    canvasSize: {
+      type: Object
     }
   },
-  emits:[
-      'saveAs',
+  emits: [
+    'saveAs',
     'showMapEditWindow',
     'showImageLoadWindow',
     'setCanvasBackground',
     'removeCanvasBackground',
     'loadJson'
   ],
-  data(){
-    return{
-      error:"",
-      backgroundColor:"#eeeeee",
-      backgroundFlag: true
+  data() {
+    return {
+      error: "",
+      backgroundColor: "#eeeeee",
+      backgroundFlag: true,
+      showMenuOptions: false,
+      showCanvasOptions: false,
     }
   },
   methods: {
-    updateBackground(){
-      if(this.backgroundFlag)
-        this.$emit('setCanvasBackground', {type: 'color', value:this.backgroundColor})
+    openMenuOptions() {
+      this.showMenuOptions = !this.showMenuOptions
+      this.showCanvasOptions = false
+    },
+    openCanvasOptions() {
+      this.showMenuOptions = false
+      this.showCanvasOptions = !this.showCanvasOptions
+    },
+    updateBackground() {
+      if (this.backgroundFlag)
+        this.$emit('setCanvasBackground', {type: 'color', value: this.backgroundColor})
       else
         this.$emit('removeCanvasBackground')
     },
@@ -118,19 +125,17 @@ export default {
       let extensions = ['png', 'jpeg', 'jpg', 'svg']
       const imgFile = event.target.files[0];
       if (extensions.indexOf(imgFile.name.split('.').pop().toLowerCase()) == -1) {
-        this.error="Расширение выбранного файла не поддерживается!"
+        this.error = "Расширение выбранного файла не поддерживается!"
         return
-      }
-      else{
+      } else {
         const reader = new FileReader();
         reader.readAsDataURL(imgFile);
         reader.onload = () => {
           try {
             this.loadBackgroundImage(reader.result)
-            this.$refs.imgInput.value=""
-          }
-          catch (e){
-            this.error=e.message
+            this.$refs.imgInput.value = ""
+          } catch (e) {
+            this.error = e.message
           }
         };
       }
@@ -139,56 +144,96 @@ export default {
       try {
         const jsonFile = event.target.files[0];
         if (jsonFile.name.split('.').pop().toLowerCase() !== "json") {
-          this.error="Выбранный файл не является файлом формата JSON!"
+          this.error = "Выбранный файл не является файлом формата JSON!"
         } else {
           const reader = new FileReader();
           reader.readAsText(jsonFile);
           reader.onload = () => {
             try {
               const jsonData = JSON.parse(reader.result);
-              this.$refs.jsonInput.value=""
+              this.$refs.jsonInput.value = ""
               this.$emit("loadJson", jsonData)
-            }
-            catch (e){
-              this.error=e.message
+            } catch (e) {
+              this.error = e.message
             }
           };
         }
-      }
-      catch (e) {
-        this.error=e.message
+      } catch (e) {
+        this.error = e.message
       }
     },
-    loadBackgroundImage(base64){
-      let backgroundImage=new Image()
-      backgroundImage.src=base64
-      this.backgroundFlag=false
-      backgroundImage.onload=()=> {
-        const background={
+    loadBackgroundImage(base64) {
+      let backgroundImage = new Image()
+      backgroundImage.src = base64
+      this.backgroundFlag = false
+      backgroundImage.onload = () => {
+        const background = {
           type: "image",
           source: base64,
-          width:backgroundImage.width,
+          width: backgroundImage.width,
           height: backgroundImage.height
         }
-        if(backgroundImage.width==this.canvasSize.width && backgroundImage.height==this.canvasSize.height) //если размер изображения соответствует размерам холста
+        if (backgroundImage.width == this.canvasSize.width && backgroundImage.height == this.canvasSize.height) //если размер изображения соответствует размерам холста
           this.$emit('setCanvasBackground', background)
         else this.$emit("showImageLoadWindow", background)
-        backgroundImage=null
+        backgroundImage = null
       }
     }
   }
 }
 </script>
 <style scoped>
+summary:not(.buttonLight) {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdownMenu p:hover {
+  cursor: pointer;
+  background-color: #728391;
+  color: white;
+}
+
+.dropdownMenu p {
+  padding-top: 10px;
+  padding-inline: 5px;
+}
+
+.nestedDetails {
+  text-align: right;
+}
+
 .topMenu {
+  padding-left: 41px;
   grid-area: TopMenu;
   background-color: white;
   position: relative;
   z-index: 2;
+  border-bottom: 1px solid #dcdcdc;
 }
 
-.dropdown-item:active {
-  background: #232323;
-  color: white;
+.stepButton {
+  height: 30px;
+}
+
+.stepButton img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 37px;
+  background-color: white;
+  max-width: 300px;
+  z-index: 4;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 10px;
+  user-select: none;
+}
+.buttonLight{
+  font-size: large;
 }
 </style>

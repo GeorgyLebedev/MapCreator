@@ -2,28 +2,30 @@
   <Error
       :error="this.error"
       @clearError="this.error=''"/>
-  <div class="m-0 p-0 border-top botMenu" id="footer">
-    <div class="d-flex justify-content-between align-items-center ">
-      <div class="d-flex align-items-center">
-        <button type="button" id="btnsave" class="radio-icon card bg-white me-2 p-0" @click="saveMap">
-          <img src="@/assets/images/Tools/save.png" alt="" class="card-img-top p-1 icon-mid hoverinv" height="40">
+  <div class="botMenu" id="footer">
+    <div class="flexRow justifyBetween alignCenter">
+      <div class="flexRow alignCenter">
+        <button type="button" class="saveButton" @click="saveMap">
+          <img src="@/assets/images/Tools/save.png" alt="" class="card-img-top p-1 icon-mid hoverInvert" height="40">
         </button>
-        <span class="me-2">
-    <u><b>Изменений: {{ changes }}</b></u></span>
-        <span class="text-muted">{{statusProp}}</span>
+        <section class="changesContent">
+        <u><b>Изменений: {{ changes }}</b></u>
+        <span>{{statusProp}}</span>
+        </section>
       </div>
-      <div class="d-flex align-items-center pe-2">
-        <button type="button" class="btn btn-outline-dark py-0 px-1 me-2 " data-bs-toggle="tooltip"
-                data-bs-placement="top" title="Сбросить" v-on:click="$emit('resetScale')" v-if="scale!=1">
-          <img src="@/assets/images/Service/reset.png" alt="" class="hoverinv" :height="25">
-        </button>
+      <section class="flexRow alignCenter">
+      <button type="button" class="resetButton" title="Сбросить" v-on:click="$emit('resetScale')" v-if="scale!=1">
+        <img src="@/assets/images/Service/reset.png" alt="" class="hoverInvert">
+      </button>
+      <div class="flexRow alignCenter justifyBetween controlPanel">
         <img src="@/assets/images/Tools/zoom.png" :height="20">
-        <div class="d-flex mx-2">
-          <input class="me-2" type="range" step="0.2" min="0.2" max="5" v-model="scale" @input="doZoom">
+        <div class="flexRow alignCenter">
+          <input type="range" step="0.2" min="0.2" max="5" v-model="scale" @input="doZoom" class="zoomRange">
           <input type="number" min="0.2" max="5" step="0.2" v-model="scale" @input="doZoom">
         </div>
-        <button type="button" class="btn btn-sm btn-outline-dark me-2" @click="$emit('resetAlign')">Выровнять</button>
+        <button type="button" class="buttonLight" @click="$emit('resetAlign')">Выровнять</button>
       </div>
+      </section>
     </div>
   </div>
 </template>
@@ -66,26 +68,61 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .botMenu {
   background-color: white;
   grid-area: BotMenu;
   position: fixed;
   bottom: 0;
+  border-top: 1px solid #dcdcdc;
   width: 100%;
   z-index: 4;
 }
 
-#btnsave {
+.saveButton {
   border-radius: 0;
   border-top: none;
   border-left: none;
   border-bottom: none;
+  background-color: white;
+  max-width: 41px;
+  max-height: 40px;
+  border-right: 1px solid #dcdcdc;
+  cursor: pointer;
+  padding: 5px;
 }
-
-#btnsave:hover {
-  background-color: #232323 !important;
-
+.saveButton img, .resetButton img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
-
+.saveButton:hover, .resetButton:hover {
+  background-color: #3d4551;
+}
+.changesContent{
+  margin-inline: 10px;
+}
+.changesContent span{
+  color: #3d4551;
+  margin-inline: 5px
+}
+.controlPanel{
+  margin-inline: 10px;
+  width: 385px;
+}
+.buttonLight img{
+  width: 100%;
+  max-height: 25px;
+  max-width: 25px;
+  height: 100%;
+  object-fit: contain;
+}
+.resetButton{
+  max-height: 30px;
+  max-width: 30px;
+  background-color: white;
+  border: 1px solid #3d4551;
+  border-radius: 10px;
+  cursor: pointer;
+}
 </style>

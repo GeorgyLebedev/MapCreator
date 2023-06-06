@@ -4,7 +4,7 @@
       <div class="modalWindow">
         <div class="modalHeader">
           <b>Изменить информацию о карте</b>
-          <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
+          <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
                @click="this.$emit('closeWindow')"></div>
         <hr>
         <div class="modalBody">
@@ -61,7 +61,7 @@ export default {
 </script>
 <style>
 .mapDescription{
-  border: 2px solid #dcdcdc;
+  border: 2px solid #728391;
   border-radius: 10px;
   font-size: 14pt;
   width: 100%;
@@ -70,5 +70,6 @@ export default {
   padding-block: 5px;
   outline: none;
   height: 400px;
+  resize: none;
 }
 </style>

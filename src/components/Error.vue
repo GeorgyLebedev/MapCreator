@@ -3,7 +3,7 @@
     <div class="errorNotice" v-if="error">
       <div class="errorHeader">
         <b>Ошибка</b>
-        <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="20" height="20"
+        <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="20" height="20"
              @click="this.$emit('clearError')">
       </div>
       <div class="errorContent">

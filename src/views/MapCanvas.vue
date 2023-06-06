@@ -55,7 +55,6 @@
         @removeCanvasBackground="canvas.removeBackground().bind(canvas)"
         @loadJson="canvas.loadProject"
     />
-    <Accordion/>
     <ToolsPanel
         @toolChange="setTool"
         @optChange="setOpt"
@@ -87,7 +86,6 @@
 </template>
 <script>
 import TopMenu from "@/components/mapCanvas/TopMenu.vue"
-import Accordion from "@/components/mapCanvas/Accordion";
 import BotMenu from "@/components/mapCanvas/BotMenu";
 import ToolsPanel from "@/components/mapCanvas/ToolsPanel";
 import MapEditWindow from "@/components/MapEditWindow";
@@ -106,8 +104,6 @@ import canvas from "@/modules/logic/canvas";
 import selection from "@/modules/logic/selection";
 import {flags} from "@/modules/logic/flags";
 import * as paper from "paper" ;
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap"
 import {zoom} from "@/modules/logic/zoom";
 import {exportAs} from "@/modules/logic/export"
 export default {
@@ -115,7 +111,6 @@ export default {
   components: {
     Error,
     TopMenu,
-    Accordion,
     BotMenu,
     ToolsPanel,
     MapEditWindow,
@@ -380,35 +375,41 @@ export default {
   box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
 }
 
-input[type=color] {
-  border: none;
-  width: 30px;
-  height: 30px;
+input[type='color'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 34px;
+  height: 38px;
   background-color: transparent;
+  border: none;
   cursor: pointer;
-  padding: 0;
-  margin: 0
+}
+input[type='color']::-webkit-color-swatch {
+  width: 100%;
+  border: 1px solid #728391;
+}
+input[type='color']::-moz-color-swatch {
+  width: 100%;
+  border: 1px solid #728391;
 }
 
 .cursorNone {
   cursor: none;
 }
 
-input[type=color]::-webkit-color-swatch {
-  border-radius: 0;
-  border: 1px solid gray;
-  cursor: pointer;
-}
 
-*:hover > .hoverinv {
+*:hover > .hoverInvert {
   filter: invert(1);
 }
 
 input[type=number] {
+  outline: none;
+  font-family: Comfortaa;
   font-size: smaller;
   font-weight: bolder;
   max-width: 50px;
-  border: 1px solid #8a8a8a;
+  border: 1px solid #3d4551;
   border-radius: 5px;
   padding: 3px 0 2px 5px
 }
@@ -420,13 +421,13 @@ input[type=number] {
 
 input[type=range] {
   width: 175px;
-  height: 12px;
+  height: 13px;
+  margin-inline: 10px;
   -webkit-appearance: none;
-  background: silver;
+  background: #728391;
   outline: none;
   border-radius: 10px;
   overflow: hidden;
-  margin-top: 7px;
   padding-left: 1px;
   padding-right: 1px;
   -webkit-box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset;
@@ -436,23 +437,23 @@ input[type=range] {
 
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  background: white;
-  width: 12px;
-  height: 12px;
-  border: 1px solid #232323;
+  background: #3d4551;
+  width: 11px;
+  height: 11px;
+  border: 2px solid #ea5c41;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: -180px 0 0 173px #232323;
+  box-shadow: -180px 0 0 173px #3d4551;
 }
 
 input[type=range]::-moz-range-thumb {
   -webkit-appearance: none;
-  background: white;
-  width: 12px;
-  height: 12px;
-  border: 1px solid #232323;
+  background: #3d4551;
+  width: 11px;
+  height: 11px;
+  border: 2px solid #ea5c41;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: -180px 0 0 173px #232323;
+  box-shadow: -180px 0 0 173px #3d4551;
 }
 </style>

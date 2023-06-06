@@ -3,27 +3,25 @@
     <ErrorComponent
     :error=this.error
     @clearError="()=>{this.error=''}"/>
-    <div class="login position-absolute top-50 start-50 translate-middle">
-      <div class="form_radio_group d-flex mt-4 justify-content-center">
-        <div class="form_radio_group-item">
-          <input id="radioSignIn" type="radio" name="radioLog" value="logIn" v-model="tab" checked>
-          <label for="radioSignIn">Вход</label>
-        </div>
-        <div class="form_radio_group-item">
-          <input id="radioSignUp" type="radio" name="radioLog" value="signIn" v-model="tab">
-          <label for="radioSignUp">Регистрация</label>
-        </div>
+    <div class="login">
+      <div class="tabs">
+        <section class="tabButton" :class="{'selected':tab=='logIn'}" @click="tab='logIn'">
+          Вход
+        </section>
+        <section class="tabButton" :class="{'selected':tab=='signIn'}" @click="tab='signIn'">
+          Регистрация
+        </section>
       </div>
-      <transition name="smooth" mode="out-in">
+      <Transition name="smooth" mode="out-in">
         <form class="loginForm" id="logIn" v-if="tab=='logIn'">
           <div>
             Email: <br>
-            <input type="email" class="loginPageInput" required  ref="enterEmail" v-model="userData.username"
+            <input type="email" required  ref="enterEmail" v-model="userData.username"
                    placeholder="Ваш email ">
           </div>
           <div>
             Пароль:<br>
-            <input type="password" required class="loginPageInput" v-model="userData.password"
+            <input type="password" required v-model="userData.password"
                    placeholder="*********">
             <div id="forgotPassword" class="">
               <span href="" @click="tab='forgotPassword'">Забыли пароль?</span>
@@ -114,7 +112,7 @@
           </button>
           </div>
         </div>
-      </transition>
+      </Transition>
     </div>
   </div>
 </template>
@@ -325,44 +323,14 @@ export default {
   }
 }
 </script>
-<style>
-.form_radio_group-item {
-  display: inline-block;
-  float: left;
-}
-
-.form_radio_group input[type=radio] {
-  display: none;
-}
-
-.form_radio_group label {
-  display: inline-block;
-  cursor: pointer;
-  padding: 0px 15px;
-  line-height: 45px;
-  border: 1px solid #232323;
-  border-right: none;
-  user-select: none;
-}
-
-.form_radio_group .form_radio_group-item:first-child label {
-  border-radius: 6px 0 0 6px;
-}
-
-.form_radio_group .form_radio_group-item:last-child label {
-  border-radius: 0 6px 6px 0;
-  border-right: 1px solid #232323;
-}
-
-.form_radio_group input[type=radio]:checked + label {
-  background: #232323;
-  color: white;
-}
-
+<style scoped>
 .login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   transition: 1s all;
   background-color: white;
-  border: 1px solid #232323;
+  border: 1px solid #3d4551;
   border-radius: 5px;
   width: 400px;
   min-width: 30%;
@@ -371,19 +339,44 @@ export default {
   -moz-box-shadow: 0px 0px 8px 8px rgba(35, 35, 35, 0.2);
   box-shadow: 0px 0px 8px 8px rgba(35, 35, 35, 0.2);
 }
-
+.tabs{
+  margin-block: 10px;
+  width: min-content;
+  display: flex;
+  flex-direction: row;
+  border:1px solid #3d4551;
+  border-radius: 10px;
+  font-size: larger;
+}
+.tabButton{
+  cursor: pointer;
+  padding-inline: 20px;
+  padding-block: 10px;
+}
+input[type='email'],input[type='password']{
+  width: 300px;
+  font-size: 16pt;
+  padding: 5px;
+  margin-block: 10px;
+}
+#forgotPassword{
+  margin-block: 5px;
+}
 #forgotPassword span {
   cursor: pointer;
   font-size: smaller;
-  color: gray;
+  color: #728391;
   text-decoration: underline;
 }
 
 #forgotPassword span:hover {
-  color: silver !important;
+  color: #3d4551;
 }
 
 .parentDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
   width: 100vw;
   background-image: url("../assets/images/background.png");
@@ -410,20 +403,14 @@ export default {
   align-items: center;
 }
 
-.loginPageInput {
-  border: 2px solid #dcdcdc;
-  padding-inline: 10px;
-  padding-block: 5px;
-  font-size: 18pt;
-  border-radius: 10px;
-  margin: 15px;
-}
 
 .loginForm {
   text-align: center;
   margin-block: 10px
 }
-
+.buttonDark{
+  font-size: larger;
+}
 .smooth-enter-active,
 .smooth-leave-active {
   transition: all 0.3s ease-out;

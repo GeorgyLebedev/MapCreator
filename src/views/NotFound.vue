@@ -53,7 +53,7 @@ export default {
   height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
-  border-bottom: 150px solid #232323;
+  border-bottom: 150px solid #3d4551;
   position: relative;
 }
 

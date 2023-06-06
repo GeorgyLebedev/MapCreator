@@ -21,7 +21,7 @@
       @deleteMap="deleteMap(this.selectedMap)"
   />
   <Header/>
-  <div class="d-flex flex-wrap">
+  <div class="flexRow">
     <MapCard v-for="map in this.mapList" :key="map._id"
              :map="map"
              @showEditMapWin="()=>{
@@ -33,7 +33,7 @@
     <div class="map">
       <div class="newMap" id="newMapCard" @click="modalFlags.showNewMapWin=true">
         <img src="@/assets/images/new.png" :width="70">
-        <p class="fs-5" style="color: #909090">Создать новую карту </p>
+        <p style="color: #909090">Создать новую карту </p>
       </div>
     </div>
   </div>
@@ -146,7 +146,7 @@ export default {
 }
 
 .map {
-  border: 2px solid #dcdcdc;
+  border: 2px solid #728391;
   border-radius: 10px;
   display: flex;
   align-items: center;

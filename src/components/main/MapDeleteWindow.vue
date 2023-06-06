@@ -3,7 +3,7 @@
 <div class="modalWindow">
   <div class="modalHeader">
     Удаление карты
-    <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
+    <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
          @click="this.$emit('closeWindow')">
   </div>
   <hr>

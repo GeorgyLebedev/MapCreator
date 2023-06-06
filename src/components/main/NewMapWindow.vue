@@ -4,7 +4,7 @@
         <div class="modalWindow">
           <div class="modalHeader">
             <b>Настройки холста</b>
-            <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
+            <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
                  @click="this.$emit('closeWindow')">
           </div>
           <hr>
@@ -166,12 +166,7 @@ export default {
   max-width: 120px;
   padding: 5px;
 }
-.selected{
-  background-color: #232323;
-  border-color: #232323;
-  color: white
-}
-.selected >img{
-  filter: invert(1);
+.modalFooter button{
+  font-size: large;
 }
 </style>

@@ -8,17 +8,54 @@ body, html, button{
 }
 a {
     text-decoration: none;
-    color:#232323
+    color:#3d4551
 }
-a:hover{color: #232323}
-input{
+a:hover{color: #3d4551}
+input[type='text'],input[type='email'],input[type='password']{
+    font-family: Comfortaa;
     outline: none;
-    border: 1px solid gainsboro;
+    border: 2px solid #728391;
     border-radius: 10px;
     padding-inline: 10px;
 }
-input[type=checkbox]{
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #3d4551;
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    margin-right: 5px;
+    border:none;
+    border-radius: 4px;
+    position: relative;
     cursor: pointer;
+    outline: none;
+}
+
+input[type="checkbox"]:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: #ea5c41;
+    border-radius: 2px;
+    opacity: 0.3;
+    transition: opacity 0.2s ease-in-out;
+}
+
+input[type="checkbox"]:checked, input[type="checkbox"]:checked:before {
+    opacity: 1;
+}
+input[type="checkbox"]+label{
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row;
 }
 .interactive {
     opacity: 0.7;
@@ -26,28 +63,11 @@ input[type=checkbox]{
 .interactive:hover{
     opacity: 1;
 }
-.btn{
-    font-weight: bolder;
-}
-.btn-dark{
-    background-color: #232323 !important;
-}
-.btn-outline-dark{
-    border-color: #232323 !important;
-    box-shadow: none !important;
-}
-.btn-outline-dark:hover{
-    background-color: #232323 !important;
-}
-.btn:focus,.btn:active {
-    outline: none !important;
-    box-shadow: none;
-}
 .buttonDark, .buttonLight:enabled:hover{
-    background-color: #232323;
+    background-color: #3d4551;
     border-radius: 10px;
-    border: 2px solid #232323;
-    color: white;
+    border: 1pt solid #3d4551;
+    color: #ea5c41;
     font-weight: bolder;
     padding-block: 5px;
     padding-inline: 10px;
@@ -57,8 +77,8 @@ input[type=checkbox]{
 .buttonLight, .buttonDark:enabled:hover{
     background-color: white;
     border-radius: 10px;
-    border: 2px solid #232323;
-    color: #232323;
+    border: 1pt solid #3d4551;
+    color: #3d4551;
     font-weight: bolder;
     padding-block: 5px;
     padding-inline: 10px;
@@ -69,34 +89,44 @@ input[type=checkbox]{
     opacity: 0.5;
     cursor: default;
 }
-.dropdown-menu{
-    transition: all 0.2s;
+.dropdownFlag{
+    width: 15px;
+    height: 15px;
+    transform: rotate(90deg);
+    margin-right: 5px;
 }
-.form-check-input:checked{
-    background-color: #232323;
-    border-color: #232323;
+.openedFlag{
+    transform: rotate(180deg);
 }
-.form-check-input:focus,.form-check-input:active{
-    outline: none !important;
-    box-shadow: none;
-    border-color: #232323;
+.buttonLight:hover .dropdownFlag{
+    fill: #ea5c41;
 }
-.accordion-button:focus, .accordion-button:active,.accordion-button:not(.collapsed){
-    outline: none !important;
-    box-shadow: none;
-    background-color: transparent;
-    color: black;
+.selected{
+    background-color: #3d4551;
+    border-color: #3d4551;
+    color: white
 }
-.accordion-button:not(.collapsed)::after{
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")
+.selected >img{
+    filter: invert(1);
 }
 
 html {
-    --scrollbarBG: #dcdcdc;
-    --thumbBG: #555555;
+    --scrollbarBG: #e3e9f4;
+    --thumbBG: #728391;
 }
 *::-webkit-scrollbar {
     width: 10px;
+}
+hr{
+
+    color:#dcdcdc;
+    border: none;
+    height: 1px;
+    background-color: #dcdcdc;
+    margin-block:5px
+}
+p{
+    padding-bottom: 10px;
 }
 * {
     scrollbar-width: thin;
@@ -112,6 +142,14 @@ html {
     border: 3px solid var(--scrollbarBG);
 }
 /*CONTAINERS*/
+.invisibleContainer{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 4;
+}
 .flexRow{
     display: flex;
     flex-direction: row;
@@ -129,14 +167,17 @@ html {
 .alignEnd{
     align-items: flex-end;
 }
+.justifyBetween{
+    justify-content: space-between;
+}
 .justifyCenter{
-    justify-items: center;
+    justify-content: center;
 }
 .justifyStart{
-    justify-items: flex-start;
+    justify-content: flex-start;
 }
 .justifyEnd{
-    justify-items: flex-end;
+    justify-content: flex-end;
 }
 /* MODAL BOXES STYLES */
 .modalContainer {
@@ -162,6 +203,7 @@ html {
     display: flex;
     font-size: large;
     justify-content: space-between;
+    align-items: center;
     padding: 10px 10px 0 10px;
     width: 100%
 }
@@ -177,6 +219,7 @@ html {
     position: relative;
     bottom: 0;
 }
+/*ANIMS*/
 .popup-anim-enter-active,
 .popup-anim-leave-active {
     transition: all 0.25s ease-out;
@@ -205,4 +248,9 @@ html {
     padding-inline: 10px;
     padding-block: 5px;
     border: 2px solid #dcdcdc;
+}
+.imageFit{
+    width:100%;
+    height:100%;
+    object-fit: contain;
 }

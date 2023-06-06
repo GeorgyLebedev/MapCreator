@@ -3,7 +3,7 @@
     <div class="modalWindow">
       <div class="modalHeader">
         Загрузка изображения
-        <img class="c-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
+        <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
              @click="this.$emit('closeWindow')">
       </div>
       <hr>
@@ -57,7 +57,7 @@ export default {
     cursor: pointer;
   }
   .selected{
-    background-color: #232323;
+    background-color: #3d4551;
     color:#dcdcdc
   }
   .loadOption p{

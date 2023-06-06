@@ -6,31 +6,31 @@
     <img src="@/assets/images/logo.png" alt="" :height="50">
     <div class="userPanel">
       <div class="userAvatarSmall" @click="modalFlags.showProfile=true">
-        <img :src="user.avatar" class="c-pointer" alt="" v-if="user">
+        <img :src="user.avatar" class="cursorPointer" alt="" v-if="user">
       </div>
-      <b class="c-pointer" @click="modalFlags.showProfile=true">{{ user.login ? user.login : user.email }}</b>
+      <b class="cursorPointer" @click="modalFlags.showProfile=true">{{ user.login ? user.login : user.email }}</b>
     </div>
   </header>
   <transition name="slide">
-    <div class="profileContainer" v-if="modalFlags.showProfile" @mousedown.self="()=>{modalFlags.showProfile=false; createNewLogin=false}">
+    <div class="invisibleContainer" v-if="modalFlags.showProfile" @mousedown.self="()=>{modalFlags.showProfile=false; createNewLogin=false}">
       <div class="userProfile" @click.stop>
         <div class="avatarContainer" @click="this.$refs.avatarInput.click()">
-          <img class="userAvatar c-pointer" :src="user.avatar" alt="">
-          <img class="hoverCameraIcon c-pointer" src="@/assets/images/Service/camera.png" alt="">
+          <img class="userAvatar cursorPointer" :src="user.avatar" alt="">
+          <img class="hoverCameraIcon cursorPointer" src="@/assets/images/Service/camera.png" alt="">
           <input type="file" :hidden="true" ref="avatarInput" accept=".png, .jpg, .jpeg, .svg" @change="loadAvatar">
         </div>
         <hr>
         <section class="userMailText" :title="user.email">{{ user.email }}</section>
         <hr>
-        <section class="userLoginText c-pointer" :title="user.login?user.login:''" v-if="!createNewLogin"
+        <section class="userLoginText cursorPointer" :title="user.login?user.login:''" v-if="!createNewLogin"
                  @click="createNewLogin=true">
           {{ user.login ? user.login : "Логин не выбран" }}
         </section>
         <section class="newLoginForm" v-else>
             <input type="text" placeholder="От 8 до 30 символов" v-model="newLogin">
             <div>
-              <img class="c-pointer interactive" src="@/assets/images/Service/close.png" @click="createNewLogin=false">
-              <img class="c-pointer interactive" src="@/assets/images/Service/tick.png" @click="updateUserData({login: newLogin})" :hidden="newLogin.length<8 || newLogin.length>30">
+              <img class="cursorPointer interactive" src="@/assets/images/Service/close.png" @click="createNewLogin=false">
+              <img class="cursorPointer interactive" src="@/assets/images/Service/tick.png" @click="updateUserData({login: newLogin})" :hidden="newLogin.length<8 || newLogin.length>30">
             </div>
         </section>
         <hr>
@@ -123,7 +123,7 @@ header {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #dcdcdc;
+  border-bottom: 2px solid #728391;
   padding-block: 10px;
   padding-inline: 15px;
   margin-bottom: 20px;
@@ -148,15 +148,6 @@ header {
   object-fit: cover;
 }
 
-.profileContainer {
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  z-index: 4;
-}
-
 .userProfile {
   display: flex;
   flex-direction: column;
@@ -169,7 +160,7 @@ header {
   top: 60px;
   width: 250px;
   background-color: white;
-  border: 2px solid gainsboro;
+  border: 2px solid #728391;
   border-radius: 15px;
 }
 
@@ -214,6 +205,7 @@ hr {
 }
 
 .userMailText {
+  padding-block: 5px;
   max-width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -221,11 +213,13 @@ hr {
 }
 
 .userLoginText {
+  padding-block: 5px;
   max-width: 100%;
   color: #555555;
 }
 
 .regDateText {
+  padding-block: 5px;
   max-width: 100%;
 }
 
