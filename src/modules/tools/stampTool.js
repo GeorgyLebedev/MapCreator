@@ -1,18 +1,18 @@
 import * as paper from "paper" ;
+import store from "@/modules/store/store";
 
 export default class stampTool {
     constructor() {
         this.instance=new paper.Tool()
-	this.size = 50
-	this.opacity = 1
-	this.rotation = 0
-	this.revert = "none"
-	this.currentKit = ""
-	this.currentStamp = ""
+	Object.assign(this,store.state.stampOptions)
 	this.set()
+	store.subscribe((mutation) => {
+	    if (mutation.type.startsWith("stampOptions/")){
+		Object.assign(this, store.state.stampOptions)
+		this.set()
+	    }})
     }
-    set(options){
-        if(options) Object.assign(this,options)
+    set(){
 	this.instance.onMouseMove = (event) => {
 	    if (this.currentItem)
 		this.currentItem.remove()

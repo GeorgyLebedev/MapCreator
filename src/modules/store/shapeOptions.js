@@ -1,0 +1,23 @@
+const shapeOptions={
+    namespaced:true,
+    state: {
+            shapeType: "rectangle",
+            strokeWidth: 1,
+            strokeColor: "#000000",
+            fillColor: "#ffffff",
+            borderRadius: 0,
+            opacity: 1,
+            rotation: 0,
+            sides: 5,
+            isArbitrary: false,
+            isFill: true,
+            isBorder: true
+    },
+    mutations: {
+        updateShapeOptions(state, option){
+            state = Object.assign( state, option)
+        }
+    }
+}
+
+export default shapeOptions

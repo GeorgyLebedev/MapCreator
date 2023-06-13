@@ -1,16 +1,20 @@
 import * as paper from "paper" ;
-
+import store from "@/modules/store/store";
 export default class cursorTool {
     constructor(selection) {
         this.instance=new paper.Tool()
 	this.selection=selection
 	this.showContextMenu = false
 	this.contextMenuPos = {}
-	this.selectionTypes = ['stamp', 'shape', 'text']
+	Object.assign(this,store.state.cursorOptions)
+	store.subscribe((mutation) => {
+	    if (mutation.type.startsWith("cursorOptions/")){
+		Object.assign(this,store.state.cursorOptions)
+		this.set()
+	    }})
 	this.set()
     }
-    set(options){
-        Object.assign(this, options)
+    set(){
 	this.instance.onMouseDown = (event) => {
 	    if (event.event.which == 1 && this.showContextMenu) this.contextMenuVisible(false)
 	    let obj = event.item //получаем объект при клике

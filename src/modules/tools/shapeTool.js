@@ -1,24 +1,20 @@
 import * as paper from "paper" ;
+import store from "@/modules/store/store";
 import Clicker from "@/modules/logic/clicker";
 const clicker=new Clicker()
+
 export default class shapeTool {
     constructor() {
         this.instance=new paper.Tool()
-	this.shapeType= "rectangle"
-	this.strokeWidth= 1
-	this.strokeColor= "#000000"
-	this.fillColor= "#ffffff"
-	this.borderRadius= 0
-	this.opacity= 1
-	this.rotation= 0
-	this.sides= 5,
-	this.isArbitrary= false,
-	this.isFill= true,
-	this.isBorder= true
+	Object.assign(this,store.state.shapeOptions)
 	this.set()
+	store.subscribe((mutation) => {
+	    if (mutation.type.startsWith("shapeOptions/")){
+		Object.assign(this, store.state.shapeOptions)
+		this.set()
+	    }})
     }
-    set(options){
-        if(options) Object.assign(this,options)
+    set(){
 	let exLine
 	let center, radius
 	let sides

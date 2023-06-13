@@ -156,7 +156,6 @@ export default {
   margin-bottom: 20px;
   margin-left: 20px;
 }
-
 .newMap {
   display: flex;
   flex-direction: column;

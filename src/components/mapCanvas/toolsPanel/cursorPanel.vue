@@ -2,14 +2,14 @@
     <div id="cursorOpt" class="toolsOptions" >
       <div class="flexRow justifyBetween alignCenter">
         <b> Курсор </b>
-        <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="closeOpt cursorPointer" height="20" alt="">
+        <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursorPointer" height="20" alt="">
       </div>
       <hr>
       <p>
       Выбирать:</p>
       <div class="selectOptionsContainer">
         <div class="selectOption"
-             :class="{optionChecked: cursorOptions.selectionTypes.length==5 }"
+             :class="{optionChecked: selectionTypes.length==5 }"
              @click="setAllSelectTypes">Всё
         </div>
         <div class="selectOption" :class="{optionChecked: getSelectType('brush') }"
@@ -38,32 +38,33 @@
 </template>
 
 <script>
-import {cursorOptions} from "@/modules/options/cursorOptions";
 export default {
   name: "cursorPanel",
   data(){
     return{
-      cursorOptions:cursorOptions,
+      selectionTypes:this.$store.state.cursorOptions.selectionTypes,
     }
   },
   methods:{
     getSelectType(type) {
-      if (this.cursorOptions.selectionTypes.indexOf(type) !== -1)
+      if (this.selectionTypes.indexOf(type) !== -1)
         return true
       else return false
     },
     setSelectType(type) {
-      let index = this.cursorOptions.selectionTypes.indexOf(type)
+      let index = this.selectionTypes.indexOf(type)
       if (index !== -1)
-        this.cursorOptions.selectionTypes.splice(index, 1)
+        this.selectionTypes.splice(index, 1)
       else
-        this.cursorOptions.selectionTypes.push(type)
+        this.selectionTypes.push(type)
+      this.$store.commit('cursorOptions/updateCursorOptions', {selectionTypes:this.selectionTypes})
     },
     setAllSelectTypes() {
-      if (this.cursorOptions.selectionTypes.length == 5)
-        this.cursorOptions.selectionTypes = []
+      if (this.selectionTypes.length == 5)
+        this.selectionTypes = []
       else
-        this.cursorOptions.selectionTypes = ['brush', 'stamp', 'shape', 'path', 'text']
+        this.selectionTypes = ['brush', 'stamp', 'shape', 'path', 'text']
+      this.$store.commit('cursorOptions/updateCursorOptions', {selectionTypes:this.selectionTypes})
     },
   },
 }

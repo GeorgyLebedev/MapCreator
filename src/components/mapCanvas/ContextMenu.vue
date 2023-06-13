@@ -42,6 +42,7 @@ export default {
   .contextMenu{
     user-select: none;
     z-index: 5;
+    padding-block: 7px;
     position: fixed;
     background-color: white;
     border: 1px solid #dcdcdc;

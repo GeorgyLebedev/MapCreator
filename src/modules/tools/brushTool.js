@@ -1,13 +1,17 @@
 import * as paper from "paper" ;
+import store from "@/modules/store/store";
 export default class brushTool {
     constructor() {
         this.instance=new paper.Tool()
-        this.size=1
-	this.opacity=1
-	this.color= ""
+	Object.assign(this, store.state.brushOptions)
 	this.cursor=null
+	store.subscribe((mutation) => {
+	    if (mutation.type.startsWith("brushOptions/")){
+		Object.assign(this, store.state.brushOptions)
+		this.set()
+	    }})
     }
-    set(options){
+    set(){
 	if(this.cursor) this.cursor.remove()
 	this.cursor=new paper.Shape.Circle({
 	    center: [0,0],
@@ -18,7 +22,6 @@ export default class brushTool {
 	    strokeWidth: 2,
 	    blendMode: "difference",
 	})
-        if(options) Object.assign(this, options)
 	let path
 	this.cursor.radius = this.size
 	this.instance.onMouseMove = (event) => {

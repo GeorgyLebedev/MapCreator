@@ -52,7 +52,6 @@
   </div>
 </template>
 <script>
-/*import StampsWindow from "@/components/mapCanvas/StampsWindow";*/
 import Error from "@/components/Error";
 import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
@@ -99,30 +98,6 @@ export default {
     }
   },
   methods: {
-    setShadow(opt) {
-      opt.shadowColor = opt.isShadow ? "#000000" : "transparent"
-    },
-    colorUpdate(color) {
-      if (this.lastColor != color) {
-        this.lastColor = color;
-        setTimeout(() => {
-          if (color == this.lastColor) {
-            this.updateRecentColors(this.lastColor)
-          }
-        }, 2000);
-      }
-    },
-
-    updateRecentColors(newColor) {
-      if (newColor == "transparent") return
-      if (this.recentColors.indexOf(newColor) != -1) return
-      if (this.recentColors.length < 8)
-        this.recentColors.unshift(newColor)
-      else {
-        this.recentColors = this.recentColors.slice(0, 7)
-        this.recentColors.unshift(newColor)
-      }
-    },
     async getOptions() {
       try {
         let request = new AxiosRequest('options/', 'get')
@@ -314,7 +289,7 @@ export default {
   z-index: 2;
   overflow-y: auto;
   max-height: 500px;
-  max-width: 290px;
+  max-width: 300px;
 }
 
 .toolsOptions hr {

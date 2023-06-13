@@ -1,28 +1,18 @@
 import * as paper from "paper" ;
+import store from "@/modules/store/store";
 
 export default class textTool {
     constructor() {
 	this.instance = new paper.Tool()
-	this.content = "Текст",
-	this.fontFamily = "Cambria",
-	this.fontSize = 50,
-	this.justification = "left",
-	this.fillColor = "#ffffff",
-	this.strokeColor = "#000000",
-	this.strokeWidth = 1,
-	this.shadowColor = "#000000",
-	this.shadowBlur = 1,
-	this.shOffsetX = 0,
-	this.shOffsetY = 0,
-	this.opacity = 1,
-	this.rotation = 0,
-	this.isBorder = true,
-	this.isFill = true,
-	this.isShadow = false
+	Object.assign(this,store.state.textOptions)
 	this.set()
+	store.subscribe((mutation) => {
+	    if (mutation.type.startsWith("textOptions/")){
+		Object.assign(this, store.state.textOptions)
+		this.set()
+	    }})
     }
-    set(options){
-        if(options) Object.assign(this,options)
+    set(){
 	this.instance.onMouseMove = (event) => {
 	    if (this.currentItem)
 		this.currentItem.remove()

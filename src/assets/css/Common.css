@@ -73,6 +73,7 @@ input[type="checkbox"]+label{
     padding-inline: 10px;
     margin:5px;
     cursor: pointer;
+    outline: none;
 }
 .buttonLight, .buttonDark:enabled:hover{
     background-color: white;
@@ -84,6 +85,7 @@ input[type="checkbox"]+label{
     padding-inline: 10px;
     margin:5px;
     cursor: pointer;
+    outline: none;
 }
 .buttonLight:disabled, .buttonDark:disabled{
     opacity: 0.5;

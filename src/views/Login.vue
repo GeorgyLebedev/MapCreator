@@ -115,6 +115,7 @@
       </Transition>
     </div>
   </div>
+  <button class="buttonLight manualButton"><a href="/mcmanual.pdf" download>Справка</a></button>
 </template>
 <script>
 import AxiosRequest from "@/modules/services/axiosRequest";
@@ -190,7 +191,7 @@ export default {
     async createUserOptions(){
       let request, response
       try {
-        request = await new AxiosRequest('options/', "post", )
+        request = await new AxiosRequest('store/', "post", )
         response= await request.sendRequest()
         if(response.msg)
           this.error = "Ошибка сервера: " + response.msg
@@ -306,8 +307,9 @@ export default {
     userData: {
       handler(val) {
         this.validateLogin(val)
-        if(this.emailToPasReset)
-        this.flags.passwordReset = this.$refs.resetEmail.validity.valid
+        if(this.userData.emailToPasReset)
+          this.flags.passwordReset = this.$refs.resetEmail.validity.valid
+
       }, deep: true
     },
     error: {
@@ -353,7 +355,7 @@ export default {
   padding-inline: 20px;
   padding-block: 10px;
 }
-input[type='email'],input[type='password']{
+input[type='email'],input[type='password'],input[type='text']{
   width: 300px;
   font-size: 16pt;
   padding: 5px;
@@ -408,8 +410,18 @@ input[type='email'],input[type='password']{
   text-align: center;
   margin-block: 10px
 }
-.buttonDark{
+.buttonDark, .buttonLight{
   font-size: larger;
+}
+.manualButton{
+  position: fixed;
+  bottom:5%;
+  right:10%;
+  width: 200px;
+  height: 50px;
+}
+.manualButton:hover a{
+  color: #ea5c41;
 }
 .smooth-enter-active,
 .smooth-leave-active {

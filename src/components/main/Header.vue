@@ -4,6 +4,9 @@
       @clearError="this.error=''"/>
   <header>
     <img src="@/assets/images/logo.png" alt="" :height="50">
+    <button type="button" class="buttonLight">
+      <a href="/mcmanual.pdf" download>Справка</a>
+    </button>
     <div class="userPanel">
       <div class="userAvatarSmall" @click="modalFlags.showProfile=true">
         <img :src="user.avatar" class="cursorPointer" alt="" v-if="user">
@@ -101,7 +104,7 @@ export default {
           }
         };
       }
-    }
+    },
   },
   async created() {
     let request
@@ -175,12 +178,14 @@ hr {
   margin: 0 auto;
   overflow: hidden;
   border-radius: 50%;
+  width: 100px;
+  height: 100px;
 }
 
 .userAvatar {
   align-self: center;
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -231,7 +236,14 @@ hr {
   max-width: 100%;
 }
 .newLoginForm input{
-  max-width: 75%;
+  max-width: 200px;
+  padding: 5px;
+}
+.buttonLight{
+  font-size: large;
+}
+.buttonLight:hover a{
+  color:#ea5c41;
 }
 .slide-enter-active,
 .slide-leave-active {

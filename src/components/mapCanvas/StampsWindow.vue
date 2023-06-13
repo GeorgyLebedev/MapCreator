@@ -2,13 +2,12 @@
   <Error
       :error="this.error"
       @clearError="this.error=''"/>
-  <transition name="popup-anim">
     <div class="modalContainer">
       <div id="stampsWindow">
         <div class="modalHeader">
           <b>Каталог штампов</b>
           <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
-               @click="this.$emit('showStampsWindow', false)">
+               @click="this.$emit('closeWindow')">
         </div>
         <hr>
         <div class="modalBody">
@@ -101,7 +100,6 @@
         </div>
       </div>
     </div>
-  </transition>
 </template>
 <script>
 import AxiosRequest from "@/modules/services/axiosRequest";
@@ -143,12 +141,17 @@ export default {
       isFocusStamp: {},
     }
   },
+  computed:{
+    selectedKitObj(){
+      return this.stamps[this.selectedKit]
+    }
+  },
   methods: {
     selectStamp(val,key){
       this.selectedStampVal=val
       this.selectedStampKey=key
-      this.$emit('showStampsWindow', false)
-      this.$emit('setStamp', key)
+      this.$store.commit('stampOptions/updateStampOptions', {currentStamp: this.selectedStampVal})
+      this.$emit('closeWindow')
     },
     showStampDeleteConfirm(key){
       this.stampDeleteConfirm=this.kitDeleteConfirm=this.isFocusStamp={}
@@ -203,7 +206,6 @@ export default {
           index=Number(index[index.length-1].replace(/^\D+/g, ''))
         }
         this.stamps[this.selectedKit][`stamp${index + 1}`] = base64
-        console.log(this.stamps)
         this.updateStamp()
       };
     },
@@ -217,18 +219,20 @@ export default {
     }
   },
   watch:{
-    selectedKit(val){
-      this.$emit('setKit', val)
+    selectedKit(value){
+      this.$store.commit('stampOptions/updateStampOptions', {currentKit:value})
+      if(Object.values(this.selectedKitObj).indexOf(this.selectedStampVal)===-1) {
+        this.selectedStampVal = this.selectedKitObj[(Object.keys(this.selectedKitObj))[0]]
+        this.selectedStampKey = Object.keys(this.selectedKitObj)[0]
+        this.$store.commit('stampOptions/updateStampOptions', {currentStamp: this.selectedStampVal})
+      }
     },
-    selectedStampKey(key){
-      this.$emit('setStamp', key)
-    }
   },
   mounted() {
     if (this.stampsProp) {
       this.stamps = this.stampsProp
-      this.selectedKit =this.selectedKitProp?this.selectedKitProp: Object.keys(this.stamps)[0]
-      this.selectedStampVal =this.selectedStampProp?this.selectedStampProp: this.stamps[this.selectedKit][Object.keys(this.stamps[this.selectedKit])[0]]
+      this.selectedKit =this.$store.state.stampOptions.currentKit
+      this.selectedStampVal =this.$store.state.stampOptions.currentStamp
     }
   }
 }

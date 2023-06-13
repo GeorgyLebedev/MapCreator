@@ -1,20 +1,19 @@
 import * as paper from "paper" ;
 import Clicker from "@/modules/logic/clicker";
+import store from "@/modules/store/store";
 const clicker=new Clicker()
 export default class pathTool {
     constructor() {
         this.instance=new paper.Tool()
-	this.size = 1
-	this.opacity = 1
-	this.color = ""
-	this.cursor = null
-	this.pathType = "line"
-	this.roundCap = true
-	this.style = "default"
-	this.dashArray = [10, 5]
-	this.dotArray = [1, 5]
+	Object.assign(this,store.state.pathOptions)
+	this.set()
+	store.subscribe((mutation) => {
+	    if (mutation.type.startsWith("pathOptions/")){
+		Object.assign(this, store.state.pathOptions)
+		this.set()
+	    }})
     }
-    set(options) {
+    set() {
         if(this.cursor) this.cursor.remove()
 	this.cursor= new paper.Shape.Circle({
 	    center: [0,0],
@@ -25,7 +24,6 @@ export default class pathTool {
 	    strokeWidth: 2,
 	    blendMode: "difference",
 	})
-	if(options) Object.assign(this, options)
 	let initPoint = undefined
 	let vector, firstSegment, lastSegment
 	let segments = []
@@ -45,9 +43,9 @@ export default class pathTool {
 			    strokeColor: this.color,
 			    opacity: this.opacity
 			})
-			if (this.style == "dashed")
+			if (this.style === "dashed")
 			    this.currentItem.dashArray = this.dashArray.map((x) => (x * this.size))
-			else if (options.style == "dotted")
+			else if (this.style === "dotted")
 			    this.currentItem.dashArray = this.dotArray.map((x) => (x * this.size))
 			else this.currentItem.dashArray = null
 			this.currentItem.insertBelow(this.cursor)
