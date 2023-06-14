@@ -127,11 +127,6 @@ export default {
         description: ""
       },
       canvas: null,
-      currentTool: {
-        name: "cursor",
-        toolRef: null
-      },
-      currentItem: null,
       activeLayer: null,
       selection: null,
       cursorTool: null,
@@ -141,7 +136,6 @@ export default {
       shapeTool: null,
       textTool: null,
       zoomTool: null,
-      nullTool: new paper.Tool()
     }
   },
   computed: {
@@ -158,9 +152,6 @@ export default {
     cursorStyle(){
       return this.getCursorStyle
     }
-    /*currentToolObject(){
-
-    }*/
   },
   methods: {
     zoom: zoom,
@@ -212,9 +203,9 @@ export default {
       this.modalFlags.showEditMapWin=false
     },
     async updateMapObjects(map){
+      this.$store.commit("removeCurrentItem")
       if(this.selection)
         this.selection.remove()
-      this.toolSwitch('off')
       const objects=paper.project.exportJSON()
       let request
       try{
@@ -276,9 +267,6 @@ export default {
         this.saveStatus=this.canvas.changes>0?"Не сохранено":"Нет изменений"
       }
     },
-  /*  'currentItem'(item) {
-      item.data.type = this.currentTool.name
-    }*/
   }
 }
 </script>
