@@ -8,19 +8,19 @@
                @copyItem="()=>{
                  cursorTool.copyItem()
                  cursorTool.contextMenuVisible(false)
-                 canvas.styleCursor='default'}"
+                 this.$store.commit('setCursorStyle', 'default')}"
                @removeItem="()=>{
                   cursorTool.removeItem()
                   cursorTool.contextMenuVisible(false)
-                  canvas.styleCursor='default'}"
+                  this.$store.commit('setCursorStyle', 'default')}"
                @toFront="()=>{
                  cursorTool.setToFront()
                  cursorTool.contextMenuVisible(false)
-                 canvas.styleCursor='default'}"
+                 this.$store.commit('setCursorStyle', 'default')}"
                @toBack="()=>{
                  cursorTool.setToBack()
                  cursorTool.contextMenuVisible(false)
-                 canvas.styleCursor='default'}"/>
+                 this.$store.commit('setCursorStyle', 'default')}"/>
   <MapEditWindow
       v-if="modalFlags.showEditMapWin"
       :map-name="currentMap.title"
@@ -57,7 +57,6 @@
     />
     <ToolsPanel
         @toolChange="setTool"
-        @optChange="setOpt"
         @update="(item, options)=>{
           cursorTool.updateItem(item, options)
           selection.set(item)
@@ -77,9 +76,9 @@
         :scale-prop="Number(canvas.scale)"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2, null, canvas)">
       <canvas id="map" :width="this.canvas.CSSwidth" :height="this.canvas.CSSheight"
-              :style="{cursor: canvas.styleCursor, width:this.canvas.CSSwidth+'px', height:this.canvas.CSSheight+'px' }"
-              @mouseout="toolSwitch('off')"
-              @mouseover="toolSwitch('on')"
+              :style="{cursor: cursorStyle, width:this.canvas.CSSwidth+'px', height:this.canvas.CSSheight+'px' }"
+      @mouseout="this.$store.commit('setCenterItemFlag',true)"
+      @mouseover="this.$store.commit('setCenterItemFlag',false)"
       ></canvas>
     </div>
   </div>
@@ -106,6 +105,7 @@ import {flags} from "@/modules/logic/flags";
 import * as paper from "paper" ;
 import {zoom} from "@/modules/logic/zoom";
 import {exportAs} from "@/modules/logic/export"
+import {mapGetters} from 'vuex'
 export default {
   name: "MapCanvas",
   components: {
@@ -145,6 +145,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['getCursorStyle']),
     contextMenuStyle() {
       const { top, right, left, bottom } = this.cursorTool.contextMenuPos;
       return {
@@ -154,35 +155,39 @@ export default {
         bottom: bottom ? `${bottom}px` : 'auto',
       };
     },
+    cursorStyle(){
+      return this.getCursorStyle
+    }
+    /*currentToolObject(){
+
+    }*/
   },
   methods: {
     zoom: zoom,
     exportAs: exportAs,
-    toolSwitch(mode) {
-      if (mode == "on" && this.currentTool.toolRef)
-        this.currentTool.toolRef.activate()
-      else
-        this.nullTool.activate()
-    },
     setTool(tool) {
-      this.currentTool.name = tool
-    },
-    setOpt(opt) {
-      switch (this.currentTool.name) {
-        case "cursor": this.cursorTool.set(opt)
-              break
-        case "brush":  this.brushTool.set(opt)
-              break
-        case "shape":this.shapeTool.set(opt)
-              break
-        case "path": this.pathTool.set(opt)
-              break
-        case "text": this.textTool.set(opt)
-              break
-        case "stamp": this.stampTool.set(opt)
-              break
-        case "zoom": this.zoomTool.set(this.canvas)
-            break
+      switch (tool){
+        case "cursor":
+          this.$store.commit("setSelectedTool",this.cursorTool)
+          break
+        case "brush":
+          this.$store.commit("setSelectedTool",this.brushTool)
+          break
+        case "stamp":
+          this.$store.commit("setSelectedTool",this.stampTool)
+          break
+        case "shape":
+          this.$store.commit("setSelectedTool",this.shapeTool)
+          break
+        case "path":
+          this.$store.commit("setSelectedTool",this.pathTool)
+          break
+        case "text":
+          this.$store.commit("setSelectedTool",this.textTool)
+          break
+        case "zoom":
+          this.$store.commit("setSelectedTool",this.zoomTool)
+          break
       }
     },
     async getCurrentMap() {
@@ -244,94 +249,36 @@ export default {
     this.shapeTool = new shapeTool()
     this.pathTool = new pathTool()
     this.textTool = new textTool()
-    this.zoomTool = new zoomTool()
-    this.cursorTool.activate()
-    this.currentTool.toolRef = this.cursorTool.instance
+    this.zoomTool = new zoomTool(this.canvas)
+    this.$store.commit("setSelectedTool",this.cursorTool)
     /*window.onbeforeunload = () =>{
       return "";
     }*/
   },
   created() {
     this.canvas = new canvas()
-    this.selection=new selection(this.canvas)
+    this.selection=new selection()
     this.cursorTool=new cursorTool(this.selection)
     window.addEventListener("resize", this.canvas.setDefaultSizes.bind(this.canvas));
     window.addEventListener("resize", this.canvas.resetCoords.bind(this.canvas));
   },
   watch: {
-    'currentTool.name'(newTool,oldTool) {
-      switch (oldTool) {
-        case "cursor":
-          if(this.selection.selectedObject) this.selection.remove()
-          break
-        case "brush":
-          paper.project.activeLayer.children["brushCursor"].remove()
-          break
-        case "stamp":
-          if(this.stampTool.currentItem) this.stampTool.currentItem.remove()
-          break
-        case "shape":
-          if(this.shapeTool.currentItem) this.shapeTool.currentItem.remove()
-          break
-        case "path":
-          paper.project.activeLayer.children["pathCursor"].remove()
-          if(this.pathTool.currentItem) this.pathTool.currentItem.remove()
-          break
-        case "text":
-          if(this.textTool.currentItem) this.textTool.currentItem.remove()
-          break
-      }
-      switch (newTool) {
-        case "cursor":
-          this.currentTool.toolRef = this.cursorTool.instance
-          this.canvas.styleCursor = "default"
-          this.cursorTool.activate()
-          break
-        case "brush":
-          this.currentTool.toolRef = this.brushTool.instance
-          this.canvas.styleCursor = "none"
-          this.brushTool.activate()
-          break
-        case "stamp":
-          this.currentTool.toolRef = this.stampTool.instance
-          this.canvas.styleCursor = "none"
-          this.stampTool.activate()
-          break
-        case "shape":
-          this.currentTool.toolRef = this.shapeTool.instance
-          this.canvas.styleCursor = "crosshair"
-          this.shapeTool.activate()
-          break
-        case "path":
-          this.currentTool.toolRef = this.pathTool.instance
-          this.canvas.styleCursor = "none"
-          this.pathTool.activate()
-          break
-        case "text":
-          this.currentTool.toolRef = this.textTool.instance
-          this.canvas.styleCursor = "none"
-          this.textTool.activate()
-          break
-        case "zoom":
-          this.currentTool.toolRef = this.zoomTool.instance
-          this.canvas.styleCursor = "zoom-in"
-          this.zoomTool.activate()
-          break
-      }
-    },
     'activeLayer.children.length'(old, val) {
       if(val) {
+        console.log(this.activeLayer.children)
         const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
-        const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
-        console.log(obj.data.type)
-           if(obj&&obj.data&&obj.data.type&&['brush','path','stamp','text','shape'].includes(obj.data.type))
-        this.canvas.changes++
+        if(filteredArr) {
+          const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
+          console.log(obj.data.type)
+          if (obj && obj.data && obj.data.type && ['brush', 'path', 'stamp', 'text', 'shape'].includes(obj.data.type))
+            this.canvas.changes++
+        }
         this.saveStatus=this.canvas.changes>0?"Не сохранено":"Нет изменений"
       }
     },
-    'currentItem'(item) {
+  /*  'currentItem'(item) {
       item.data.type = this.currentTool.name
-    }
+    }*/
   }
 }
 </script>

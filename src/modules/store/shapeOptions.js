@@ -1,6 +1,7 @@
 const shapeOptions={
     namespaced:true,
     state: {
+            name: "shape",
             shapeType: "rectangle",
             strokeWidth: 1,
             strokeColor: "#000000",

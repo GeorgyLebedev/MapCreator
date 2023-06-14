@@ -1,43 +1,44 @@
 import * as paper from "paper" ;
+import store from "@/modules/store/store";
 import {zoom} from "../logic/zoom"
 export default class zoomTool {
-    constructor() {
+    constructor(canvas) {
         this.instance=new paper.Tool()
-	this.canvas=null,
+	this.name="zoom"
+	this.canvas=canvas,
 	this.set()
     }
-    set(canvas){
-        this.canvas=canvas
+    set(){
 	let drag = false
 	let isZoom = false
 	let newX, newY
 	this.instance.onMouseUp = (event) => {
 	    let mode
 	    if (event.event.button == 0) {
-		this.canvas.styleCursor = "zoom-in"
+		store.commit('setCursorStyle', 'zoom-in')
 		mode = "+"
 	    }
 	    if (event.event.button == 2) {
-		this.canvas.styleCursor = "zoom-out"
+		store.commit('setCursorStyle', 'zoom-out')
 		mode = "-"
 	    }
 	    drag = false
 	    if (!isZoom) return
-	    zoom(event.event, 0.5, mode,canvas)
+	    zoom(event.event, 0.5, mode,this.canvas)
 	}
 	this.instance.onMouseMove = (event) => {
 	    isZoom = false
 	    if (!drag) return
-	    newX=canvas.offsetLeft + event.event.movementX
-	    newY=canvas.offsetTop + event.event.movementY
-	    canvas.ref.style.transform = "translate(" + newX + "px," + newY + "px)"
-	    canvas.offsetLeft = newX
-	    canvas.offsetTop = newY
+	    newX=this.canvas.offsetLeft + event.event.movementX
+	    newY=this.canvas.offsetTop + event.event.movementY
+	    this.canvas.ref.style.transform = "translate(" + newX + "px," + newY + "px)"
+	    this.canvas.offsetLeft = newX
+	    this.canvas.offsetTop = newY
 	}
 	this.instance.onMouseDown = () => {
 	    isZoom = true
 	    drag = true
-	    this.canvas.styleCursor = "move"
+	    store.commit('setCursorStyle', 'move')
 	}
     }
     activate(){

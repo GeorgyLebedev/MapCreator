@@ -1,6 +1,7 @@
 const pathOptions = {
     namespaced: true,
     state: {
+        name: "path",
         size: 1,
         opacity: 1,
         color: "#000000",

@@ -119,31 +119,6 @@ export default {
     tool(val) {
       this.optionVisible = true
       this.$emit('toolChange', val)
-      switch (val) {
-        case "cursor":
-          this.$emit('optChange', this.cursorOpt)
-          break
-        case "brush":
-          this.$emit('optChange', this.brushOpt)
-          break;
-        case "stamp":
-          this.$emit('optChange', this.stampOpt)
-          break
-        case "shape":
-          this.$emit('optChange', this.shapeOpt)
-          break
-        case "path":
-          this.$emit('optChange', this.pathOpt)
-          break
-        case "text":
-          this.$emit('optChange', this.textOpt)
-          break
-        case "zoom":
-          this.$emit('optChange')
-          break
-        default:
-          return
-      }
     },
     selectedObj: {
       handler(val) {
@@ -202,48 +177,6 @@ export default {
         if (!val || this.selectedObj.data.type != "stamp") return
         this.stampOpt.size = val
       }
-    },
-    cursorOpt: {
-      handler() {
-        this.$emit('optChange', this.cursorOpt)
-      }, deep: true
-    },
-    brushOpt: {
-      handler() {
-        this.$emit('optChange', this.brushOpt)
-      }, deep: true
-    },
-    stampOpt: {
-      handler() {
-        if (this.selectedObj) {
-          Object.assign(this.selectedObj, this.stampOpt)
-          this.$emit("update", this.selectedObj, this.stampOpt)
-        }
-        this.$emit('optChange', this.stampOpt)
-      }, deep: true
-    },
-    shapeOpt: {
-      handler() {
-        if (this.selectedObj) {
-          //Object.assign(this.selectedObj, this.shapeOpt)
-          this.$emit("update", this.selectedObj, this.shapeOpt)
-        }
-        this.$emit('optChange', this.shapeOpt)
-      }, deep: true
-    },
-    pathOpt: {
-      handler() {
-        this.$emit('optChange', this.pathOpt)
-      }, deep: true
-    },
-    textOpt: {
-      handler() {
-        if (this.selectedObj) {
-          Object.assign(this.selectedObj, this.textOpt)
-          this.$emit("update", this.selectedObj, this.textOpt)
-        }
-        this.$emit('optChange', this.textOpt)
-      }, deep: true
     },
   }
 }

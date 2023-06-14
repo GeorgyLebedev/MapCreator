@@ -124,6 +124,7 @@ export default {
       'setStamp',
       'setKit',
       'showStampsWindow',
+      'closeWindow'
   ],
   data() {
     return {

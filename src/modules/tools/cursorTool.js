@@ -39,6 +39,7 @@ export default class cursorTool {
 		this.selection.remove()
 	    }
 	}
+	store.commit("updateSelectedTool", this)
     }
     activate(){
 	this.instance.activate()

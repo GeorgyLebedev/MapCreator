@@ -18,7 +18,7 @@ export default class stampTool {
 		this.currentItem.remove()
 	    this.currentItem = new paper.Raster({
 		source:  this.currentStamp,
-		position: event.point,
+		position: this.centerFlag?paper.view.center:event.point,
 		size: this.size,
 		opacity: this.opacity,
 		rotation: this.rotation
@@ -30,6 +30,7 @@ export default class stampTool {
 	this.instance.onMouseDown = () => {
 	    this.currentItem.clone()
 	}
+	store.commit("updateSelectedTool", this)
     }
     activate(){
 	this.instance.activate()

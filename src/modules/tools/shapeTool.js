@@ -162,6 +162,7 @@ export default class shapeTool {
 		}
 		break
 	}
+	store.commit("updateSelectedTool", this)
     }
     activate(){
 	this.instance.activate()

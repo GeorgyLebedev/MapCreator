@@ -1,10 +1,9 @@
 import paper from "paper";
-
+import store from "@/modules/store/store";
 export default class selection {
-    constructor(canvas) {
+    constructor() {
         this.selectedObject=undefined
         this.selectionGroup=undefined
-        this.canvas=canvas
     }
     set(item){
         if (this.selectionGroup || this.selectedObject)
@@ -19,7 +18,7 @@ export default class selection {
         this.selectionGroup.remove()
         this.selectionGroup = undefined
         this.selectedObject=undefined
-        this.canvas.styleCursor="default"
+        store.commit('setCursorStyle', 'default')
     }
     build(group, item){
         if(!item) return
@@ -42,16 +41,16 @@ export default class selection {
         let boundCircle = boundCircleFull.exclude(boundRect)
         boundCircleFull.remove()
         item.onMouseEnter = () => {
-            this.canvas.styleCursor = 'grab'
+            store.commit('setCursorStyle', 'grab')
         }
         item.onMouseLeave = () => {
-            this.canvas.styleCursor = 'default'
+            store.commit('setCursorStyle', 'default')
         }
         item.onMouseDown = () => {
-            this.canvas.styleCursor = 'grabbing'
+            store.commit('setCursorStyle', 'grabbing')
         }
         item.onMouseUp = () => {
-            this.canvas.styleCursor = 'grab'
+            store.commit('setCursorStyle', 'grab')
         }
         let corners = ['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
         let twoLast = []
@@ -67,15 +66,15 @@ export default class selection {
             })
             boundSq.bringToFront()
             boundSq.onMouseLeave = () => {
-                this.canvas.styleCursor = "default"
+                store.commit('setCursorStyle', 'default')
             }
             if (corner == 'topLeft' || corner == 'bottomRight') {
                 boundSq.onMouseEnter = () => {
-                    this.canvas.styleCursor = 'nwse-resize'
+                    store.commit('setCursorStyle', 'nwse-resize')
                 }
             } else {
                 boundSq.onMouseEnter = () => {
-                    this.canvas.styleCursor = 'nesw-resize'
+                    store.commit('setCursorStyle',  'nesw-resize')
                 }
             }
             group.addChild(boundSq)
@@ -134,10 +133,10 @@ export default class selection {
             }
         })
         boundCircle.onMouseLeave = () => {
-            this.canvas.styleCursor = "default"
+            store.commit('setCursorStyle', 'default')
         }
         boundCircle.onMouseEnter = () => {
-            this.canvas.styleCursor= 'url(' + require('@/assets/images/Service/rotate.png') + '), auto'
+            store.commit('setCursorStyle', 'url(' + require('@/assets/images/Service/rotate.png') + '), auto')
         }
         boundCircle.onMouseDown = (event) => {
             rotateStart = new paper.Point({

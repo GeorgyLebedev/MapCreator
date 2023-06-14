@@ -1,6 +1,7 @@
 const textOptions = {
     namespaced: true,
     state: {
+        name: "text",
 	content: "Текст",
 	fontFamily: "Cambria",
 	fontSize: 50,

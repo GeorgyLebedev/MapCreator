@@ -43,6 +43,7 @@ export default class textTool {
 	this.instance.onMouseDown = () => {
 	    this.currentItem.clone()
 	}
+	store.commit("updateSelectedTool", this)
     }
     activate(){
 	this.instance.activate()

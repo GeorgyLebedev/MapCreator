@@ -10,6 +10,7 @@ export default class brushTool {
 		Object.assign(this, store.state.brushOptions)
 		this.set()
 	    }})
+	this.set()
     }
     set(){
 	if(this.cursor) this.cursor.remove()
@@ -25,6 +26,9 @@ export default class brushTool {
 	let path
 	this.cursor.radius = this.size
 	this.instance.onMouseMove = (event) => {
+	    if(this.centerFlag){
+		this.cursor.position=paper.view.center
+	    } else
 	    this.cursor.position = event.point;
 	}
 	this.instance.onMouseDown = (event) => {
@@ -46,8 +50,10 @@ export default class brushTool {
 	    path.add(event.point);
 	    path.smooth();
 	}
+	store.commit("updateSelectedTool", this)
     }
     activate(){
+        this.set()
         this.instance.activate()
     }
 }

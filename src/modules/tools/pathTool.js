@@ -31,7 +31,10 @@ export default class pathTool {
 	switch (this.pathType) {
 	    case "line":
 		this.instance.onMouseMove = (event) => {
-		    this.cursor.position = event.point;
+		    if(this.centerFlag){
+			this.cursor.position=paper.view.center
+		    } else
+			this.cursor.position = event.point;
 		    if (this.currentItem)
 			this.currentItem.remove()
 		    if (initPoint) {
@@ -64,7 +67,10 @@ export default class pathTool {
 		break
 	    case "poly":
 		this.instance.onMouseMove = (event) => {
-		    this.cursor.position = event.point;
+		    if(this.centerFlag){
+			this.cursor.position=paper.view.center
+		    } else
+			this.cursor.position = event.point;
 		    if (this.currentItem)
 			this.currentItem.remove()
 		    if (initPoint) {
@@ -112,7 +118,10 @@ export default class pathTool {
 	    case "curve":
 		this.instance.onMouseMove = (event) => {
 		    let hIn, hOut, firstVector, angle
-		    this.cursor.position = event.point;
+		    if(this.centerFlag){
+			this.cursor.position=paper.view.center
+		    } else
+			this.cursor.position = event.point;
 		    if (this.currentItem)
 			this.currentItem.remove()
 		    if (initPoint) {
@@ -197,9 +206,10 @@ export default class pathTool {
 		}
 		break
 	}
+	store.commit("updateSelectedTool", this)
     }
     activate(){
-	this.cursor.visible=true
+	this.set()
 	this.instance.activate()
     }
 }

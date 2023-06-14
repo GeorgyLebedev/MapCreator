@@ -1,16 +1,17 @@
- const stampOptions = {
-    namespaced:true,
+const stampOptions = {
+    namespaced: true,
     state: {
-	    size: 50,
-	    opacity: 1,
-	    rotation: 0,
-	    revert: "none",
-	    currentKit: {},
-	    currentStamp: "",
+        name: "stamp",
+	size: 50,
+	opacity: 1,
+	rotation: 0,
+	revert: "none",
+	currentKit: {},
+	currentStamp: "",
     },
     mutations: {
-        updateStampOptions(state, option){
-	    state = Object.assign( state, option)
+	updateStampOptions(state, option) {
+	    state = Object.assign(state, option)
 	}
     }
 }

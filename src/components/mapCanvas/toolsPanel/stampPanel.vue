@@ -1,5 +1,4 @@
 <template>
-  <Transition name="popup-anim">
     <stampsWindow
         v-if="modalFlags.showStampsWin"
         :stamps-prop="stamps"
@@ -7,9 +6,7 @@
         :selected-stamp-prop="currentStamp"
         @closeWindow="modalFlags.showStampsWin=false"
     />
-  </Transition>
-    <div class="toolsOptions"
-         v-if="true || (selectedObject && selectedObject.data.type=='stamp')">
+    <div class="toolsOptions">
       <div class="flexRow justifyBetween alignCenter">
         <b> Штамп </b>
         <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursorPointer" height="20" alt="">
