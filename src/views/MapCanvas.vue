@@ -4,7 +4,7 @@
       @clearError="this.error=''"/>
   <ContextMenu
                :style="contextMenuStyle"
-               :show-menu="cursorTool.showContextMenu"
+               :show-menu="this.getMenuFlag"
                @copyItem="()=>{
                  cursorTool.copyItem()
                  cursorTool.contextMenuVisible(false)
@@ -57,14 +57,6 @@
     />
     <ToolsPanel
         @toolChange="setTool"
-        @update="(item, options)=>{
-          cursorTool.updateItem(item, options)
-          selection.set(item)
-        }"
-        @removeSelect="selection.remove()"
-        :selected-obj="selection.selectedObject"
-        :rotation="selection.selectedObject? Number(selection.selectedObject.rotation):0"
-        :size="selection.selectedObject&&selection.selectedObject.size? Number(selection.selectedObject.size.width):0"
     />
     <BotMenu
         @resetAlign="canvas.hardReset()"
@@ -100,7 +92,7 @@ import textTool from "@/modules/tools/textTool";
 import stampTool from "@/modules/tools/stampTool";
 import zoomTool from "@/modules/tools/zoomTool";
 import canvas from "@/modules/logic/canvas";
-import selection from "@/modules/logic/selection";
+import selection from "@/modules/logic/selectionLogic";
 import {flags} from "@/modules/logic/flags";
 import * as paper from "paper" ;
 import {zoom} from "@/modules/logic/zoom";
@@ -139,19 +131,26 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCursorStyle']),
+    ...mapGetters(['getCursorStyle'],['cursorOptions/getContextMenuPos']),
+    ...mapGetters('cursorOptions', [
+      'getContextMenuPos',
+    ]),
+    ...mapGetters('cursorOptions', [
+      'getMenuFlag',
+    ]),
     contextMenuStyle() {
-      const { top, right, left, bottom } = this.cursorTool.contextMenuPos;
+      if(!this.getContextMenuPos) return
       return {
-        top: top ? `${top}px` : 'auto',
-        right: right ? `${right}px` : 'auto',
-        left: left ? `${left}px` : 'auto',
-        bottom: bottom ? `${bottom}px` : 'auto',
+        top: this.getContextMenuPos.top ? `${this.getContextMenuPos.top}px` : 'auto',
+        right: this.getContextMenuPos.right ? `${this.getContextMenuPos.right }px` : 'auto',
+        left: this.getContextMenuPos.left ? `${ this.getContextMenuPos.left}px` : 'auto',
+        bottom: this.getContextMenuPos.bottom ? `${this.getContextMenuPos.bottom}px` : 'auto',
       };
     },
     cursorStyle(){
       return this.getCursorStyle
-    }
+    },
+
   },
   methods: {
     zoom: zoom,
@@ -256,7 +255,6 @@ export default {
   watch: {
     'activeLayer.children.length'(old, val) {
       if(val) {
-        console.log(this.activeLayer.children)
         const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
         if(filteredArr) {
           const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);

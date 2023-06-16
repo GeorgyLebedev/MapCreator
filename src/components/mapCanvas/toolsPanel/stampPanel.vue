@@ -70,6 +70,7 @@ export default {
     stampsProp: Object,
     selectedObject: Object
   },
+  emits:['closePanel'],
   data(){
     return{
       stamps: {},

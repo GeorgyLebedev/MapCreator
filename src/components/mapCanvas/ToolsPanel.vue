@@ -9,16 +9,16 @@
     <brush-panel v-if="tool=='brush' && optionVisible" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
-    <stamp-panel v-if="tool=='stamp' && optionVisible" :stamps-prop="this.stamps" @closePanel="optionVisible=false"/>
+    <stamp-panel v-if="((tool=='stamp' && optionVisible) || selectedObjectType=='stamp')" :stamps-prop="this.stamps" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
-    <shape-panel v-if="tool=='shape' && optionVisible" @closePanel="optionVisible=false"/>
+    <shape-panel v-if="((tool=='shape' && optionVisible) || selectedObjectType=='shape')" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
     <path-panel v-if="tool=='path' && optionVisible" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
-    <text-panel v-if="tool=='text' && optionVisible" @closePanel="optionVisible=false"/>
+    <text-panel v-if="((tool=='text' && optionVisible) || selectedObjectType=='text')" @closePanel="optionVisible=false"/>
   </Transition>
   <div id="toolsPanel">
     <section class="tool" :class="{selected:tool=='cursor' }" title="Курсор"
@@ -61,6 +61,7 @@ import stampPanel from "@/components/mapCanvas/toolsPanel/stampPanel";
 import shapePanel from "@/components/mapCanvas/toolsPanel/shapePanel";
 import pathPanel from "@/components/mapCanvas/toolsPanel/pathPanel";
 import textPanel from "@/components/mapCanvas/toolsPanel/textPanel";
+import {mapGetters} from "vuex";
 
 export default {
   name: "ToolsPanel",
@@ -74,9 +75,6 @@ export default {
     textPanel,
   },
   props: {
-    selectedObj: {
-      type: Object
-    },
     rotation: {
       type: Number
     },
@@ -109,6 +107,15 @@ export default {
     },
 
   },
+  computed:{
+    ...mapGetters('selection', ['getSelectedObject']),
+    selectedObject(){
+      return this.getSelectedObject
+    },
+    selectedObjectType(){
+      return this.selectedObject&&this.selectedObject.data?this.selectedObject.data.type:false
+    }
+  },
   async mounted() {
     let userOptions = await this.getOptions()
     this.stamps = userOptions.stamps
@@ -120,7 +127,12 @@ export default {
       this.optionVisible = true
       this.$emit('toolChange', val)
     },
-    selectedObj: {
+    optionVisible(val){
+      if(!val&&this.selectedObject){
+        this.$store.commit("selection/removeSelection")
+      }
+    }
+  /*  selectedObj: {
       handler(val) {
         if (val) {
           this.optionVisible = false
@@ -177,7 +189,7 @@ export default {
         if (!val || this.selectedObj.data.type != "stamp") return
         this.stampOpt.size = val
       }
-    },
+    },*/
   }
 }
 </script>

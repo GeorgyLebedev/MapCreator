@@ -6,20 +6,31 @@ import shapeOptions from "@/modules/store/shapeOptions";
 import pathOptions from "@/modules/store/pathOptions";
 import textOptions from "@/modules/store/textOptions";
 import colorsStore from "@/modules/store/colorsStore";
+import selection from "@/modules/store/selection";
 import paper from "paper";
 
 const store = createStore({
     state: {
 	selectedTool: {},
-	cursorStyle: "default"
+	cursorStyle: "default",
+	centerFlag:true
     },
     getters:{
         getCursorStyle(state){
             return state.cursorStyle
+	},
+	getCenterFlag(state){
+            return state.centerFlag
 	}
     },
     mutations: {
 	setSelectedTool(state, tool) {
+	    if(selection.getters.getSelectedObject){
+	        store.commit("selection/removeSelection")
+	    }
+	    if(cursorOptions.getters.getMenuFlag){
+	        store.commit("cursorOptions/updateCursorOptions", {showContextMenu:false})
+	    }
 	    if ( state.selectedTool.currentItem)
 		state.selectedTool.currentItem.remove()
 	    if (tool!=="path" && paper.project.activeLayer.children["pathCursor"])
@@ -48,8 +59,7 @@ const store = createStore({
 	    tool.activate()
 	},
 	setCenterItemFlag(state,value){
-	    if(value) state.selectedTool.centerFlag=true
-	    else state.selectedTool.centerFlag=false
+	    state.centerFlag=value
 	},
 	removeCurrentItem(state){
 	    if(state.selectedTool.currentItem){
@@ -62,6 +72,9 @@ const store = createStore({
 	updateSelectedTool(state,tool){
 	    state.selectedTool=tool
 	},
+	/*updateSelectedToolOptions(state,options){
+
+	}*/
 	setCursorStyle(state,style){
 	    state.cursorStyle=style
 	}
@@ -73,7 +86,8 @@ const store = createStore({
 	shapeOptions,
 	pathOptions,
 	textOptions,
-	colorsStore
+	colorsStore,
+	selection
     }
 })
 export default store

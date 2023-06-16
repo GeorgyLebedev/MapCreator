@@ -1,15 +1,22 @@
 import paper from "paper";
 import store from "@/modules/store/store";
-export default class selection {
+export default class selectionLogic {
     constructor() {
         this.selectedObject=undefined
         this.selectionGroup=undefined
+        store.subscribe((mutation)=>{
+            if(mutation.type=="selection/removeSelection"){
+                this.remove()
+            }
+        })
     }
     set(item){
         if (this.selectionGroup || this.selectedObject)
             this.remove()
         this.selectionGroup = this.build(new paper.Group(), item)
+        store.commit("selection/setSelectionGroup",this.selectionGroup)
         this.selectedObject = item
+        store.commit("selection/setSelectedObject",this.selectedObject)
     }
     remove() {
         if (!this.selectedObject) return
@@ -18,6 +25,7 @@ export default class selection {
         this.selectionGroup.remove()
         this.selectionGroup = undefined
         this.selectedObject=undefined
+        store.commit("selection/removeSelection")
         store.commit('setCursorStyle', 'default')
     }
     build(group, item){

@@ -17,7 +17,7 @@ export default class textTool {
 	    if (this.currentItem)
 		this.currentItem.remove()
 	    this.currentItem = new paper.PointText({
-		point: event.point,
+		point: store.getters.getCenterFlag?paper.view.center:event.point,
 		content: this.content,
 		fillColor: this.isFill ? this.fillColor : new paper.Color(0, 0, 0, 1e-6),
 		fontFamily: this.fontFamily,

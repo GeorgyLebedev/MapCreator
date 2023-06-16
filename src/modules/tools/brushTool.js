@@ -9,7 +9,8 @@ export default class brushTool {
 	    if (mutation.type.startsWith("brushOptions/")){
 		Object.assign(this, store.state.brushOptions)
 		this.set()
-	    }})
+	    }
+	})
 	this.set()
     }
     set(){
@@ -26,10 +27,7 @@ export default class brushTool {
 	let path
 	this.cursor.radius = this.size
 	this.instance.onMouseMove = (event) => {
-	    if(this.centerFlag){
-		this.cursor.position=paper.view.center
-	    } else
-	    this.cursor.position = event.point;
+		this.cursor.position=store.getters.getCenterFlag?paper.view.center: event.point
 	}
 	this.instance.onMouseDown = (event) => {
 	    path = new paper.Path();

@@ -20,7 +20,6 @@ export default class AxiosRequest {
 		data: this.data
 	    })).data
 	    if(response.newToken) { //если получен новый токен
-	        alert("Token Update")
 		localStorage.setItem('TOKEN', response.newToken)//обновляем его
 		localStorage.setItem('USER', response.username)
 		this.authHeader=`Bearer ${localStorage.getItem('TOKEN')}`

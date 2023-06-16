@@ -4,13 +4,15 @@ export default class cursorTool {
     constructor(selection) {
         this.instance=new paper.Tool()
 	this.selection=selection
-	this.showContextMenu = false
-	this.contextMenuPos = {}
 	Object.assign(this,store.state.cursorOptions)
 	store.subscribe((mutation) => {
 	    if (mutation.type.startsWith("cursorOptions/")){
 		Object.assign(this,store.state.cursorOptions)
 		this.set()
+	    if (mutation.type=="setSelectedTool") {
+	        this.contextMenuVisible(false)
+		store.commit("cursorOptions/updateCursorOptions", this)
+	    }
 	    }})
 	this.set()
     }
@@ -117,5 +119,6 @@ export default class cursorTool {
 	    else
 		this.contextMenuPos.top = position.clientY
 	}
+	store.commit("cursorOptions/updateCursorOptions", this)
     }
 }
