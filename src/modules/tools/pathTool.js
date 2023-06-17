@@ -44,6 +44,7 @@ export default class pathTool {
 			    strokeColor: this.color,
 			    opacity: this.opacity
 			})
+			this.currentItem.data.type="path"
 			if (this.style === "dashed")
 			    this.currentItem.dashArray = this.dashArray.map((x) => (x * this.size))
 			else if (this.style === "dotted")
@@ -57,9 +58,7 @@ export default class pathTool {
 		    if (!initPoint)
 			initPoint = event.point
 		    else {
-			this.currentItem = new paper.Path.Line(initPoint, event.point)
-			this.currentItem.data.type="path"
-			this.currentItem.insertBelow(this.cursor)
+			this.currentItem.clone()
 			initPoint = undefined
 		    }
 		}
