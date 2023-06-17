@@ -11,7 +11,8 @@ export default class brushTool {
 		this.set()
 	    }
 	})
-	this.set()
+	if(store.getters.getSelectedToolName=="brush")
+	    this.set()
     }
     set(){
 	if(this.cursor) this.cursor.remove()

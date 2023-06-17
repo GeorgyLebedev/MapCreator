@@ -12,7 +12,8 @@ const shapeOptions={
             sides: 5,
             isArbitrary: false,
             isFill: true,
-            isBorder: true
+            isBorder: true,
+            initPoint: undefined
     },
     mutations: {
         updateShapeOptions(state, option){

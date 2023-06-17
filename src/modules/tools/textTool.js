@@ -5,12 +5,15 @@ export default class textTool {
     constructor() {
 	this.instance = new paper.Tool()
 	Object.assign(this,store.state.textOptions)
-	this.set()
 	store.subscribe((mutation) => {
 	    if (mutation.type.startsWith("textOptions/")){
 		Object.assign(this, store.state.textOptions)
 		this.set()
-	    }})
+	    }
+	    if(mutation.type=="setSelectedTool" && store.getters.getSelectedToolName=="text"){
+		this.set()
+	    }
+	})
     }
     set(){
 	this.instance.onMouseMove = (event) => {
@@ -39,11 +42,12 @@ export default class textTool {
 		shOffsetX: this.isShadow ? this.shOffsetX : 0,
 		shOffsetY: this.isShadow ? this.shOffsetY : 0,
 	    }
+	    store.commit("updateSelectedTool", this)
 	}
 	this.instance.onMouseDown = () => {
 	    this.currentItem.clone()
 	}
-	store.commit("updateSelectedTool", this)
+
     }
     activate(){
 	this.instance.activate()

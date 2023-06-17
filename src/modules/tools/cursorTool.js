@@ -14,7 +14,8 @@ export default class cursorTool {
 		store.commit("cursorOptions/updateCursorOptions", this)
 	    }
 	    }})
-	this.set()
+	if(store.getters.getSelectedToolName=="cursor")
+	    this.set()
     }
     set(){
 	this.instance.onMouseDown = (event) => {

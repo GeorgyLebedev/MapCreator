@@ -6,12 +6,13 @@ export default class pathTool {
     constructor() {
         this.instance=new paper.Tool()
 	Object.assign(this,store.state.pathOptions)
-	this.set()
 	store.subscribe((mutation) => {
 	    if (mutation.type.startsWith("pathOptions/")){
 		Object.assign(this, store.state.pathOptions)
 		this.set()
 	    }})
+	if(store.getters.getSelectedToolName=="path")
+	    this.set()
     }
     set() {
         if(this.cursor) this.cursor.remove()
@@ -49,6 +50,7 @@ export default class pathTool {
 			    this.currentItem.dashArray = this.dotArray.map((x) => (x * this.size))
 			else this.currentItem.dashArray = null
 			this.currentItem.insertBelow(this.cursor)
+			store.commit("updateSelectedTool", this)
 		    }
 		}
 		this.instance.onMouseDown = (event) => {
@@ -88,6 +90,7 @@ export default class pathTool {
 			else this.currentItem.dashArray = null
 			this.currentItem.insertBelow(this.cursor)
 			this.currentItem.data.type="path"
+			store.commit("updateSelectedTool", this)
 		    }
 		}
 		this.instance.onMouseDown = (event) => {
@@ -175,6 +178,7 @@ export default class pathTool {
 			else this.currentItem.dashArray = null
 			this.currentItem.insertBelow(this.cursor)
 			this.currentItem.data.type="path"
+			store.commit("updateSelectedTool", this)
 		    }
 		}
 		this.instance.onMouseDown = (event) => {

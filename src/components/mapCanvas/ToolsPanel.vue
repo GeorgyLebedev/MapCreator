@@ -124,6 +124,7 @@ export default {
 
   watch: {
     tool(val) {
+      this.$store.commit("selection/removeSelection")
       this.optionVisible = true
       this.$emit('toolChange', val)
     },

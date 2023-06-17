@@ -7,7 +7,6 @@ import pathOptions from "@/modules/store/pathOptions";
 import textOptions from "@/modules/store/textOptions";
 import colorsStore from "@/modules/store/colorsStore";
 import selection from "@/modules/store/selection";
-import paper from "paper";
 
 const store = createStore({
     state: {
@@ -16,6 +15,9 @@ const store = createStore({
 	centerFlag:true
     },
     getters:{
+        getSelectedToolName(state){
+            return state.selectedTool.name
+	},
         getCursorStyle(state){
             return state.cursorStyle
 	},
@@ -25,18 +27,13 @@ const store = createStore({
     },
     mutations: {
 	setSelectedTool(state, tool) {
+	    store.commit("removeCurrentItem")
 	    if(selection.getters.getSelectedObject){
 	        store.commit("selection/removeSelection")
 	    }
 	    if(cursorOptions.getters.getMenuFlag){
 	        store.commit("cursorOptions/updateCursorOptions", {showContextMenu:false})
 	    }
-	    if ( state.selectedTool.currentItem)
-		state.selectedTool.currentItem.remove()
-	    if (tool!=="path" && paper.project.activeLayer.children["pathCursor"])
-		paper.project.activeLayer.children["pathCursor"].remove()
-	    if (tool!=="brush"&& paper.project.activeLayer.children["brushCursor"])
-		paper.project.activeLayer.children["brushCursor"].remove()
 	    state.selectedTool={}
 	    Object.assign(state.selectedTool, tool)
 	    	switch (tool.name) {
@@ -62,12 +59,10 @@ const store = createStore({
 	    state.centerFlag=value
 	},
 	removeCurrentItem(state){
-	    if(state.selectedTool.currentItem){
+	    if(state.selectedTool.currentItem)
 		state.selectedTool.currentItem.remove()
-	    }
-	    if(state.selectedTool.name=="path"||state.selectedTool.name=="brush"){
+	    if(state.selectedTool.name=="path"||state.selectedTool.name=="brush")
 		state.selectedTool.cursor.remove()
-	    }
 	},
 	updateSelectedTool(state,tool){
 	    state.selectedTool=tool

@@ -4,12 +4,13 @@ export default class stampTool {
     constructor() {
         this.instance=new paper.Tool()
 	Object.assign(this,store.state.stampOptions)
-	this.set()
 	store.subscribe((mutation) => {
 	    if (mutation.type.startsWith("stampOptions/")){
 		Object.assign(this, store.state.stampOptions)
 		this.set()
 	    }})
+	if(store.getters.getSelectedToolName=="stamp")
+	    this.set()
     }
     set(){
 	this.instance.onMouseMove = (event) => {
@@ -25,11 +26,11 @@ export default class stampTool {
 	    this.currentItem.data.set = this.currentKit
 	    this.currentItem.data.stamp = this.currentStamp
 	    this.currentItem.data.type="stamp"
+	    store.commit("updateSelectedTool", this)
 	}
 	this.instance.onMouseDown = () => {
 	    this.currentItem.clone()
 	}
-	store.commit("updateSelectedTool", this)
     }
     activate(){
 	this.instance.activate()

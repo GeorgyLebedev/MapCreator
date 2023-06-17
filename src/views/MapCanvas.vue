@@ -256,7 +256,7 @@ export default {
     'activeLayer.children.length'(old, val) {
       if(val) {
         const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
-        if(filteredArr) {
+        if(filteredArr.length>0) {
           const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
           console.log(obj.data.type)
           if (obj && obj.data && obj.data.type && ['brush', 'path', 'stamp', 'text', 'shape'].includes(obj.data.type))
