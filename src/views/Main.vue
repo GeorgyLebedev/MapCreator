@@ -1,7 +1,4 @@
 <template>
-  <ErrorComponent
-      :error=this.error
-      @clearError="()=>{this.error=''}"/>
   <NewMapWindow v-if="modalFlags.showNewMapWin"
                 @closeWindow="()=>{modalFlags.showNewMapWin = false}"
                 @newMap="addNewMap"/>
@@ -44,7 +41,6 @@ import MapCard from "@/components/main/MapCard";
 import NewMapWindow from "@/components/main/NewMapWindow";
 import MapEditWindow from "@/components/MapEditWindow";
 import MapDeleteWindow from "@/components/main/MapDeleteWindow";
-import ErrorComponent from "@/components/Error"
 import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
 export default {
@@ -55,13 +51,11 @@ export default {
     NewMapWindow,
     MapEditWindow,
     MapDeleteWindow,
-    ErrorComponent
   },
   data() {
     return {
       modalFlags: flags,
       selectedMap: {},
-      error: "",
       mapList: [],
     }
   },
@@ -73,7 +67,7 @@ export default {
         this.currentUser = null
         this.$router.push('/Login')
       } catch (e) {
-        this.error = e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     },
     async addNewMap(title, resolution) {
@@ -92,7 +86,7 @@ export default {
         await this.getMaps()
         this.modalFlags.showNewMapWin=false
       } catch (e) {
-        this.error = e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     },
     async getMaps() { //получение карт пользователя
@@ -103,9 +97,9 @@ export default {
         if (response && response.maps) //если карты получены
           this.mapList = response.maps //передать их в массив
         if(response && response.msg) //если есть сообщение об ошибке - вывести его
-          this.error=response.msg
+          this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
       } catch (e) {
-        this.error = e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     },
     async deleteMap(map){
@@ -118,7 +112,7 @@ export default {
         this.modalFlags.showDelMapWin=false
       }
       catch (e) {
-        this.error = e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     },
     async updateMapMetadata(map){
@@ -130,7 +124,7 @@ export default {
         this.modalFlags.showEditMapWin=false
       }
       catch (e){
-        this.error=e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     }
   },

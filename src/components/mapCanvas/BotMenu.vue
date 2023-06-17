@@ -1,7 +1,4 @@
 <template>
-  <Error
-      :error="this.error"
-      @clearError="this.error=''"/>
   <div class="botMenu" id="footer">
     <div class="flexRow justifyBetween alignCenter">
       <div class="flexRow alignCenter">
@@ -30,16 +27,11 @@
   </div>
 </template>
 <script>
-import Error from "@/components/Error";
 
 export default {
   name: "BotMenu",
-  components: {
-    Error
-  },
   data() {
     return {
-      error: "",
       changes: 0,
       scale: 1,
     }

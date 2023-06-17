@@ -1,8 +1,5 @@
 <template>
   <div class="parentDiv">
-    <ErrorComponent
-    :error=this.error
-    @clearError="()=>{this.error=''}"/>
     <div class="login">
       <div class="tabs">
         <section class="tabButton" :class="{'selected':tab=='logIn'}" @click="tab='logIn'">
@@ -119,12 +116,8 @@
 </template>
 <script>
 import AxiosRequest from "@/modules/services/axiosRequest";
-import ErrorComponent from '@/components/Error.vue'
 export default {
   name: 'LoginPage',
-  components:{
-    ErrorComponent
-  },
   data() {
     return {
       tab: "logIn",
@@ -150,7 +143,6 @@ export default {
         login: false,
         passwordReset: false,
       },
-      error: "",
     }
   },
   created() {
@@ -165,7 +157,7 @@ export default {
         request = await new AxiosRequest("user/confirm/","post",{email: email.toLowerCase(),src: src})
         response=await request.sendRequest()
       } catch (e) {
-        console.log("Ошибка сервера: " + e)
+        this.$store.commit("setNotification", ["error",e.message])
         return
       }
       return response
@@ -174,7 +166,7 @@ export default {
       if (!data.verified) {
         let res = await this.confirmEmail(data.email, 'register')
         if (res && res.msg) {
-          this.error = res.msg
+          this.$store.commit("setNotification", ["error","Ошибка сервера: " + res.msg])
           return
         }
         if (res && res.code) {
@@ -194,17 +186,17 @@ export default {
         request = await new AxiosRequest('store/', "post", )
         response= await request.sendRequest()
         if(response.msg)
-          this.error = "Ошибка сервера: " + response.msg
+          this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
       }
       catch (e) {
-        this.error = "Ошибка сервера: " + e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
         return
       }
     },
     async resetPassword(email) {
       let res = await this.confirmEmail(email, 'pasReset')
       if (res.msg) {
-        this.error = res.msg
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + res.msg])
         return
       }
       else {
@@ -220,7 +212,7 @@ export default {
         request = await new AxiosRequest(`user/${data.id}`, "put", {password:data.newPassword})
         response= await request.sendRequest()
       } catch (e) {
-        this.error = "Ошибка сервера: " + e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
         return
       }
       try {
@@ -228,7 +220,7 @@ export default {
         await this.enter(data.emailToPasReset, data.newPassword)
       }
       catch (e) {
-        this.error = "Ошибка сервера: " + e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
         return
       }
     },
@@ -243,20 +235,19 @@ export default {
           verified: data.verified })
         response=await request.sendRequest()
         if(response.msg)
-          this.error = "Ошибка сервера: " + response.msg
+          this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
         else console.log(response)
       } catch (e) {
-        this.error = "Ошибка сервера: " + e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
         return
       }
       return response
     },
     checkCode() {
       if (this.enteredCode == this.code) {
-        this.error = ""
         return true
       } else {
-        this.error = "Введённый код неверен!"
+        this.$store.commit("setNotification", ["error","Введённый код неверен!"])
         return false
       }
     },
@@ -268,15 +259,14 @@ export default {
       })
       response = await request.sendRequest()
       if(!response) {
-        this.error="Сервер недоступен"
+        this.$store.commit("setNotification", ["error","Сервер недоступен"])
         return
       }
       if( response.msg)
-        this.error = response.msg
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
       else if(response.token)
         {
           localStorage.setItem('TOKEN', response.token)
-          this.error = ""
           this.$router.push({path: "/Main"})
         }
     },
@@ -312,16 +302,6 @@ export default {
 
       }, deep: true
     },
-    error: {
-      handler(val) {
-        let tmp = val
-        this.error = ""
-        this.error = tmp
-        setTimeout(() => {
-          this.error = ""
-        }, 10000)
-      }
-    }
   }
 }
 </script>

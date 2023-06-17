@@ -1,7 +1,4 @@
 <template>
-  <Error
-      :error="this.error"
-      @clearError="this.error=''"/>
   <ContextMenu
                :style="contextMenuStyle"
                :show-menu="this.getMenuFlag"
@@ -82,7 +79,6 @@ import ToolsPanel from "@/components/mapCanvas/ToolsPanel";
 import MapEditWindow from "@/components/MapEditWindow";
 import ImageLoadWindow from "@/components/mapCanvas/ImageLoadWindow";
 import AxiosRequest from "@/modules/services/axiosRequest";
-import Error from "@/components/Error";
 import ContextMenu from "@/components/mapCanvas/ContextMenu";
 import cursorTool from "@/modules/tools/cursorTool";
 import brushTool from "@/modules/tools/brushTool";
@@ -101,7 +97,6 @@ import {mapGetters} from 'vuex'
 export default {
   name: "MapCanvas",
   components: {
-    Error,
     TopMenu,
     BotMenu,
     ToolsPanel,
@@ -111,7 +106,6 @@ export default {
   },
   data() {
     return {
-      error:"",
       saveStatus: "Нет изменений",
       modalFlags: flags,
       currentMap: {
@@ -186,7 +180,7 @@ export default {
         let response = (await request.sendRequest())
         if (response && response.map) return response.map
       } catch (e) {
-        this.error = e.message
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
         this.$router.push("/Main")
       }
     },
@@ -197,7 +191,7 @@ export default {
         await request.sendRequest()
         this.showEditMapWin = false
       } catch (e) {
-        this.error = e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
       this.modalFlags.showEditMapWin=false
     },
@@ -210,12 +204,12 @@ export default {
       try{
         request = new AxiosRequest(`map/${map._id}`, "put", {objects:objects}) //запрос
         await request.sendRequest()
-        this.error="Успешно сохранено!"
+        this.$store.commit("setNotification", ["success","Успешно сохранено!"])
         this.canvas.changes=0
         this.saveStatus="Сохранено"
       }
       catch (e) {
-      this.error = e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
     }
     this.toolSwitch('on')
     }

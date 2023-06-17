@@ -1,7 +1,4 @@
 <template>
-  <Error
-      :error="this.error"
-      @clearError="this.error=''"/>
   <div id="header" class="flexRow alignCenter topMenu">
     <div class="invisibleContainer" @click="showMenuOptions=showCanvasOptions=false" v-if="showMenuOptions||showCanvasOptions"></div>
     <button class="buttonLight" @click="openMenuOptions">
@@ -77,13 +74,9 @@
   </div>
 </template>
 <script>
-import Error from "@/components/Error";
 
 export default {
   name: "TopMenu",
-  components: {
-    Error
-  },
   props: {
     canvasSize: {
       type: Object
@@ -99,7 +92,6 @@ export default {
   ],
   data() {
     return {
-      error: "",
       backgroundColor: "#eeeeee",
       backgroundFlag: true,
       showMenuOptions: false,
@@ -125,7 +117,7 @@ export default {
       let extensions = ['png', 'jpeg', 'jpg', 'svg']
       const imgFile = event.target.files[0];
       if (extensions.indexOf(imgFile.name.split('.').pop().toLowerCase()) == -1) {
-        this.error = "Расширение выбранного файла не поддерживается!"
+        this.$store.commit("setNotification", ["message","Расширение выбранного файла не поддерживается."])
         return
       } else {
         const reader = new FileReader();
@@ -135,7 +127,7 @@ export default {
             this.loadBackgroundImage(reader.result)
             this.$refs.imgInput.value = ""
           } catch (e) {
-            this.error = e.message
+            this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
           }
         };
       }
@@ -144,7 +136,7 @@ export default {
       try {
         const jsonFile = event.target.files[0];
         if (jsonFile.name.split('.').pop().toLowerCase() !== "json") {
-          this.error = "Выбранный файл не является файлом формата JSON!"
+          this.$store.commit("setNotification", ["message","Выбранный файл не является файлом формата JSON."])
         } else {
           const reader = new FileReader();
           reader.readAsText(jsonFile);
@@ -154,12 +146,12 @@ export default {
               this.$refs.jsonInput.value = ""
               this.$emit("loadJson", jsonData)
             } catch (e) {
-              this.error = e.message
+              this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
             }
           };
         }
       } catch (e) {
-        this.error = e.message
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     },
     loadBackgroundImage(base64) {

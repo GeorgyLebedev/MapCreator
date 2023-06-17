@@ -1,7 +1,4 @@
 <template>
-  <Error
-      :error="this.error"
-      @clearError="this.error=''"/>
   <Transition name="show">
     <cursor-panel v-if="tool=='cursor' && optionVisible" @closePanel="optionVisible=false"/>
   </Transition>
@@ -52,7 +49,6 @@
   </div>
 </template>
 <script>
-import Error from "@/components/Error";
 import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
 import cursorPanel from "@/components/mapCanvas/toolsPanel/cursorPanel";
@@ -66,7 +62,6 @@ import {mapGetters} from "vuex";
 export default {
   name: "ToolsPanel",
   components: {
-    Error,
     cursorPanel,
     brushPanel,
     stampPanel,
@@ -85,7 +80,6 @@ export default {
   emits: ['toolChange', 'optChange', 'update', 'removeSelect'],
   data() {
     return {
-      error: "",
       modalFlags: flags,
       tool: "cursor",
       lastColor: "",
@@ -102,7 +96,7 @@ export default {
         let response = await request.sendRequest()
         if (response && response.options) return response.options
       } catch (e) {
-        this.error = e
+        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     },
 

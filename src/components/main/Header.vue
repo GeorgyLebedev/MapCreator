@@ -1,7 +1,4 @@
 <template>
-  <Error
-      :error="this.error"
-      @clearError="this.error=''"/>
   <header>
     <img src="@/assets/images/logo.png" alt="" :height="50">
     <button type="button" class="buttonLight">
@@ -49,17 +46,12 @@
 
 <script>
 import AxiosRequest from "@/modules/services/axiosRequest";
-import Error from "@/components/Error";
 import {flags} from "@/modules/logic/flags";
 
 export default {
   name: 'HeaderComponent',
-  components:{
-    Error
-  },
   data() {
     return {
-      error:"",
       modalFlags: flags,
       user: {},
       registrationDate: "",
@@ -82,16 +74,16 @@ export default {
       if (!response.msg) {
         this.$router.go(0)
       }
-      this.error=response.msg
+      this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
     },
     loadAvatar() {
       let extensions = ['png', 'jpeg', 'jpg', 'svg']
       const avatar = event.target.files[0];
       if (extensions.indexOf(avatar.name.split('.').pop().toLowerCase()) == -1) {
-        this.error="Расширение выбранного файла не поддерживается!"
+        this.$store.commit("setNotification", ["message","Расширение выбранного файла не поддерживается!"])
         return
       } else if (avatar.size > 4e5) {
-        this.error="Размер загружаемого изображения не должен превышать 300 КБ!"
+        this.$store.commit("setNotification", ["message","Размер загружаемого изображения не должен превышать 300 КБ!\""])
       } else {
         const reader = new FileReader();
         reader.readAsDataURL(avatar);
@@ -100,7 +92,7 @@ export default {
             this.updateUserData({avatar:reader.result})
             this.$refs.avatarInput.value = ""
           } catch (e) {
-            this.error=e.message
+            this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
           }
         };
       }

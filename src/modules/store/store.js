@@ -12,7 +12,8 @@ const store = createStore({
     state: {
 	selectedTool: {},
 	cursorStyle: "default",
-	centerFlag:true
+	centerFlag:true,
+	notification:{}
     },
     getters:{
         getSelectedToolName(state){
@@ -26,6 +27,16 @@ const store = createStore({
 	}
     },
     mutations: {
+        setNotification(state, data){
+            let notification={type:data[0], message:data[1]}
+            Object.assign(state.notification,notification)
+	    setTimeout(()=>{
+	        store.commit("clearNotification")
+	    },15000)
+	},
+	clearNotification(state){
+            state.notification={}
+	},
 	setSelectedTool(state, tool) {
 	    store.commit("removeCurrentItem")
 	    if(selection.getters.getSelectedObject){

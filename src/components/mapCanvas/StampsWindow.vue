@@ -1,7 +1,4 @@
 <template>
-  <Error
-      :error="this.error"
-      @clearError="this.error=''"/>
     <div class="modalContainer">
       <div id="stampsWindow">
         <div class="modalHeader">
@@ -103,12 +100,8 @@
 </template>
 <script>
 import AxiosRequest from "@/modules/services/axiosRequest";
-import Error from "@/components/Error";
 export default {
   name: 'StampsWindow',
-  components:{
-    Error,
-  },
   props: {
     stampsProp: {
       type: Object,
@@ -128,7 +121,6 @@ export default {
   ],
   data() {
     return {
-      error: "",
       stamps: {},
       addNewKit: false,
       editKit: {},
@@ -197,7 +189,7 @@ export default {
       reader.onloadend = () => {
         base64 = reader.result
         if (Object.values(this.stamps[this.selectedKit]).includes(base64)) {
-          this.error= "В выбранном наборе уже есть такой штамп!"
+          this.$store.commit("setNotification", ["message","В выбранном наборе уже есть такой штамп!"])
           return
         }
         if(Object.keys(this.stamps[this.selectedKit]).length==0)
@@ -216,7 +208,7 @@ export default {
       response = await request.sendRequest()
       if (!response.msg)
         this.$emit('updateStamps', this.stamps)
-      else this.error=response.msg
+      else this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
     }
   },
   watch:{
