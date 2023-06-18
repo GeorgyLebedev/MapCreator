@@ -78,9 +78,49 @@ const store = createStore({
 	updateSelectedTool(state,tool){
 	    state.selectedTool=tool
 	},
-	/*updateSelectedToolOptions(state,options){
-
-	}*/
+	updateSelectedObjectPanelOptions(){
+            let keys, options={}
+	    const object=selection.state.selectedObject
+           switch (selection.state.selectedObject.data.type) {
+	       case "stamp":
+		   keys=Object.keys(stampOptions.state)
+		   keys.forEach(key=>{
+		       if(object[key]) store.commit("stampOptions/updateStampOptions",{[key]:object[key]})
+		   })
+		   keys.forEach(key=>{
+		       if(object.data[key]) store.commit("stampOptions/updateStampOptions",{[key]:object.data[key]})
+		   })
+	           break
+	       case "text":
+		   options.content = object.content
+		   options.fontFamily = object.fontFamily
+		   options.fontSize = object.fontSize
+		   options.justification = object.justification
+		   options.opacity = object.opacity
+		   options.rotation=object.data&&object.data.rotation?object.data.rotation:0
+		   options.fillColor = object.data.isFill ? object.fillColor.toCSS(true) : "transparent"
+		   options.strokeColor = object.data.isBorder ? object.strokeColor.toCSS(true) : "transparent"
+		   options.strokeWidth = object.data.isBorder ? object.strokeWidth : 0
+		   options.shadowColor = object.data.isShadow ? object.shadowColor.toCSS(true) : "transparent"
+		   options.shadowBlur = object.data.isShadow ? object.shadowBlur : 0
+		   options.shadowOffset = object.shadowOffset
+		   options.isBorder = object.data.isBorder
+		   options.isFill = object.data.isFill
+		   options.isShadow = object.data.isShadow
+		    store.commit("textOptions/updateTextOptions",options)
+	           break
+	       case "shape":
+		   options.strokeColor = object.data.isBorder ? object.strokeColor.toCSS(true) : "transparent"
+		   options.fillColor = object.data.isFill ? object.fillColor.toCSS(true) : "transparent"
+		   options.strokeWidth = object.data.isBorder ? object.strokeWidth : 0
+		   options.opacity = object.opacity
+		   options.rotation=object.data&&object.data.rotation?object.data.rotation:0
+		   options.isBorder = object.data.isBorder
+		   options.isFill = object.data.isFill
+		   store.commit("shapeOptions/updateShapeOptions",options)
+	           break
+	   }
+	},
 	setCursorStyle(state,style){
 	    state.cursorStyle=style
 	}

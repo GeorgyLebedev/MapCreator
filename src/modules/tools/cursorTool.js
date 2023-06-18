@@ -75,36 +75,6 @@ export default class cursorTool {
 	item.sendToBack()
 	this.selection.set(item)
     }
-    updateItem(item, options) {
-	switch (item.data.type) {
-	    case "text":
-		item.shadowColor = options.isShadow ? options.shadowColor : "transparent"
-		item.shadowBlur = options.isShadow ? options.shadowBlur : 0
-		item.shadowOffset = options.isShadow ? new paper.Point(Number(options.shOffsetX), Number(options.shOffsetY)) : undefined
-		item.data.shOffsetX = options.isShadow ? options.shOffsetX : 0
-		item.data.shOffsetY = options.isShadow ? options.shOffsetY : 0
-		item.strokeColor = options.isBorder ? options.strokeColor : "transparent"
-		item.fillColor = options.isFill ? options.fillColor : new paper.Color(0, 0, 0, 1e-6)
-		item.strokeWidth = options.isBorder ? options.strokeWidth : 0
-		item.data.isBorder = options.isBorder ? options.isBorder : false
-		item.data.isFill = options.isFill ? options.isFill : false
-		item.data.isShadow = options.isShadow ? options.isShadow : false
-		break
-	    case "shape":
-		item.opacity = options.opacity
-		item.strokeColor = options.isBorder ? options.strokeColor : "transparent"
-		item.fillColor = options.isFill ? options.fillColor : "transparent"
-		item.strokeWidth = options.isBorder ? options.strokeWidth : 0
-		item.data.isBorder = options.isBorder ? options.isBorder : false
-		item.data.isFill = options.isFill ? options.isFill : false
-		item.data.isShadow = options.isShadow ? options.isShadow : false
-		item.rotation = options.rotation
-		break
-	    case "stamp":
-		item.source= item.data.stamp
-		item.size = options.size
-	}
-    }
     contextMenuVisible(flag, position = null) {
 	this.showContextMenu = flag
 	let windowX = document.documentElement.clientWidth

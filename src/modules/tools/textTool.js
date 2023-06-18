@@ -32,15 +32,13 @@ export default class textTool {
 		strokeWidth: this.isBorder ? this.strokeWidth : 0,
 		shadowColor: this.isShadow ? this.shadowColor : "transparent",
 		shadowBlur: this.isShadow ? this.shadowBlur : 0,
-		shadowOffset: this.isShadow ? new paper.Point(Number(this.shOffsetX), Number(this.shOffsetY)) : undefined,
+		shadowOffset: this.isShadow ? this.shadowOffset: undefined,
 	    })
 	    this.currentItem.data = {
 	        type: "text",
 		isBorder: this.isBorder,
 		isFill: this.isFill,
 		isShadow: this.isShadow,
-		shOffsetX: this.isShadow ? this.shOffsetX : 0,
-		shOffsetY: this.isShadow ? this.shOffsetY : 0,
 	    }
 	    store.commit("updateSelectedTool", this)
 	}

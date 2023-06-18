@@ -1,12 +1,11 @@
 <template>
-  <div id="shapesOpt" class="toolsOptions"
-       v-if="true || (selectedObject && selectedObject.data.type=='shape')">
+  <div id="shapesOpt" class="toolsOptions">
     <div class="flexRow justifyBetween alignCenter">
       <b> Фигуры </b>
       <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursorPointer" height="20" alt="">
     </div>
     <hr>
-    <div v-if="!(selectedObject && selectedObject.data.type=='shape')">
+    <div v-if="!Object.keys(this.selectedObject).length">
       <p> Вид фигуры:</p>
       <div class="flexRow">
         <button class="typeSelectButton"
@@ -117,6 +116,7 @@
 <script>
 import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette";
 import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors";
+import {mapGetters} from "vuex";
 
 export default {
   name: "shapePanel",
@@ -124,10 +124,10 @@ export default {
     RecentColors,
     ColorsPalette
   },
-  props: {
-    selectedObject: Object,
-  },
   computed: {
+    ...mapGetters({
+      selectedObject:'selection/getSelectedObject'
+    }),
     shapeType: {
       get() {
         return this.$store.state.shapeOptions.shapeType

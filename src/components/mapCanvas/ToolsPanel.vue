@@ -132,21 +132,22 @@ export default {
         if (val) {
           this.optionVisible = false
           if (val.data.type == "text") {
-            this.textOpt.content = val.content
-            this.textOpt.fontFamily = val.fontFamily
-            this.textOpt.fontSize = val.fontSize
-            this.textOpt.justification = val.justification
-            this.textOpt.fillColor = val.data.isFill ? val.fillColor.toCSS(true) : "transparent"
-            this.textOpt.strokeColor = val.data.isBorder ? val.strokeColor.toCSS(true) : "transparent"
-            this.textOpt.strokeWidth = val.data.isBorder ? val.strokeWidth : 0
-            this.textOpt.shadowColor = val.data.isShadow ? val.shadowColor.toCSS(true) : "transparent"
-            this.textOpt.shadowBlur = val.data.isShadow ? val.shadowBlur : 0
-            this.textOpt.shOffsetX = val.data.shOffsetX
-            this.textOpt.shOffsetY = val.data.shOffsetY
-            this.textOpt.opacity = val.opacity
-            this.textOpt.isBorder = val.data.isBorder
-            this.textOpt.isFill = val.data.isFill
-            this.textOpt.isShadow = val.data.isShadow
+            this.textOpt.content = selectedObj.content
+            this.textOpt.fontFamily = selectedObj.fontFamily
+            this.textOpt.fontSize = selectedObj.fontSize
+            this.textOpt.justification = selectedObj.justification
+             this.textOpt.opacity = selectedObj.opacity
+            this.textOpt.fillColor = selectedObj.data.isFill ? val.fillColor.toCSS(true) : "transparent"
+            this.textOpt.strokeColor = selectedObj.data.isBorder ? val.strokeColor.toCSS(true) : "transparent"
+            this.textOpt.strokeWidth = selectedObj.data.isBorder ? val.strokeWidth : 0
+            this.textOpt.shadowColor = selectedObj.data.isShadow ? val.shadowColor.toCSS(true) : "transparent"
+            this.textOpt.shadowBlur = selectedObj.data.isShadow ? val.shadowBlur : 0
+            this.textOpt.shOffsetX = selectedObj.data.shOffsetX
+            this.textOpt.shOffsetY = selectedObj.data.shOffsetY
+
+            this.textOpt.isBorder = selectedObj.data.isBorder
+            this.textOpt.isFill = selectedObj.data.isFill
+            this.textOpt.isShadow = selectedObj.data.isShadow
           }
           if (val.data.type == "shape") {
             this.shapeOpt.strokeColor = val.data.isBorder ? val.strokeColor.toCSS(true) : "transparent"

@@ -272,18 +272,18 @@ export default {
     },
     shOffsetX: {
       get(){
-        return this.$store.state.textOptions.shOffsetX
+        return this.$store.state.textOptions.shadowOffset[0]
       },
       set(value){
-        this.$store.commit('textOptions/updateTextOptions', {shOffsetX:value})
+        this.$store.commit('textOptions/updateTextOptions', {shadowOffset:[value, this.$store.state.textOptions.shadowOffset[1]]})
       }
     },
     shOffsetY: {
       get(){
-        return this.$store.state.textOptions.shOffsetY
+        return this.$store.state.textOptions.shadowOffset[1]
       },
       set(value){
-        this.$store.commit('textOptions/updateTextOptions', {shOffsetY:value})
+        this.$store.commit('textOptions/updateTextOptions', {shadowOffset:[this.$store.state.textOptions.shadowOffset[0],value]})
       }
     },
     opacity: {

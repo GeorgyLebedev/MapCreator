@@ -11,8 +11,7 @@ const textOptions = {
 	strokeWidth: 1,
 	shadowColor: "#000000",
 	shadowBlur: 1,
-	shOffsetX: 0,
-	shOffsetY: 0,
+	shadowOffset:[0,0],
 	opacity: 1,
 	rotation: 0,
 	isBorder: true,
@@ -21,7 +20,12 @@ const textOptions = {
     },
     mutations: {
 	updateTextOptions(state, option){
-	    state = Object.assign( state, option)
+	    //console.log(option)
+	    state = Object.assign(state, option)
+	    const selectedObject = this.getters["selection/getSelectedObject"]
+	    if (selectedObject) {
+		this.commit("selection/updateSelectedObject", state)
+	    }
 	}
     }
 }

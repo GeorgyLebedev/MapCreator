@@ -23,8 +23,8 @@ export default class stampTool {
 		opacity: this.opacity,
 		rotation: this.rotation
 	    })
-	    this.currentItem.data.set = this.currentKit
-	    this.currentItem.data.stamp = this.currentStamp
+	    this.currentItem.data.currentKit = this.currentKit
+	    this.currentItem.data.currentStamp = this.currentStamp
 	    this.currentItem.data.type="stamp"
 	    store.commit("updateSelectedTool", this)
 	}

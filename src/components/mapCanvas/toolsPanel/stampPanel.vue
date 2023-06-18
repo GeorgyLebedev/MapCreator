@@ -12,7 +12,7 @@
         <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursorPointer" height="20" alt="">
       </div>
       <hr>
-      <section v-if="!selectedObject" class="flexColumn ">
+      <section class="flexColumn " v-if="!Object.keys(this.selectedObject).length">
         <div class="stampsContainer flexRow" v-if="currentKitLength>0">
           <div class="bigStampContainer flexColumn">
             <div class="bigStamp">
@@ -61,6 +61,7 @@
 <script>
 import {flags} from "@/modules/logic/flags";
 import stampsWindow from "@/components/mapCanvas/StampsWindow";
+import {mapGetters} from "vuex";
 export default {
   name: "stampPanel",
   components:{
@@ -68,7 +69,6 @@ export default {
   },
   props:{
     stampsProp: Object,
-    selectedObject: Object
   },
   emits:['closePanel'],
   data(){
@@ -87,6 +87,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      selectedObject:'selection/getSelectedObject'
+    }),
     size:{
       get(){
         return this.$store.state.stampOptions.size

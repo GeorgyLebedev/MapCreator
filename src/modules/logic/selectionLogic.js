@@ -8,6 +8,11 @@ export default class selectionLogic {
             if(mutation.type=="selection/removeSelection"){
                 this.remove()
             }
+            if(mutation.type=="selection/updateSelectedObject" && this.selectionGroup){
+                this.selectionGroup.removeChildren()
+                this.selectionGroup = this.build(new paper.Group(), this.selectedObject)
+                store.commit("selection/setSelectionGroup",this.selectionGroup)
+            }
         })
     }
     set(item){
@@ -30,6 +35,7 @@ export default class selectionLogic {
     }
     build(group, item){
         if(!item) return
+        item.applyMatrix=false
         let rotateStart, rotateEnd, angle = 0
         let boundRect = new paper.Path.Rectangle({
             rectangle: item.strokeBounds,
