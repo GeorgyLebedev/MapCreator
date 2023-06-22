@@ -57,23 +57,27 @@ export default class cursorTool {
 	paper.project.activeLayer.addChild(newItem)
 	this.selection.remove()
 	this.selection.set(newItem)
+	store.commit('addChanges')
     }
     removeItem(item=this.selection.selectedObject) {
 	if(!item) return
         this.selection.remove()
 	item.remove()
+	store.commit('addChanges')
     }
     setToFront(item=this.selection.selectedObject) {
 	if(!item) return
         this.selection.remove()
 	item.bringToFront()
 	this.selection.set(item)
+	store.commit('addChanges')
     }
     setToBack(item=this.selection.selectedObject) {
 	if(!item) return
         this.selection.remove()
 	item.sendToBack()
 	this.selection.set(item)
+	store.commit('addChanges')
     }
     contextMenuVisible(flag, position = null) {
 	this.showContextMenu = flag

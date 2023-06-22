@@ -30,6 +30,7 @@ export default class stampTool {
 	}
 	this.instance.onMouseDown = () => {
 	    this.currentItem.clone()
+	    store.commit('addChanges')
 	}
     }
     activate(){

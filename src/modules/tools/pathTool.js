@@ -60,6 +60,7 @@ export default class pathTool {
 		    else {
 			this.currentItem.clone()
 			initPoint = undefined
+			store.commit('addChanges')
 		    }
 		}
 		break
@@ -97,6 +98,7 @@ export default class pathTool {
 			initPoint=undefined
 			this.currentItem.clone()
 			this.currentItem.remove()
+			store.commit('addChanges')
 			return;
 		    }
 		    if (!initPoint) {
@@ -185,6 +187,7 @@ export default class pathTool {
 			initPoint=undefined
 			this.currentItem.clone()
 			this.currentItem.remove()
+			store.commit('addChanges')
 			return;
 		    }
 		    if (!initPoint) {

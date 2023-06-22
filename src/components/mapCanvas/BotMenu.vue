@@ -7,7 +7,7 @@
         </button>
         <section class="changesContent">
         <u><b>Изменений: {{ changes }}</b></u>
-        <span>{{statusProp}}</span>
+        <span>{{changes>0?'Не сохранено':'Нет изменений'}}</span>
         </section>
       </div>
       <section class="flexRow alignCenter">
@@ -28,11 +28,12 @@
 </template>
 <script>
 
+import {mapGetters} from "vuex";
+
 export default {
   name: "BotMenu",
   data() {
     return {
-      changes: 0,
       scale: 1,
     }
   },
@@ -46,10 +47,13 @@ export default {
   },
   props: {
     scaleProp: Number,
-    changesProp: Number,
-    statusProp: String
   },
   emits:['resetAlign','zoom','resetScale','saveMap'],
+  computed:{
+    ...mapGetters({
+    changes: "getChangesCount"
+    })
+  },
   watch: {
     scaleProp(val) {
       this.scale = val

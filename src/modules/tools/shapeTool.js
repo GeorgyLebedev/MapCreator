@@ -31,6 +31,7 @@ export default class shapeTool {
 			this.currentItem.data.type="shape"
 			this.currentItem.clone()
 			this.initPoint = undefined
+			store.commit('addChanges')
 		    }
 		}
 		this.instance.onMouseMove = (event) => {
@@ -69,6 +70,7 @@ export default class shapeTool {
 			this.currentItem.data.type="shape"
 			this.currentItem.clone()
 			this.initPoint = undefined
+			store.commit('addChanges')
 		    }
 		}
 		this.instance.onMouseMove = (event) => {
@@ -103,6 +105,7 @@ export default class shapeTool {
 			this.currentItem.data.type="shape"
 			this.currentItem.clone()
 			this.initPoint = undefined
+			store.commit('addChanges')
 		    }
 		}
 		this.instance.onMouseMove = (event) => {
@@ -147,6 +150,7 @@ export default class shapeTool {
 			this.currentItem.clone()
 			this.currentItem.remove()
 			this.initPoint = undefined
+			store.commit('addChanges')
 			return
 		    }
 		    if (!this.initPoint) {

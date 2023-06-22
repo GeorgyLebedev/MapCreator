@@ -48,6 +48,7 @@ export default class brushTool {
 	this.instance.onMouseUp = (event) => {
 	    path.add(event.point);
 	    path.smooth();
+	    store.commit('addChanges')
 	}
 	store.commit("updateSelectedTool", this)
     }

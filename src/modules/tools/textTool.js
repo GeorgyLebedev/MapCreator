@@ -44,6 +44,7 @@ export default class textTool {
 	}
 	this.instance.onMouseDown = () => {
 	    this.currentItem.clone()
+	    store.commit('addChanges')
 	}
 
     }

@@ -18,6 +18,12 @@ const selection = {
 	},
 	updateSelectedObject(state, options) {
 	    Object.assign(state.selectedObject,options)
+	 /*   if(state.selectedObject.data.type=="stamp") {
+		let size = options.size
+		state.selectedObject.size=size
+		state.selectedObject.source=state.selectedObject.data.currentStamp
+		state.selectedObject.size=size
+	    }*/
 	},
 	removeSelection(state) {
 	    state.selectionGroup = {}

@@ -35,6 +35,7 @@ export default class selectionLogic {
     }
     build(group, item){
         if(!item) return
+        if(item.applyMatrix)
         item.applyMatrix=false
         let rotateStart, rotateEnd, angle = 0
         let boundRect = new paper.Path.Rectangle({
@@ -139,10 +140,11 @@ export default class selectionLogic {
                     let oldSize=item.bounds.size
                     let rotate=item.rotation?item.rotation:0
                     item.matrix= new paper.Matrix()
-                    item.source = item.data.stamp
+                    item.source = item.data.currentStamp
                     item.position=group.position
                     item.rotation=rotate
                     item.size=oldSize
+                    store.commit("stampOptions/updateSize", item.size.width)
                 }
             }
         })
@@ -160,6 +162,18 @@ export default class selectionLogic {
         }
         boundCircle.onMouseUp = () => {
             angle = undefined
+            switch (item.data.type){
+                case "stamp":
+                    store.commit("stampOptions/updateRotation", item.rotation)
+                    break;
+                case "text":
+                    store.commit('textOptions/updateRotation',item.rotation)
+                    break;
+                case "shape":
+                    store.commit('shapeOptions/updateRotation', item.rotation)
+                    break
+            }
+
         }
         boundCircle.onMouseDrag = (event) => {
             if (angle) {

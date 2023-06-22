@@ -13,7 +13,8 @@ const store = createStore({
 	selectedTool: {},
 	cursorStyle: "default",
 	centerFlag:true,
-	notification:{}
+	notification:{},
+	changes: 0,
     },
     getters:{
         getSelectedToolName(state){
@@ -24,6 +25,9 @@ const store = createStore({
 	},
 	getCenterFlag(state){
             return state.centerFlag
+	},
+	getChangesCount(state){
+            return state.changes
 	}
     },
     mutations: {
@@ -36,6 +40,12 @@ const store = createStore({
 	},
 	clearNotification(state){
             state.notification={}
+	},
+	clearChanges(state){
+            state.changes=0
+	},
+	addChanges(state){
+            state.changes++
 	},
 	setSelectedTool(state, tool) {
 	    store.commit("removeCurrentItem")
@@ -79,17 +89,14 @@ const store = createStore({
 	    state.selectedTool=tool
 	},
 	updateSelectedObjectPanelOptions(){
-            let keys, options={}
+            let options={}
 	    const object=selection.state.selectedObject
            switch (selection.state.selectedObject.data.type) {
 	       case "stamp":
-		   keys=Object.keys(stampOptions.state)
-		   keys.forEach(key=>{
-		       if(object[key]) store.commit("stampOptions/updateStampOptions",{[key]:object[key]})
-		   })
-		   keys.forEach(key=>{
-		       if(object.data[key]) store.commit("stampOptions/updateStampOptions",{[key]:object.data[key]})
-		   })
+		   options.opacity=object.opacity
+		   options.rotation=object.rotation?object.rotation:0
+		   options.size=object.size.width
+		   store.commit("stampOptions/updateStampOptions",options)
 	           break
 	       case "text":
 		   options.content = object.content
@@ -97,7 +104,7 @@ const store = createStore({
 		   options.fontSize = object.fontSize
 		   options.justification = object.justification
 		   options.opacity = object.opacity
-		   options.rotation=object.data&&object.data.rotation?object.data.rotation:0
+		   options.rotation=object.rotation?object.rotation:0
 		   options.fillColor = object.data.isFill ? object.fillColor.toCSS(true) : "transparent"
 		   options.strokeColor = object.data.isBorder ? object.strokeColor.toCSS(true) : "transparent"
 		   options.strokeWidth = object.data.isBorder ? object.strokeWidth : 0
@@ -114,7 +121,7 @@ const store = createStore({
 		   options.fillColor = object.data.isFill ? object.fillColor.toCSS(true) : "transparent"
 		   options.strokeWidth = object.data.isBorder ? object.strokeWidth : 0
 		   options.opacity = object.opacity
-		   options.rotation=object.data&&object.data.rotation?object.data.rotation:0
+		   options.rotation=object.rotation?object.rotation:0
 		   options.isBorder = object.data.isBorder
 		   options.isFill = object.data.isFill
 		   store.commit("shapeOptions/updateShapeOptions",options)

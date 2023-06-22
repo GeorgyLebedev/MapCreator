@@ -49,7 +49,7 @@
           modalFlags.showImgLoadWin = true
         }"
         @setCanvasBackground="(background)=>{canvas.setBackground(background)}"
-        @removeCanvasBackground="canvas.removeBackground().bind(canvas)"
+        @removeCanvasBackground="canvas.removeBackground().bind(this.canvas)"
         @loadJson="canvas.loadProject"
     />
     <ToolsPanel
@@ -60,8 +60,6 @@
         @zoom="(event, step, mode)=>{zoom(event, step, mode, this.canvas)}"
         @resetScale="canvas.resetScale()"
         @saveMap="updateMapObjects(currentMap)"
-        :status-prop="this.saveStatus"
-        :changes-prop="canvas.changes"
         :scale-prop="Number(canvas.scale)"/>
     <div class="CanvasArea" id="canvasBox" @wheel="zoom(event,0.2, null, canvas)">
       <canvas id="map" :width="this.canvas.CSSwidth" :height="this.canvas.CSSheight"
@@ -106,7 +104,6 @@ export default {
   },
   data() {
     return {
-      saveStatus: "Нет изменений",
       modalFlags: flags,
       currentMap: {
         title: "",
@@ -205,8 +202,7 @@ export default {
         request = new AxiosRequest(`map/${map._id}`, "put", {objects:objects}) //запрос
         await request.sendRequest()
         this.$store.commit("setNotification", ["success","Успешно сохранено!"])
-        this.canvas.changes=0
-        this.saveStatus="Сохранено"
+        this.$store.commit("clearChanges")
       }
       catch (e) {
         this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
@@ -247,8 +243,9 @@ export default {
     window.addEventListener("resize", this.canvas.resetCoords.bind(this.canvas));
   },
   watch: {
-    'activeLayer.children.length'(old, val) {
+ /*   'activeLayer.children.length'(old, val) {
       if(val) {
+        console.log(this.activeLayer.children)
         const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
         if(filteredArr.length>0) {
           const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
@@ -258,7 +255,7 @@ export default {
         }
         this.saveStatus=this.canvas.changes>0?"Не сохранено":"Нет изменений"
       }
-    },
+    },*/
   }
 }
 </script>

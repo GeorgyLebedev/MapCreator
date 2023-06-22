@@ -19,9 +19,12 @@ const shapeOptions = {
         updateShapeOptions(state, option) {
             state = Object.assign(state, option)
             const selectedObject = this.getters["selection/getSelectedObject"]
-            if (selectedObject) {
+            if (Object.keys(selectedObject).length>0) {
                 this.commit("selection/updateSelectedObject", state)
             }
+        },
+        updateRotation(state, value){
+            state.rotation=value
         }
     }
 }
