@@ -7,7 +7,7 @@ import pathOptions from "@/modules/store/pathOptions";
 import textOptions from "@/modules/store/textOptions";
 import colorsStore from "@/modules/store/colorsStore";
 import selection from "@/modules/store/selection";
-
+import modalFlags from "@/modules/store/modalFlags";
 const store = createStore({
     state: {
 	selectedTool: {},
@@ -140,7 +140,8 @@ const store = createStore({
 	pathOptions,
 	textOptions,
 	colorsStore,
-	selection
+	selection,
+	modalFlags
     }
 })
 export default store

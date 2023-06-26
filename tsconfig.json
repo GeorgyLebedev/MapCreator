@@ -1,10 +1,44 @@
 {
   "compilerOptions": {
+    "strictNullChecks": true,
+    "noImplicitAny": true,
     "target": "esnext",
     "module": "esnext",
-    // this enables stricter inference for data properties on `this`
+    "esModuleInterop": true,
     "strict": true,
+    "outDir": "./dist",
     "jsx": "preserve",
-    "moduleResolution": "node"
-  }
+    "moduleResolution": "node",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "types": [
+      "webpack-env"
+    ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

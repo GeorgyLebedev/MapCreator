@@ -1,9 +1,9 @@
 <template>
-  <div class="ms-4 mt-4 d-flex ">
-    <div class="fw-bold main">
+  <div class="content ">
+    <div class="main">
       <img src="@/assets/images/404.png" height="150" alt="">
       <p class="fs-1">Кажется, такой страницы не существует</p>
-      <a href="/" class="text-decoration-underline fw-bolder fs-5">На главную</a>
+      <a href="/" class="text-decoration-underline fw-bolder fs-5"><u><h4>На главную</h4></u></a>
     </div>
     <div class="arrowContainer">
       <div class="main-arrow">
@@ -13,13 +13,20 @@
     </div>
   </div>
 </template>
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "NotFound"
-}
+})
 </script>
 <style scoped>
+.content{
+  display: flex;
+  margin:10px
+}
 .main{
+  font-weight: bolder;
   width: 80%;
   min-width: 700px;
 }
@@ -53,7 +60,7 @@ export default {
   height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
-  border-bottom: 150px solid #3d4551;
+  border-bottom: 150px solid #000;
   position: relative;
 }
 

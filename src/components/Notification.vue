@@ -12,15 +12,20 @@
     </div>
   </transition>
 </template>
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+interface Notification{
+  type:string,
+  message:string
+}
+export default defineComponent({
   name: "NotifyComponent",
   computed: {
-    notification() {
+    notification():Notification {
       return this.$store.state.notification;
     },
-    title() {
-      let value = ""
+    title():string {
+      let value:string = ""
       switch (this.notification.type) {
         case "error":
           value = "\u274c Ошибка!"
@@ -35,7 +40,7 @@ export default {
       return value
     }
   }
-}
+})
 </script>
 <style scoped>
 img{

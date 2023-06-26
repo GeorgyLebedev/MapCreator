@@ -111,7 +111,9 @@ input[type="checkbox"]+label{
 .selected >img{
     filter: invert(1);
 }
-
+.cursorPointer{
+    cursor: pointer;
+}
 html {
     --scrollbarBG: #e3e9f4;
     --thumbBG: #728391;
