@@ -1,17 +1,21 @@
 import axios from "axios"; //подключаем axios
 axios.defaults.withCredentials=true //позволяем axios передавать cookie с запросами
 export default class AxiosRequest {
-    baseURL="http://localhost:1111/" //базовый URL сервера
-    constructor(url, method, data={}) {
+    private baseURL="http://localhost:1111/" //базовый URL сервера
+	authHeader: string
+	url:string
+	method:string
+	data:any
+
+    constructor(url:string, method:string, data:any={}) {
 	this.authHeader=`Bearer ${localStorage.getItem('TOKEN')}` //прикрепляем токен авторизации
 	this.url = this.baseURL+url; //получаем полный URL
 	this.method = method; // GET, POST, PUT, DELETE
 	this.data = data; //данные
     }
     async sendRequest() { //отправить запрос
-        let response
 	try {
-            response = (await axios({ //ожидание отправки запроса
+		const response:any = (await axios({ //ожидание отправки запроса
 		method: this.method,
 		url: this.url,
 		headers: {
@@ -19,11 +23,10 @@ export default class AxiosRequest {
 		},
 		data: this.data
 	    })).data
-	    if(response.newToken) { //если получен новый токен
+	    if(response?.newToken) { //если получен новый токен
 		localStorage.setItem('TOKEN', response.newToken)//обновляем его
-		localStorage.setItem('USER', response.username)
 		this.authHeader=`Bearer ${localStorage.getItem('TOKEN')}`
-		let responseRepeat = (await axios({ //и повторяем прошлый запрос
+		const responseRepeat = (await axios({ //и повторяем прошлый запрос
 		    method: this.method,
 		    url: this.url,
 		    headers: {
@@ -35,7 +38,7 @@ export default class AxiosRequest {
 	    }
 	    else
 	    return response
-	} catch (e) {
+	} catch (e:any) {
 	    return {msg:e.message}
 	}
     }

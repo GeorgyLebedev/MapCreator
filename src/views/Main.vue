@@ -37,13 +37,15 @@
 </template>
 <script lang="ts">
 import Header from '@/components/main/Header.vue'
-import MapCard from "@/components/main/MapCard";
-import NewMapWindow from "@/components/main/NewMapWindow";
-import MapEditWindow from "@/components/MapEditWindow";
-import MapDeleteWindow from "@/components/main/MapDeleteWindow";
+import MapCard from "@/components/main/MapCard.vue";
+import NewMapWindow from "@/components/main/NewMapWindow.vue";
+import MapEditWindow from "@/components/MapEditWindow.vue";
+import MapDeleteWindow from "@/components/main/MapDeleteWindow.vue";
 import {defineComponent} from "vue";
 import {logOut, addNewMap, updateMapMetadata, getMaps, deleteMap} from "@/modules/services/mainPageUtils";
 import {mapGetters} from "vuex";
+import Imap from "@/modules/intefaces/map";
+
 export default defineComponent({
   name: 'MainPage',
   components: {
@@ -55,16 +57,25 @@ export default defineComponent({
   },
   data() {
     return {
-      selectedMap: {},
-      mapList: [] as object[]|undefined,
+      selectedMap: {} as Imap,
+      mapList: [] as Imap[] | undefined,
     }
   },
   methods: {
     logOut: logOut,
-    addNewMap:addNewMap,
-    updateMapMetadata:updateMapMetadata,
-    getMaps:getMaps,
-    deleteMap:deleteMap
+    async addNewMap(title: string, resolution: string) {
+      await addNewMap(title, resolution)
+      this.mapList = await this.getMaps()
+    },
+    async updateMapMetadata(selectedMap:Imap) {
+      await updateMapMetadata(selectedMap)
+      this.mapList = await this.getMaps()
+    },
+    getMaps: getMaps,
+    async deleteMap(selectedMap:Imap) {
+      await deleteMap(selectedMap)
+      this.mapList = await this.getMaps()
+    }
   },
   computed: {
     ...mapGetters({
@@ -76,7 +87,7 @@ export default defineComponent({
   },
   async created() {
     if (!localStorage.getItem('TOKEN')) await this.logOut()
-    this.mapList=await this.getMaps()
+    this.mapList = await this.getMaps()
   }
 })
 </script>
@@ -96,6 +107,7 @@ export default defineComponent({
   margin-bottom: 20px;
   margin-left: 20px;
 }
+
 .newMap {
   display: flex;
   flex-direction: column;
