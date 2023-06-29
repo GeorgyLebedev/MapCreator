@@ -68,7 +68,6 @@ router.post('/confirm', async (req, res) => {
 });
 //Добавление записи
 router.post('/', async (req, res) => {
-    if(req.body.verified) {
         try {
 	    req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
 	    let activeRecord = new userModel(req.body)
@@ -78,7 +77,6 @@ router.post('/', async (req, res) => {
 	catch (e) {
 	    res.json({msg:e.message})
 	}
-    }
 });
 //Обновление пароля
 router.put('/:id', async (req, res) => {
