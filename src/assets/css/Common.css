@@ -18,6 +18,13 @@ input[type='text'],input[type='email'],input[type='password'], textarea{
     border-radius: 10px;
     padding-inline: 10px;
 }
+.defaultInput {
+    width: 300px;
+    font-size: 16pt;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
 input[type="checkbox"] {
     appearance: none;
     -webkit-appearance: none;
@@ -69,8 +76,6 @@ input[type="checkbox"]+label{
     border: 1pt solid #3d4551;
     color: #ea5c41;
     font-weight: bolder;
-    padding-block: 5px;
-    padding-inline: 10px;
     margin:5px;
     cursor: pointer;
     outline: none;
@@ -81,8 +86,6 @@ input[type="checkbox"]+label{
     border: 1pt solid #3d4551;
     color: #3d4551;
     font-weight: bolder;
-    padding-block: 5px;
-    padding-inline: 10px;
     margin:5px;
     cursor: pointer;
     outline: none;
@@ -90,6 +93,21 @@ input[type="checkbox"]+label{
 .buttonLight:disabled, .buttonDark:disabled{
     opacity: 0.5;
     cursor: default;
+}
+.buttonSmall, .buttonSmall:hover{
+    font-size: 12pt;
+    padding-block: 5px;
+    padding-inline: 10px;
+}
+.buttonMiddle, .buttonMiddle:hover{
+    font-size: 16pt;
+    padding-block: 5px;
+    padding-inline: 15px;
+}
+.buttonLarge, .buttonLarge:hover{
+    font-size: 18pt;
+    padding-block: 10px;
+    padding-inline: 25px;
 }
 .dropdownFlag{
     width: 15px;

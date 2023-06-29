@@ -2,18 +2,18 @@
   <form class="loginForm" id="logIn">
     <div>
       Email: <br>
-      <input type="email" required  ref="enterEmail" v-model="username"
+      <input class="defaultInput" type="email" required  ref="enterEmail" v-model="username"
              placeholder="Ваш email ">
     </div>
     <div>
       Пароль:<br>
-      <input type="password" required v-model="password"
+      <input class="defaultInput" type="password" required v-model="password"
              placeholder="*********">
       <div id="forgotPassword" class="">
-        <span href="" @click="$store.commit('userState/setTab','forgotPassword')">Забыли пароль?</span>
+        <span href="" @click="this.$store.commit('userState/setTab','forgotPassword')">Забыли пароль?</span>
       </div>
     </div>
-    <button type="button" class="buttonDark" :disabled="!validForm"
+    <button type="button" class="buttonDark buttonLarge" :disabled="!validForm"
             @click="this.$store.dispatch('userState/enter')">Войти
     </button>
   </form>

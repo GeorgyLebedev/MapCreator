@@ -34,7 +34,7 @@
             </div>
           </div>
         </div>
-        <button class="buttonLight" @click="modalFlags.showStampsWin=true">Открыть каталог</button>
+        <button class="buttonLight buttonSmall" @click="modalFlags.showStampsWin=true">Открыть каталог</button>
         <hr>
       </section>
       <div class="flexRow alignCenter" title="Размер иконок">

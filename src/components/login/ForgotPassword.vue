@@ -1,14 +1,14 @@
 <template>
   <div class="forgotPasswordForm">
     Введите E-mail, указанный при регистрации: <br>
-    <input type="email" class="loginPageInput" ref="resetEmail" v-model="emailToPasReset"
+    <input type="email" class="defaultInput"  ref="resetEmail" v-model="emailToPasReset"
            placeholder="Ваш E-mail">
     <div>
-      <button type="button" class="buttonLight"  @click="$store.commit('userState/setTab','logIn')">
+      <button type="button" class="buttonLight buttonLarge"  @click="this.$store.commit('userState/setTab','logIn')">
         Отмена
       </button>
-      <button type="button" class="buttonDark"
-              :disabled="!isValidEmail(emailToPasReset)" @click="$store.dispatch('userState/resetPassword')">
+      <button type="button" class="buttonDark buttonLarge"
+              :disabled="!isValidEmail(emailToPasReset)" @click="this.$store.dispatch('userState/resetPassword')">
         Далее
       </button>
     </div>

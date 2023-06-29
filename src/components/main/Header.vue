@@ -1,7 +1,7 @@
 <template>
   <header>
     <img src="@/assets/images/logo.png" alt="" :height="50">
-    <button type="button" class="buttonLight">
+    <button type="button" class="buttonLight buttonMiddle">
       <a href="/mcmanual.pdf" download>Справка</a>
     </button>
     <div class="userPanel">
@@ -37,7 +37,7 @@
         <section class="regDateText">Дата регистрации: {{ registrationDate }}</section>
         <hr>
         <a href="/Login">
-          <button type="button" class="buttonLight" @click="logOut()">Выход</button>
+          <button type="button" class="buttonLight buttonMiddle" @click="logOut()">Выход</button>
         </a>
       </div>
     </div>
@@ -230,9 +230,6 @@ hr {
 .newLoginForm input{
   max-width: 200px;
   padding: 5px;
-}
-.buttonLight{
-  font-size: large;
 }
 .buttonLight:hover a{
   color:#ea5c41;

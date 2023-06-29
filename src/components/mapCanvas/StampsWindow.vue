@@ -29,8 +29,8 @@
               <div class="deleteConfirm kitConfirm" v-if="kitDeleteConfirm[key]" :key=key>
                 Вы уверены, что хотите удалить данный набор?
                 <div class="flexRow">
-                  <button type="button" class="buttonDark" @click="deleteKit(key)">Удалить</button>
-                  <button type="button" class="buttonLight" @click="kitDeleteConfirm[key]=false">Отмена</button>
+                  <button type="button" class="buttonDark buttonSmall" @click="deleteKit(key)">Удалить</button>
+                  <button type="button" class="buttonLight buttonSmall" @click="kitDeleteConfirm[key]=false">Отмена</button>
                 </div>
               </div>
               </transition>
@@ -80,8 +80,8 @@
                 <div class="deleteConfirm stampConfirm" v-if="stampDeleteConfirm[key]" :key=key>
                   Вы уверены, что хотите удалить данный штамп?
                   <div class="flexRow">
-                    <button type="button" class="buttonDark" @click="deleteStamp(key)">Удалить</button>
-                    <button type="button" class="buttonLight" @click="stampDeleteConfirm[key]=false">Отмена</button>
+                    <button type="button" class="buttonDark buttonSmall" @click="deleteStamp(key)">Удалить</button>
+                    <button type="button" class="buttonLight buttonSmall" @click="stampDeleteConfirm[key]=false">Отмена</button>
                   </div>
                 </div>
               </transition>
@@ -396,11 +396,12 @@ hr {
   position: absolute;
   display: flex;
   align-items: center;
+  text-align: center;
   z-index: 4;
+    font-size: 10pt;
   flex-direction: column;
-  width: 200px;
+  width: 230px;
   background-color: white;
-  font-size: small;
   border: 1px solid #dcdcdc;
   padding: 5px;
   border-radius: 5px;

@@ -1,7 +1,7 @@
 <template>
   <div id="header" class="flexRow alignCenter topMenu">
     <div class="invisibleContainer" @click="showMenuOptions=showCanvasOptions=false" v-if="showMenuOptions||showCanvasOptions"></div>
-    <button class="buttonLight" @click="openMenuOptions">
+    <button class="buttonLight buttonSmall" @click="openMenuOptions">
       <div class="flexRow alignCenter">
         <svg fill="#3d4551" class="dropdownFlag" :class="{'openedFlag':showMenuOptions}" width="800px" height="800px"
              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -39,7 +39,7 @@
     </div>
     </Transition>
     <div>
-      <button class="buttonLight" @click="openCanvasOptions">
+      <button class="buttonLight buttonSmall" @click="openCanvasOptions">
         <div class="flexRow alignCenter">
           <svg fill="#3d4551" class="dropdownFlag" :class="{'openedFlag':showCanvasOptions}" width="800px"
                height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -224,8 +224,5 @@ summary:not(.buttonLight) {
   border-radius: 10px;
   padding: 10px;
   user-select: none;
-}
-.buttonLight{
-  font-size: large;
 }
 </style>

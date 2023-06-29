@@ -2,20 +2,20 @@
   <div class="confirmForm">
     <div>
       Введите код, отправленный на вашу электронную почту:<br>
-      <input type="text" class="loginPageInput" style="width:120px; text-align: center"
+      <input type="text"  class="defaultInput"  style="width:120px; text-align: center"
              v-model="enteredCode">
     </div>
     <div>
-      <button type="button" class="buttonLight" @click=" $store.commit('userState/setTab', 'logIn')">
+      <button type="button" class="buttonLight buttonLarge" @click=" this.$store.commit('userState/setTab', 'logIn')">
         Отмена
       </button>
-      <button type="button" class="buttonDark"
+      <button type="button" class="buttonDark buttonLarge"
               :disabled="!(Number(enteredCode) && (enteredCode.length===4))"
               @click="()=>{
                       if(confirmType==='register' && checkCode())
-                        $store.dispatch('userState/register')
+                        this.$store.dispatch('userState/register')
                       if(confirmType==='resetPas' && checkCode())
-                         $store.commit('userState/setTab', 'newPassword')
+                         this.$store.commit('userState/setTab', 'newPassword')
                     }">
         Подтвердить
       </button>
@@ -33,7 +33,7 @@ export default defineComponent({
       if (this.enteredCode===this.confirmCode) {
         return true
       } else {
-        this.$store.commit("setNotification", ["error", "Введённый код неверен!"])
+        store.commit("setNotification", ["error", "Введённый код неверен!"])
         return false
       }
     },

@@ -12,7 +12,7 @@
     <div class="invisibleContainer" @click="showFontsList=false" v-if="showFontsList"></div>
     <div class="flexRow alignCenter justifyBetween">
       Шрифт
-      <button class="buttonLight" @click="openFontsList">
+      <button class="buttonLight buttonSmall" @click="openFontsList">
         <div class="flexRow alignCenter">
           <svg fill="#3d4551" class="dropdownFlag" :class="{'openedFlag':showFontsList}" width="800px" height="800px"
                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

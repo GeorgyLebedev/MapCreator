@@ -63,9 +63,9 @@
             </div>
           </div>
           <div class="modalFooter">
-            <button type="button" class="buttonLight" @click="this.$emit('closeWindow')">Закрыть</button>
+            <button type="button" class="buttonLight buttonSmall" @click="this.$emit('closeWindow')">Закрыть</button>
             <button type="button"
-                class="buttonDark"
+                class="buttonDark buttonSmall"
                 @click="createCanvas"
                 :disabled="mapData.name.length<6 ||
                 (res=='yours' && (mapData.resX<200 || mapData.resX>5000 || mapData.resY<200 || mapData.resY>5000))">Создать</button>

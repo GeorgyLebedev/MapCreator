@@ -14,8 +14,8 @@
           <textarea cols="30" rows="10" class="mapDescription" v-model="description"></textarea>
         </div>
         <div class="modalFooter">
-          <button type="button" class="buttonLight" @click="this.$emit('closeWindow')">Отмена</button>
-          <button type="button" class="buttonDark" :disabled="!(name.length>=6)" @click="this.$emit('updateMapMetadata')">Завершить</button>
+          <button type="button" class="buttonLight buttonSmall" @click="this.$emit('closeWindow')">Отмена</button>
+          <button type="button" class="buttonDark buttonSmall" :disabled="!(name.length>=6)" @click="this.$emit('updateMapMetadata')">Завершить</button>
         </div>
       </div>
     </div>

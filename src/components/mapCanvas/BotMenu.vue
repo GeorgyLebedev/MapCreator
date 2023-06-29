@@ -20,7 +20,7 @@
           <input type="range" step="0.2" min="0.2" max="5" v-model="scale" @input="doZoom" class="zoomRange">
           <input type="number" min="0.2" max="5" step="0.2" v-model="scale" @input="doZoom">
         </div>
-        <button type="button" class="buttonLight" @click="$emit('resetAlign')">Выровнять</button>
+        <button type="button" class="buttonLight buttonSmall" @click="$emit('resetAlign')">Выровнять</button>
       </div>
       </section>
     </div>
@@ -103,7 +103,7 @@ export default {
   margin-inline: 5px
 }
 .controlPanel{
-  margin-inline: 10px;
+  margin-inline: 20px;
   width: 385px;
 }
 .buttonLight img{

@@ -13,8 +13,8 @@
     <input type="text" class="mapNameInput" v-model="inputMapName">
   </div>
   <div class="modalFooter">
-    <button type="button" class="buttonLight" @click="this.$emit('closeWindow')">Отмена</button>
-    <button type="button" class="buttonDark" @click="this.$emit('deleteMap')" :disabled="mapName!=inputMapName">Удалить</button>
+    <button type="button" class="buttonLight buttonSmall" @click="this.$emit('closeWindow')">Отмена</button>
+    <button type="button" class="buttonDark buttonSmall" @click="this.$emit('deleteMap')" :disabled="mapName!=inputMapName">Удалить</button>
   </div>
 </div>
 </div>

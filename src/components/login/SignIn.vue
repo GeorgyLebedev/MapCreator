@@ -2,21 +2,21 @@
   <form class="loginForm" id="signIn">
     <div>
       Введите E-mail: <br>
-      <input type="email" class="loginPageInput" required ref="regEmail" v-model="email"
+      <input type="email"  class="defaultInput"  required ref="regEmail" v-model="email"
              placeholder="Ваш E-mail">
     </div>
     <div>
       Задайте пароль: <br>
       <small>(Минимум 8 символов)</small><br>
-      <input type="password" required class="loginPageInput" v-model="password"
+      <input type="password" required  class="defaultInput"  v-model="password"
              placeholder="*********">
     </div>
     <div>
       Повторите пароль:<br>
-      <input type="password" required class="loginPageInput" v-model="passwordRepeat"
+      <input type="password" required  class="defaultInput"  v-model="passwordRepeat"
              placeholder="*********">
     </div>
-    <button type="button" class="buttonDark" :disabled="!validForm" @click="$store.dispatch('userState/confirmNewUser')">
+    <button type="button" class="buttonDark buttonLarge" :disabled="!validForm" @click="this.$store.dispatch('userState/confirmNewUser')">
       Зарегистрироваться
     </button>
   </form>
