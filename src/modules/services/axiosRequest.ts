@@ -27,7 +27,7 @@ export default class AxiosRequest {
 	    if(response?.newToken) { //если получен новый токен
 		localStorage.setItem('TOKEN', response.newToken)//обновляем его
 		this.authHeader=`Bearer ${localStorage.getItem('TOKEN')}`
-		const responseRepeat = (await axios({ //и повторяем прошлый запрос
+		const responseRepeat:any = (await axios({ //и повторяем прошлый запрос
 		    method: this.method,
 		    url: this.url,
 		    headers: {
