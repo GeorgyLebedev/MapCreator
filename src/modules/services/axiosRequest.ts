@@ -1,4 +1,5 @@
 import axios from "axios"; //подключаем axios
+import handleError from "@/modules/services/serverErrorsHandler";
 axios.defaults.withCredentials=true //позволяем axios передавать cookie с запросами
 export default class AxiosRequest {
     private baseURL="http://localhost:1111/" //базовый URL сервера
@@ -39,7 +40,8 @@ export default class AxiosRequest {
 	    else
 	    return response
 	} catch (e:any) {
-	    return {msg:e.message}
+		await handleError(e)
+		return undefined
 	}
     }
 }

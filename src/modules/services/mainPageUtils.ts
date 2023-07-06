@@ -36,8 +36,6 @@ export const getMaps=async ():Promise<undefined | object[]>=> { //получен
         response = await request.sendRequest() //ожидание ответа
         if (response?.maps) //если карты получены
             return response.maps //передать их в массив
-        if(response?.msg) //если есть сообщение об ошибке - вывести его
-            store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
         return undefined
     } catch (e:any) {
         store.commit("setNotification", ["error","Ошибка сервера: " + e.message])

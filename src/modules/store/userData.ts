@@ -112,25 +112,14 @@ const userState: Module<UserState, any> = {
                 }
             const request = await new AxiosRequest("auth/login", "post", enterData)
             const response = await request.sendRequest()
-            if (!response) {
-                store.commit("setNotification", ["error", "Сервер недоступен"])
-                return
-            }
-            if (response.msg) {
-                console.log(response.msg)
-                store.commit("setNotification", ["error", "Ошибка сервера: " + String(response.msg)])
-            }
-            else if (response.token) {
+            if (response.token) {
                 localStorage.setItem('TOKEN', response.token)
                 await router.push({path: "/Main"})
             }
         },
         async resetPassword() {
             const response = await store.dispatch('userState/confirmEmail', 'pasReset')
-            if (response.msg) {
-                store.commit("setNotification", ["error", "Ошибка сервера: " + response.msg])
-                return
-            } else {
+            if (response) {
                 store.commit('userState/setTab', 'confirm')
                 store.commit("userState/setConfirmDataType", 'resetPas')
                 store.commit("userState/setConfirmDataCode", String(response.code))
@@ -144,7 +133,6 @@ const userState: Module<UserState, any> = {
                     src: src
                 })
                 const response: any = await request.sendRequest()
-                console.log(response)
                 return response
             } catch (e: any) {
                 store.commit("setNotification", ["error", e.message])
@@ -153,11 +141,7 @@ const userState: Module<UserState, any> = {
         },
         async confirmNewUser({getters}) {
             const response: any = await store.dispatch('userState/confirmEmail', 'register')
-            if (response && response.msg) {
-                store.commit("setNotification", ["error", "Ошибка сервера: " + response.msg])
-                return
-            }
-            if (response && response.code) {
+            if (response?.code) {
                 store.commit('userState/setTab', 'confirm')
                 store.commit("userState/setConfirmDataType", 'register')
                 store.commit("userState/setConfirmDataCode", String(response.code))
@@ -193,10 +177,6 @@ const userState: Module<UserState, any> = {
                         regDate: new Date(),
                     })
                 const response: any = await request.sendRequest()
-                if (response.msg) {
-                    store.commit("setNotification", ["error", "Ошибка сервера: " + response.msg])
-                    return
-                }
                 return response
             } catch (e: any) {
                 store.commit("setNotification", ["error", "Ошибка сервера: " + e.message])
@@ -206,9 +186,7 @@ const userState: Module<UserState, any> = {
         async createUserOptions() {
             try {
                 const request: AxiosRequest = await new AxiosRequest('options/', "post",)
-                const response: any = await request.sendRequest()
-                if (response.msg)
-                    store.commit("setNotification", ["error", "Ошибка сервера: " + response.msg])
+                await request.sendRequest()
             } catch (e: any) {
                 store.commit("setNotification", ["error", "Ошибка сервера: " + e.message])
                 return

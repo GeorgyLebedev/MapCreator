@@ -15,7 +15,7 @@ module.exports = defineConfig({
     },
     configureWebpack: {
         resolve: {
-            extensions: ['.ts', '.js', '.vue', '.json']
+            extensions: ['.ts', '.js', '.vue', '.json'],
         },
         entry: {
             app: './src/main.ts'

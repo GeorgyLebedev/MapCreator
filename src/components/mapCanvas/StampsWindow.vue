@@ -206,9 +206,8 @@ export default {
       let response, request
       request = await new AxiosRequest("options/", "put", {stamps: this.stamps})
       response = await request.sendRequest()
-      if (!response.msg)
+      if (response)
         this.$emit('updateStamps', this.stamps)
-      else this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
     }
   },
   watch:{

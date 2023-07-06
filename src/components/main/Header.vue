@@ -71,10 +71,9 @@ export default {
       let request, response
       request = new AxiosRequest("user/", "put", data)
       response = await request.sendRequest()
-      if (!response.msg) {
+      if (response) {
         this.$router.go(0)
       }
-      this.$store.commit("setNotification", ["error","Ошибка сервера: " + response.msg])
     },
     loadAvatar() {
       let extensions = ['png', 'jpeg', 'jpg', 'svg']

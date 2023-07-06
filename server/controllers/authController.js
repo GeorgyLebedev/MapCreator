@@ -19,7 +19,7 @@ router.post('/login', async (req, res) => {
 	res.json({token: accessToken, username: query[0].login});
     }
     else {
-	res.json({msg:'Неправильный логин или пароль!'});
+	res.status(401).send({message: 'Неправильный логин или пароль!'});
     }
 });
 
