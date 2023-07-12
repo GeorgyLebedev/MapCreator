@@ -1,15 +1,15 @@
 <template>
-  <div class="confirmForm">
+  <form class="confirm-form">
     <div>
       Введите код, отправленный на вашу электронную почту:<br>
-      <input type="text"  class="defaultInput"  style="width:120px; text-align: center"
+      <input type="text"  class="input-medium code-input"
              v-model="enteredCode">
     </div>
-    <div>
-      <button type="button" class="buttonLight buttonLarge" @click=" this.$store.commit('userState/setTab', 'logIn')">
+    <div class="flex-row">
+      <button type="button" class="button-light button-large" @click=" this.$store.commit('userState/setTab', 'logIn')">
         Отмена
       </button>
-      <button type="button" class="buttonDark buttonLarge"
+      <button type="button" class="button-dark button-large"
               :disabled="!(Number(enteredCode) && (enteredCode.length===4))"
               @click="()=>{
                       if(confirmType==='register' && checkCode())
@@ -20,7 +20,7 @@
         Подтвердить
       </button>
     </div>
-  </div>
+  </form>
 </template>
 
 <script lang="ts">
@@ -67,14 +67,16 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.confirmForm {
-  display: flex;
-  flex-direction: column;
-  font-size: smaller;
-  padding: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-}
+<style scoped lang="sass">
+.confirm-form
+  display: flex
+  flex-direction: column
+  padding: 20px
+  text-align: center
+  justify-content: center
+  align-items: center
+
+.code-input
+  width: 30%
+  text-align: center
 </style>

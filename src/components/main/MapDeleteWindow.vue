@@ -1,20 +1,25 @@
 <template>
-<div class="modalContainer">
-<div class="modalWindow">
-  <div class="modalHeader">
+<div class="modal-container">
+<div class="modal-window">
+  <div class="modal-header">
+      <svg class="svg-light" stroke="#1C274C" width="30px" viewBox="0 0 24 24" fill="none"
+	   xmlns="http://www.w3.org/2000/svg">
+	  <path d="M20.5001 6H3.5 M9.5 11L10 16 M14.5 11L14 16 M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6 M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5"
+		stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
     Удаление карты
-    <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
-         @click="this.$emit('closeWindow')">
+      <svg class="cursor-pointer modal-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" @click="this.$emit('closeWindow')">
+	  <path d="M19 5L5 19M5 5L9.5 9.5M12 12L19 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
   </div>
-  <hr>
-  <div class="modalBody">
-    Для удаления карты введите её название в поле ниже: <br>
-    <small>{{mapName}}</small>
-    <input type="text" class="mapNameInput" v-model="inputMapName">
+  <div class="modal-body">
+    <p>Для удаления карты введите её название в поле ниже:</p>
+    <p class="text-medium-colored">{{mapName}}</p>
+    <input class="input-small" type="text" v-model="inputMapName">
   </div>
-  <div class="modalFooter">
-    <button type="button" class="buttonLight buttonSmall" @click="this.$emit('closeWindow')">Отмена</button>
-    <button type="button" class="buttonDark buttonSmall" @click="this.$emit('deleteMap')" :disabled="mapName!=inputMapName">Удалить</button>
+  <div class="modal-footer">
+    <button type="button" class="button-light button-middle" @click="this.$emit('closeWindow')">Отмена</button>
+    <button type="button" class="button-dark button-middle" @click="this.$emit('deleteMap')" :disabled="mapName!=inputMapName">Удалить</button>
   </div>
 </div>
 </div>
@@ -34,11 +39,11 @@ export default {
   }
 }
 </script>
-<style scoped>
-.modalWindow{
-  max-width: 400px;
-}
-small{
-  color: #8a8a8a;
-}
+<style scoped lang="sass">
+.modal-window
+  max-width: 400px
+
+.modal-body
+  & input
+    width: 100%
 </style>

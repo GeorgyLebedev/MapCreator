@@ -1,0 +1,36 @@
+.slide-enter-active, .slide-leave-active
+  transition: all 0.25s ease-in-out
+.slide-enter-from, .slide-leave-to
+  transform: translateX(200px)
+  opacity: 0
+
+
+.show-enter-active, .show-leave-active
+  transition: all 0.3s ease
+.show-enter-from, .show-leave-to
+  opacity: 0
+  transform: translateX(-400px) scaleX(0)
+
+
+.stretch-enter-from, .stretch-leave-to
+  transform: scaleY(0)
+  opacity: 0
+.stretch-enter-active, .stretch-leave-active
+  transition: all 0.3s ease
+
+
+.notification-anim-enter-active, .notification-anim-leave-active
+  transition: all 0.3s ease-out
+.notification-anim-enter-from, .notification-anim-leave-to
+  transform: translateY(-200px)
+
+
+.show-opt-enter-active, .show-opt-leave-active
+  transition: all 0.4s cubic-bezier(0.785, 0.135, 0.15, 0.86)
+.show-opt-enter-from, .show-opt-leave-to
+  opacity: 0
+
+.scale-enter-active, scale-leave-active
+  transition: all 0.3s ease
+.scale-enter-from, .scale-leave-to
+  transform: scale(0)

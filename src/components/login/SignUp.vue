@@ -1,22 +1,22 @@
 <template>
-  <form class="loginForm" id="signIn">
-    <div>
+  <form class="login-form">
+    <section class="login-section">
       Введите E-mail: <br>
-      <input type="email"  class="defaultInput"  required ref="regEmail" v-model="email"
+      <input type="email"  class="input-medium login-input"  required ref="regEmail" v-model="email"
              placeholder="Ваш E-mail">
-    </div>
-    <div>
+    </section>
+    <section  class="login-section">
       Задайте пароль: <br>
-      <small>(Минимум 8 символов)</small><br>
-      <input type="password" required  class="defaultInput"  v-model="password"
+      <small class="text-medium-colored">(Минимум 8 символов)</small>
+      <input type="password" required  class="input-medium login-input"  v-model="password"
              placeholder="*********">
-    </div>
-    <div>
+    </section>
+    <section  class="login-section">
       Повторите пароль:<br>
-      <input type="password" required  class="defaultInput"  v-model="passwordRepeat"
+      <input type="password" required  class="input-medium login-input"  v-model="passwordRepeat"
              placeholder="*********">
-    </div>
-    <button type="button" class="buttonDark buttonLarge" :disabled="!validForm" @click="this.$store.dispatch('userState/confirmNewUser')">
+    </section>
+    <button type="button" class="button-dark button-large" :disabled="!validForm" @click="this.$store.dispatch('userState/confirmNewUser')">
       Зарегистрироваться
     </button>
   </form>
@@ -26,7 +26,7 @@
 import {defineComponent} from "vue";
 import store from "@/modules/store/store";
 export default defineComponent({
-  name: "SignIn",
+  name: "SignUp",
   computed:{
     validForm():boolean{
       return (this.password.length>7 && this.password===this.passwordRepeat && this.isValidEmail(this.email))
@@ -65,6 +65,3 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
-</style>

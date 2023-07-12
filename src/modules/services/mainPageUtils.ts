@@ -36,9 +36,10 @@ export const getMaps=async ():Promise<undefined | object[]>=> { //получен
         response = await request.sendRequest() //ожидание ответа
         if (response?.maps) //если карты получены
             return response.maps //передать их в массив
-        return undefined
+        else return undefined
     } catch (e:any) {
         store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
+        return undefined
     }
 }
 export const deleteMap=async (map:Imap):Promise<void>=>{

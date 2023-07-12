@@ -3,13 +3,13 @@
       <div id="stampsWindow">
         <div class="modalHeader">
           <b>Каталог штампов</b>
-          <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
+          <img class="cursor-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
                @click="this.$emit('closeWindow')">
         </div>
         <hr>
         <div class="modalBody">
           <div class="sideMenu">
-            <div class="stampKit cursorPointer" :class="{selectedKit:(key==selectedKit)}"
+            <div class="stampKit cursor-pointer" :class="{selectedKit:(key==selectedKit)}"
                  v-for="(val, key) in stamps" :key=key>
               <div class="stampInnerContainer" v-if="!editKit[key]" @click.self="selectedKit=key">
               <div class="stampKitName" :title="key" @click.self="selectedKit=key" v-if="editKit[key]!==key">{{ key }}</div>
@@ -40,12 +40,12 @@
                        placeholder="Минимум 5 символов"
                        ref="editKitInput" v-model="editKitName">
                 <div style="display: flex">
-                  <img class="cursorPointer interactive" src="@/assets/images/Service/close.png" alt=""
+                  <img class="cursor-pointer interactive" src="@/assets/images/Service/close.png" alt=""
                        @click="()=>{
                      editKitName=''
                      editKit={}
                    }">
-                  <img class="cursorPointer interactive" src="@/assets/images/Service/tick.png" v-if="editKitName.length>=5" alt=""
+                  <img class="cursor-pointer interactive" src="@/assets/images/Service/tick.png" v-if="editKitName.length>=5" alt=""
                        @click="updateKitName(key)">
                 </div>
               </div>
@@ -56,18 +56,18 @@
                        placeholder="Минимум 5 символов"
                        ref="newKitInput" v-model="newKitName">
                 <div style="display: flex">
-                  <img class="cursorPointer interactive" src="@/assets/images/Service/close.png" alt=""
+                  <img class="cursor-pointer interactive" src="@/assets/images/Service/close.png" alt=""
                        @click="()=>{
                      newKitName=''
                      addNewKit=false
                    }">
-                  <img class="cursorPointer interactive" src="@/assets/images/Service/tick.png" v-if="newKitName.length>=5" alt=""
+                  <img class="cursor-pointer interactive" src="@/assets/images/Service/tick.png" v-if="newKitName.length>=5" alt=""
                        @click="addKit">
                 </div>
               </div>
             </div>
-            <div class="stampKit cursorPointer">
-              <div class="stampKitName cursorPointer addNewKit" @click="()=>this.addNewKit=true">
+            <div class="stampKit cursor-pointer">
+              <div class="stampKitName cursor-pointer addNewKit" @click="()=>this.addNewKit=true">
                 Создать новый набор
                 <img src="@/assets/images/new.png" alt="" width="30" height="30">
               </div>
@@ -85,13 +85,13 @@
                   </div>
                 </div>
               </transition>
-              <img class="deleteStampCross cursorPointer" src="@/assets/images/Service/crossRounded.png"
+              <img class="deleteStampCross cursor-pointer" src="@/assets/images/Service/crossRounded.png"
                    @click.prevent="showStampDeleteConfirm(key)">
-              <img class="stampImage cursorPointer" :src=val alt=""  @click.self="selectStamp(val,key)">
+              <img class="stampImage cursor-pointer" :src=val alt=""  @click.self="selectStamp(val,key)">
             </div>
             <div class="stampIcon">
               <input type="file" :hidden="true" ref="fileInput" accept="image/svg+xml" @change="getFile">
-              <img class="stampImage cursorPointer" src="@/assets/images/new.png" alt="" @click="pickFile">
+              <img class="stampImage cursor-pointer" src="@/assets/images/new.png" alt="" @click="pickFile">
             </div>
           </div>
         </div>

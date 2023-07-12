@@ -1,12 +1,12 @@
 <template>
   <details>
-    <summary class="cursorPointer"><u>Последние цвета:</u></summary>
+    <summary class="cursor-pointer"><u>Последние цвета:</u></summary>
     <table class="colorTable">
       <tr>
         <td v-for="(color, index) in recentColors" :key="index">
           <template v-if="color !== 'transparent'">
             <div
-                class="colorCell cursorPointer"
+                class="colorCell cursor-pointer"
                 :style="{ backgroundColor: color }"
                 @click="setToolColor(color)"
             />

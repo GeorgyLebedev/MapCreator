@@ -9,7 +9,7 @@
     <div class="toolsOptions">
       <div class="flexRow justifyBetween alignCenter">
         <b> Штамп </b>
-        <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursorPointer" height="20" alt="">
+        <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursor-pointer" height="20" alt="">
       </div>
       <hr>
       <section class="flexColumn " v-if="!Object.keys(this.selectedObject).length">
@@ -19,13 +19,13 @@
               <img :src="currentStamp" alt="">
             </div>
             <div class="flexRow justifyBetween alignCenter">
-              <img src="@/assets/images/leftArrow.png" class="cursorPointer" height="20" @click="getSwitchStamp(true)">
+              <img src="@/assets/images/leftArrow.png" class="cursor-pointer" height="20" @click="getSwitchStamp(true)">
               {{ stampNumber + 1 }}/{{ currentKitLength }}
-              <img src="@/assets/images/rightArrow.png" class="cursorPointer" height="20" @click="getSwitchStamp(false)">
+              <img src="@/assets/images/rightArrow.png" class="cursor-pointer" height="20" @click="getSwitchStamp(false)">
             </div>
           </div>
           <div class="stampsTable">
-            <div class="smallStamp cursorPointer"
+            <div class="smallStamp cursor-pointer"
                  v-for="(key) in visibleStamps"
                  :class="{currentStamp:stamps[currentKit][key]===currentStamp}"
                  :key="key"

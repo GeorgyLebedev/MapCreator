@@ -1,0 +1,60 @@
+@use "../Variables"
+.modal-container
+  min-width: 800px
+  min-height: 750px
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 100%
+  height: 100%
+  position: fixed
+  background-color: rgba(61, 69, 81, 0.7)
+  z-index: 5
+  overflow-y: scroll
+
+.modal-window
+  position: relative
+  color: Variables.$dark-color
+  width: 800px
+  border-radius: 15px
+  & > :not(.modal-header)
+    background-color: Variables.$light-color
+.modal-header
+  display: flex
+  color: Variables.$light-color
+  background-color: Variables.$medium-color
+  font-size: large
+  font-weight: bold
+  justify-content: space-between
+  align-items: center
+  border-radius: 15px 15px 0 0
+  border-bottom: 1px solid Variables.$dark-color
+  padding-inline: 15px
+  padding-block: 10px
+  width: 100%
+
+.modal-body
+  width: 100%
+  padding-inline: 15px
+  padding-block: 10px
+.modal-footer
+  display: flex
+  justify-content: space-between
+  padding: 0 10px 10px 10px
+  width: 100%
+  position: relative
+  bottom: 0
+
+.modal-close-icon
+  width: 30px
+  height: 30px
+  stroke: Variables.$light-color
+  transition: 0.3s ease-in-out
+  &:hover
+    stroke: Variables.$orange-color
+    transform: scale(1.1) rotate(90deg)
+
+.modal-input
+  width: 100%
+  margin-bottom: 25px
+

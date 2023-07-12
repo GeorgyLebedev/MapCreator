@@ -272,25 +272,4 @@ export default {
   margin-top:3px;
 }
 
-.show-enter-active,
-.show-leave-active {
-  transition: all 0.3s ease;
-}
-
-.show-enter-from,
-.show-leave-to {
-  opacity: 0;
-  transform: translateX(-400px) scaleX(0);
-}
-
-.stretch-enter-from,
-.stretch-leave-to {
-  transform: scaleY(0);
-  opacity: 0;
-}
-
-.stretch-enter-active,
-.stretch-leave-active {
-  transition: all 0.3s ease;
-}
 </style>

@@ -1,18 +1,20 @@
 <template>
-  <div class="forgotPasswordForm">
+    <form class="login-form">
+  <section class="login-section">
     Введите E-mail, указанный при регистрации: <br>
-    <input type="email" class="defaultInput"  ref="resetEmail" v-model="emailToPasReset"
+    <input type="email" class="input-medium login-input"  ref="resetEmail" v-model="emailToPasReset"
            placeholder="Ваш E-mail">
     <div>
-      <button type="button" class="buttonLight buttonLarge"  @click="this.$store.commit('userState/setTab','logIn')">
+      <button type="button" class="button-light button-large"  @click="this.$store.commit('userState/setTab','logIn')">
         Отмена
       </button>
-      <button type="button" class="buttonDark buttonLarge"
+      <button type="button" class="button-dark button-large"
               :disabled="!isValidEmail(emailToPasReset)" @click="this.$store.dispatch('userState/resetPassword')">
         Далее
       </button>
     </div>
-  </div>
+  </section>
+    </form>
 </template>
 
 <script lang="ts">
@@ -39,13 +41,13 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.forgotPasswordForm {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-}
+<style scoped lang="sass">
+.forgot-password-form
+  display: flex
+  flex-direction: column
+  padding: 20px
+  text-align: center
+  justify-content: center
+  align-items: center
+
 </style>

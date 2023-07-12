@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
     "noImplicitAny": true,
     "target": "esnext",
     "module": "esnext",

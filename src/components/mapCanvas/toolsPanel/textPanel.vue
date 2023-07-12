@@ -3,7 +3,7 @@
        v-if="true||(selectedObject && selectedObject.data.type=='text')">
     <div class="flexRow justifyBetween alignCenter">
       <b> Надпись </b>
-      <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursorPointer" height="20" alt="">
+      <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursor-pointer" height="20" alt="">
     </div>
     <hr>
     <textarea v-model="content"

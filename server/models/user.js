@@ -11,7 +11,6 @@ const User = new Schema({
     login:{
         type: String,
         default: "",
-        unique: true
     },
     password: {
         type:String,

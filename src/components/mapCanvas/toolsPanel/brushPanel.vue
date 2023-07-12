@@ -2,7 +2,7 @@
     <div id="brushOptions" class="toolsOptions">
       <div class="flexRow justifyBetween alignCenter">
         <b> Кисть </b>
-        <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursorPointer" height="20" alt="">
+        <img src="@/assets/images/arrow-left.png" @click="$emit('closePanel')" class="cursor-pointer" height="20" alt="">
       </div>
       <hr>
       <table class="styleTable">

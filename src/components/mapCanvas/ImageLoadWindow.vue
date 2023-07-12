@@ -3,7 +3,7 @@
     <div class="modalWindow">
       <div class="modalHeader">
         Загрузка изображения
-        <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
+        <img class="cursor-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
              @click="this.$emit('closeWindow')">
       </div>
       <hr>

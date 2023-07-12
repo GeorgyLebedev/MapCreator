@@ -1,19 +1,19 @@
 <template>
-  <form class="loginForm" id="logIn">
-    <div>
-      Email: <br>
-      <input class="defaultInput" type="email" required  ref="enterEmail" v-model="username"
-             placeholder="Ваш email ">
-    </div>
-    <div>
+  <form class="login-form">
+    <section class="login-section">
+	E-mail: <br>
+      <input class="input-medium login-input" type="email" required  ref="enterEmail" v-model="username"
+             placeholder="Введите E-mail ">
+    </section>
+    <section class="login-section">
       Пароль:<br>
-      <input class="defaultInput" type="password" required v-model="password"
+      <input class="input-medium login-input" type="password" required v-model="password"
              placeholder="*********">
-      <div id="forgotPassword" class="">
-        <span href="" @click="this.$store.commit('userState/setTab','forgotPassword')">Забыли пароль?</span>
+      <div class="cursor-pointer forgot-password-link">
+        <small @click="this.$store.commit('userState/setTab','forgotPassword')" class="text-medium-colored "><u>Забыли пароль?</u></small>
       </div>
-    </div>
-    <button type="button" class="buttonDark buttonLarge" :disabled="!validForm"
+    </section>
+    <button type="button" class="button-dark button-large" :disabled="!validForm"
             @click="this.$store.dispatch('userState/enter')">Войти
     </button>
   </form>
@@ -54,24 +54,7 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
-.loginForm {
-  text-align: center;
+<style scoped lang="sass">
+.forgot-password-link
   margin-block: 10px
-}
-#forgotPassword {
-  margin-block: 5px;
-}
-
-#forgotPassword span {
-  cursor: pointer;
-  font-size: smaller;
-  color: #728391;
-  text-decoration: underline;
-}
-
-#forgotPassword span:hover {
-  color: #3d4551;
-}
 </style>

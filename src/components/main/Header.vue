@@ -1,47 +1,62 @@
 <template>
-  <header>
-    <img src="@/assets/images/logo.png" alt="" :height="50">
-    <button type="button" class="buttonLight buttonMiddle">
-      <a href="/mcmanual.pdf" download>Справка</a>
-    </button>
-    <div class="userPanel">
-      <div class="userAvatarSmall" @click="modalFlags.showProfile=true">
-        <img :src="user.avatar" class="cursorPointer" alt="" v-if="user">
-      </div>
-      <b class="cursorPointer" @click="modalFlags.showProfile=true">{{ user.login ? user.login : user.email }}</b>
-    </div>
-  </header>
-  <transition name="slide">
-    <div class="invisibleContainer" v-if="modalFlags.showProfile" @mousedown.self="()=>{modalFlags.showProfile=false; createNewLogin=false}">
-      <div class="userProfile" @click.stop>
-        <div class="avatarContainer" @click="this.$refs.avatarInput.click()">
-          <img class="userAvatar cursorPointer" :src="user.avatar" alt="">
-          <img class="hoverCameraIcon cursorPointer" src="@/assets/images/Service/camera.png" alt="">
-          <input type="file" :hidden="true" ref="avatarInput" accept=".png, .jpg, .jpeg, .svg" @change="loadAvatar">
-        </div>
-        <hr>
-        <section class="userMailText" :title="user.email">{{ user.email }}</section>
-        <hr>
-        <section class="userLoginText cursorPointer" :title="user.login?user.login:''" v-if="!createNewLogin"
-                 @click="createNewLogin=true">
-          {{ user.login ? user.login : "Логин не выбран" }}
-        </section>
-        <section class="newLoginForm" v-else>
-            <input type="text" placeholder="От 8 до 30 символов" v-model="newLogin">
-            <div>
-              <img class="cursorPointer interactive" src="@/assets/images/Service/close.png" @click="createNewLogin=false">
-              <img class="cursorPointer interactive" src="@/assets/images/Service/tick.png" @click="updateUserData({login: newLogin})" :hidden="newLogin.length<8 || newLogin.length>30">
-            </div>
-        </section>
-        <hr>
-        <section class="regDateText">Дата регистрации: {{ registrationDate }}</section>
-        <hr>
-        <a href="/Login">
-          <button type="button" class="buttonLight buttonMiddle" @click="logOut()">Выход</button>
-        </a>
-      </div>
-    </div>
-  </transition>
+    <header>
+	<img src="@/assets/images/logo.png" alt="" :height="50">
+	<button class="button-light button-middle" @click="this.$refs.manualLink.click()">Справка</button>
+	<a href="/mcmanual.pdf" download ref="manualLink" :hidden="true"></a>
+	<div class="user-panel">
+	    <div class="user-avatar-small" @click="modalFlags.showProfile=true">
+		<img :src="user.avatar" class="cursor-pointer" alt="" v-if="user">
+	    </div>
+	    <b class="cursor-pointer" @click="modalFlags.showProfile=true">{{
+                user.login ? user.login : user.email
+		}}</b>
+	</div>
+    </header>
+    <transition name="slide">
+	<div class="invisibleContainer" v-if="modalFlags.showProfile"
+	     @mousedown.self="()=>{modalFlags.showProfile=false; createNewLogin=false}">
+	    <div class="user-profile" @click.stop>
+		<div class="flex-row">
+		    <div class="flex-column">
+			<section class="avatar-container" @click="this.$refs.avatarInput.click()">
+			    <img class="user-avatar cursor-pointer" :src="user.avatar" alt="">
+			    <img class="hover-camera-icon cursor-pointer" src="@/assets/images/Service/camera.png"
+				 alt="">
+			    <input type="file" :hidden="true" ref="avatarInput" accept=".png, .jpg, .jpeg, .svg"
+				   @change="loadAvatar">
+			</section>
+			<button type="button" class="button-light button-middle" @click="logOut()">Выход</button>
+		    </div>
+		    <div class="user-info">
+			<div class="user-field-name" :title="user.email">Email:</div>
+			{{ user.email }}
+			<hr>
+					<div class="user-field-name" :title="user.login?user.login:''">Логин:</div>
+			<span  v-if="!createNewLogin"
+			      @click="createNewLogin=true">
+
+				<u class="text-medium-colored cursor-pointer">
+				    {{ user.login ? user.login : "Логин не выбран" }}
+				</u>
+			    </span>
+			<section class="new-login-form" v-else>
+			    <input class="input-small" type="text" placeholder="От 8 до 30 символов" v-model="newLogin">
+
+			    <img class="cursor-pointer" src="@/assets/images/Service/close.png"
+				 @click="createNewLogin=false">
+			    <img class="cursor-pointer" src="@/assets/images/Service/tick.png"
+				 @click="updateUserData({login: newLogin})"
+				 :hidden="newLogin.length<8 || newLogin.length>30">
+			</section>
+					<hr>
+			<div class="user-field-name">Дата регистрации:</div>
+			{{ registrationDate }}
+		    </div>
+		</div>
+
+	    </div>
+	</div>
+    </transition>
 </template>
 
 <script>
@@ -49,198 +64,161 @@ import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
 
 export default {
-  name: 'HeaderComponent',
-  data() {
-    return {
-      modalFlags: flags,
-      user: {},
-      registrationDate: "",
-      createNewLogin: false,
-      newLogin: ""
+    name: 'HeaderComponent',
+    data() {
+	return {
+	    modalFlags: flags,
+	    user: {},
+	    registrationDate: "",
+	    createNewLogin: false,
+	    newLogin: ""
+	}
+    },
+    methods: {
+	async logOut() {
+	    let request, response
+	    request = new AxiosRequest("auth/logout", "post")
+	    response = await request.sendRequest()
+	    localStorage.clear()
+	    if (!response) return
+	},
+	async updateUserData(data) {
+	    let request, response
+	    request = new AxiosRequest("user/", "put", data)
+	    response = await request.sendRequest()
+	    if (response) {
+		this.$router.go(0)
+	    }
+	},
+	loadAvatar() {
+	    let extensions = ['png', 'jpeg', 'jpg', 'svg']
+	    const avatar = event.target.files[0];
+	    if (extensions.indexOf(avatar.name.split('.').pop().toLowerCase()) == -1) {
+		this.$store.commit("setNotification", ["message", "Расширение выбранного файла не поддерживается!"])
+		return
+	    } else if (avatar.size > 4e5) {
+		this.$store.commit("setNotification", ["message", "Размер загружаемого изображения не должен превышать 300 КБ!\""])
+	    } else {
+		const reader = new FileReader();
+		reader.readAsDataURL(avatar);
+		reader.onload = () => {
+		    try {
+			this.updateUserData({avatar: reader.result})
+			this.$refs.avatarInput.value = ""
+		    } catch (e) {
+			this.$store.commit("setNotification", ["error", "Ошибка сервера: " + e.message])
+		    }
+		};
+	    }
+	},
+    },
+    async created() {
+	let request
+	request = new AxiosRequest("user/", "get")
+	this.user = (await request.sendRequest()).user
+	if (this.user.login) this.newLogin = this.user.login
+	let day, month, year
+	day = '' + new Date(this.user.regDate).getDate()
+	if (day.length < 2) day = '0' + day
+	month = '' + (new Date(this.user.regDate).getMonth() + 1)
+	if (month.length < 2) month = '0' + month
+	year = '' + new Date(this.user.regDate).getFullYear()
+	this.registrationDate = day + '.' + month + '.' + year
     }
-  },
-  methods: {
-    async logOut() {
-      let request, response
-      request = new AxiosRequest("auth/logout", "post")
-      response = await request.sendRequest()
-      localStorage.clear()
-      if (!response) return
-    },
-    async updateUserData(data) {
-      let request, response
-      request = new AxiosRequest("user/", "put", data)
-      response = await request.sendRequest()
-      if (response) {
-        this.$router.go(0)
-      }
-    },
-    loadAvatar() {
-      let extensions = ['png', 'jpeg', 'jpg', 'svg']
-      const avatar = event.target.files[0];
-      if (extensions.indexOf(avatar.name.split('.').pop().toLowerCase()) == -1) {
-        this.$store.commit("setNotification", ["message","Расширение выбранного файла не поддерживается!"])
-        return
-      } else if (avatar.size > 4e5) {
-        this.$store.commit("setNotification", ["message","Размер загружаемого изображения не должен превышать 300 КБ!\""])
-      } else {
-        const reader = new FileReader();
-        reader.readAsDataURL(avatar);
-        reader.onload = () => {
-          try {
-            this.updateUserData({avatar:reader.result})
-            this.$refs.avatarInput.value = ""
-          } catch (e) {
-            this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
-          }
-        };
-      }
-    },
-  },
-  async created() {
-    let request
-    request = new AxiosRequest("user/", "get")
-    this.user = (await request.sendRequest()).user
-    let day, month, year
-    day = '' + new Date(this.user.regDate).getDate()
-    if (day.length < 2) day = '0' + day
-    month = '' + (new Date(this.user.regDate).getMonth() + 1)
-    if (month.length < 2) month = '0' + month
-    year = '' + new Date(this.user.regDate).getFullYear()
-    this.registrationDate = day + '.' + month + '.' + year
-  }
 }
 </script>
-<style scoped>
-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #728391;
-  padding-block: 10px;
-  padding-inline: 15px;
-  margin-bottom: 20px;
-}
+<style scoped lang="sass">
+@use '/src/assets/styles/Variables'
+header
+	position: relative
+	display: flex
+	flex-direction: row
+	justify-content: space-between
+	align-items: center
+	border-bottom: 1px solid Variables.$medium-color
+	padding-block: 10px
+	padding-inline: 15px
+	z-index: 2
+	background-color: Variables.$medium-light-color
+.user-panel
+	display: flex
+	align-items: center
 
-.userPanel {
-  display: flex;
-  align-items: center;
-}
+.user-avatar-small
+	margin-inline: 10px
+	width: 40px
+	height: 40px
+	overflow: hidden
+	border-radius: 50%
 
-.userAvatarSmall {
-  margin-inline: 10px;
-  width: 40px;
-  height: 40px;
-  overflow: hidden;
-  border-radius: 50%;
-}
+	& img
+		width: 100%
+		height: 100%
+		object-fit: cover
 
-.userAvatarSmall img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.user-profile
+	position: absolute
+	z-index: 5
+	padding: 10px
+	top: 0
+	right: 0
+	max-width: 350px
+	max-height: 170px
+	background-color: Variables.$light-color
+	border: 1px solid Variables.$medium-color
+	border-radius: 15px 0 0 15px
 
-.userProfile {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  position: absolute;
-  z-index: 5;
-  right: 10px;
-  padding: 10px;
-  top: 60px;
-  width: 250px;
-  background-color: white;
-  border: 2px solid #728391;
-  border-radius: 15px;
-}
+.avatar-container
+	position: relative
+	overflow: hidden
+	border-radius: 50%
+	width: 110px
+	height: 110px
 
-hr {
-  color: gainsboro;
-  background-color: gainsboro;
-  height: 1px;
-  width: 100%;
-}
+.user-avatar
+	align-self: center
+	width: 100%
+	height: 100%
+	object-fit: cover
 
-.avatarContainer {
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
-}
+.hover-camera-icon
+	position: absolute
+	left: 50%
+	top: 50%
+	transform: translate(-50%, -50%)
+	width: 40px
+	opacity: 0
 
-.userAvatar {
-  align-self: center;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.avatar-container:hover
+	.user-avatar
+		filter: brightness(0.3)
 
-.hoverCameraIcon {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 70%);
-  width: 40px;
-  opacity: 0;
-}
+	.hover-camera-icon
+		opacity: 1
 
-.avatarContainer:hover .userAvatar {
-  filter: brightness(0.3);
-}
+.user-info
+	display: flex
+	flex-direction: column
+	width: 250px
+	max-width: 250px
+	margin-left: 10px
 
-.avatarContainer:hover .hoverCameraIcon {
-  opacity: 1;
-}
+.new-login-form
+	display: flex
+	flex-direction: row
+	align-items: center
+	width: 100%
+	height: 40px
 
-.userProfile a {
-  align-self: center;
-}
+	input
+		width: 100%
+		margin-block: 5px
+	img
+		width: 30px
+		height: 30px
 
-.userMailText {
-  padding-block: 5px;
-  max-width: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.userLoginText {
-  padding-block: 5px;
-  max-width: 100%;
-  color: #555555;
-}
-
-.regDateText {
-  padding-block: 5px;
-  max-width: 100%;
-}
-
-.newLoginForm {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 100%;
-}
-.newLoginForm input{
-  max-width: 200px;
-  padding: 5px;
-}
-.buttonLight:hover a{
-  color:#ea5c41;
-}
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.25s ease-in-out;
-}
-
-.slide-enter-from,
-.slide-leave-to {
-  transform: translateY(-50px);
-  opacity: 0;
-}
+.user-field-name
+	margin-bottom: 5px
+	font-weight: bold
+	color: Variables.$dark-color
 </style>

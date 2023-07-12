@@ -1,12 +1,12 @@
 <template>
   <details>
-    <summary class="cursorPointer"><u>Палитра:</u></summary>
+    <summary class="cursor-pointer"><u>Палитра:</u></summary>
     <div id="palette" class="colorGrid">
       <div
           v-for="(color, index) in paletteColors"
           :key="index"
           class="colorCell"
-          :class="{ 'cursorPointer': color !== null }"
+          :class="{ 'cursor-pointer': color !== null }"
           :style="{ backgroundColor: color }"
           @click.right="openPaletteContextMenu($event, index)"
           @click.left="setToolColor(color)"

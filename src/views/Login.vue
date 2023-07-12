@@ -1,28 +1,41 @@
 <template>
-    <div class="parentDiv">
-	<div class="login">
-	    <div class="tabs">
-		<section class="tabButton firstTab" :class="{'current':tab=='logIn'}" @click="tab='logIn'">
-		    Вход
-		</section>
-		<section class="tabButton secondTab" :class="{'current':tab=='signIn'}" @click="tab='signIn'">
-		    Регистрация
-		</section>
-	    </div>
-	    <Transition name="smooth" mode="out-in">
-		<log-in v-if="tab=='logIn'"/>
-		<sign-in v-else-if="tab=='signIn'"/>
-		<confirm-form v-else-if="tab==='confirm'"/>
-		<new-password v-else-if="tab==='newPassword'"/>
-		<forgot-password v-else-if="tab==='forgotPassword'"/>
-	    </Transition>
-	</div>
-    </div>
-    <button class="buttonLight manualButton"><a href="/mcmanual.pdf" download>Справка</a></button>
+    <section class="root">
+	<div class="background-container"></div>
+	<aside class="aside-container">
+	    <section class="logo-container">
+		<img class="logo-image" src="@/assets/images/logo.png" alt="">
+	    </section>
+	    <section class="login">
+		<div class="tabs" v-if="tab=='logIn' || tab==='signUp'">
+		    <section class="tab-button tab-first" :class="{'current':tab=='logIn'}" @click="tab='logIn'">
+			Вход
+		    </section>
+		    <section class="tab-button tab-second" :class="{'current':tab=='signUp'}" @click="tab='signUp'">
+			Регистрация
+		    </section>
+		</div>
+		<Transition name="smooth" mode="out-in">
+		    <log-in v-if="tab=='logIn'"/>
+		    <sign-up v-else-if="tab=='signUp'"/>
+		    <confirm-form v-else-if="tab==='confirm'"/>
+		    <new-password v-else-if="tab==='newPassword'"/>
+		    <forgot-password v-else-if="tab==='forgotPassword'"/>
+		</Transition>
+	    </section>
+	    <p class="text-medium-colored">
+		<b>
+		    &copy; Georgy Lebedev, 2022-2023
+		</b>
+	    </p>
+	</aside>
+    </section>
+
+    <button class="button-light button-large manual-button" @click="this.$refs.manualLink.click()">Справка</button>
+    <a href="/mcmanual.pdf" download ref="manualLink" :hidden="true"></a>
 </template>
 <script lang="ts">
 import LogIn from "@/components/login/LogIn.vue"
-import SignIn from "@/components/login/SignIn.vue"
+import SignUp from "@/components/login/SignUp.vue"
 import ForgotPassword from "@/components/login/ForgotPassword.vue";
 import ConfirmForm from "@/components/login/ConfirmForm.vue";
 import NewPassword from "@/components/login/NewPassword.vue";
@@ -36,7 +49,7 @@ export default defineComponent({
         ConfirmForm,
         ForgotPassword,
         LogIn,
-        SignIn,
+        SignUp,
     },
     created() {
         if (localStorage.getItem('TOKEN')) {
@@ -55,86 +68,6 @@ export default defineComponent({
     },
 })
 </script>
-<style scoped>
-.login {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-block: 10px;
-    text-align: center;
-    transition: 1s all;
-    background-color: white;
-    border: 1px solid #3d4551;
-    border-radius: 5px;
-    width: 400px;
-    min-width: 30%;
-    font-size: large;
-    -webkit-box-shadow: 0px 0px 8px 8px rgba(35, 35, 35, 0.2);
-    -moz-box-shadow: 0px 0px 8px 8px rgba(35, 35, 35, 0.2);
-    box-shadow: 0px 0px 8px 8px rgba(35, 35, 35, 0.2);
-}
-
-.tabs {
-    margin-block: 15px;
-    width: min-content;
-    display: flex;
-    flex-direction: row;
-    font-size: larger;
-}
-
-.tabButton {
-    cursor: pointer;
-    border: 1px solid #3d4551;
-    padding-inline: 20px;
-    padding-block: 10px;
-}
-
-.firstTab {
-    border-radius: 10px 0 0 10px;
-}
-
-.secondTab {
-    border-radius: 0 10px 10px 0;
-}
-
-.tabButton.current {
-    background-color: #3d4551;
-    color: #ea5c41;
-}
-
-
-.parentDiv {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    background-image: url("../assets/images/background.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-.manualButton {
-    position: fixed;
-    bottom: 5%;
-    right: 10%;
-    width: 200px;
-    height: 50px;
-    font-size: 16pt;
-}
-
-.manualButton:hover a {
-    color: #ea5c41;
-}
-
-.smooth-enter-active,
-.smooth-leave-active {
-    transition: all 0.3s ease-out;
-}
-
-.smooth-enter-from,
-.smooth-leave-to {
-    opacity: 0;
-    transform: scale(0)
-}
+<style lang="sass">
+@use "@/assets/styles/pages/Login"
 </style>

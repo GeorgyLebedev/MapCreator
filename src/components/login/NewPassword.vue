@@ -1,26 +1,26 @@
 <template>
-  <div class="forgotPasswordForm" >
-    <div>
+  <form class="login-form">
+    <section class="login-section">
       Введите новый пароль:<br>
-      <small>(Минимум 8 символов)</small><br>
-      <input type="password" required  class="defaultInput"  v-model="newPassword"
+      <small>(Минимум 8 символов)</small>
+      <input type="password" required  class="input-medium login-input"  v-model="newPassword"
              placeholder="*********">
-    </div>
-    <div>
+    </section>
+    <section class="login-section">
       Повторите пароль:<br>
-      <input type="password" required  class="defaultInput"  v-model="newPasswordRepeat"
+      <input type="password" required  class="input-medium login-input"  v-model="newPasswordRepeat"
              placeholder="*********">
-    </div>
-    <div>
-      <button type="button" class="buttonLight buttonLarge" @click="this.$store.commit('userState/setTab','logIn')">
+    </section>
+    <section class="login-section flex-row">
+      <button type="button" class="button-light button-large" @click="this.$store.commit('userState/setTab','logIn')">
         Отмена
       </button>
-      <button type="button" class="buttonDark buttonLarge"
+      <button type="button" class="button-dark button-large"
               :disabled="!(newPassword.length>=8 && newPasswordRepeat===newPassword)" @click="this.$store.dispatch('userState/updatePassword')">
         Завершить
       </button>
-    </div>
-  </div>
+    </section>
+  </form>
 </template>
 
 <script lang="ts">
