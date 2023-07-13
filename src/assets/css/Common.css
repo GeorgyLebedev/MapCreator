@@ -172,15 +172,15 @@ p{
     left: 0;
     z-index: 4;
 }
-.flexRow{
+.flex-row{
     display: flex;
     flex-direction: row;
 }
-.flexColumn{
+.flex-column{
     display: flex;
     flex-direction: column;
 }
-.alignCenter{
+.align-center{
     align-items: center;
 }
 .alignStart{
@@ -189,7 +189,7 @@ p{
 .alignEnd{
     align-items: flex-end;
 }
-.justifyBetween{
+.justify-between{
     justify-content: space-between;
 }
 .justifyCenter{

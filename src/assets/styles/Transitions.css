@@ -1,0 +1,12 @@
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.25s ease-in-out;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateY(-50px);
+  opacity: 0;
+}
+
+/*# sourceMappingURL=Transitions.css.map */

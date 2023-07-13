@@ -1,0 +1,9 @@
+/*VARIABLES*/
+input[type=text], input[type=email],
+input[type=password], textarea {
+  border: 1px solid #3d4551;
+  color: #3d4551;
+  outline: none;
+}
+
+/*# sourceMappingURL=Inputs.css.map */

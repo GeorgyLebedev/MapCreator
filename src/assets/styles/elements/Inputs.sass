@@ -1,6 +1,6 @@
 @use "../Variables"
 input[type='text'], input[type='email'],
-input[type='password'], textarea
+input[type='password'], input[type='number'], textarea
   border: 1px solid Variables.$dark-color
   color: Variables.$dark-color
   outline: none
@@ -17,3 +17,65 @@ textarea
   font-size: 14pt
   border-radius: 15px
   padding: 10px
+
+input[type='range']
+  width: 175px
+  height: 13px
+  margin-inline: 10px
+  -webkit-appearance: none
+  background: Variables.$medium-color
+  outline: none
+  border-radius: 10px
+  overflow: hidden
+  padding-left: 1px
+  padding-right: 1px
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset
+  -moz-box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset
+  box-shadow: 0px 0px 0px 1px rgba(35, 35, 35, 1) inset
+
+input[type='range']::-webkit-slider-thumb
+  -webkit-appearance: none
+  background: Variables.$orange-color
+  width: 11px
+  height: 11px
+  border: 2px solid Variables.$orange-color
+  border-radius: 10px
+  cursor: pointer
+  box-shadow: -180px 0 0 173px #3d4551
+
+
+input[type='range']::-moz-range-thumb
+  -webkit-appearance: none
+  background: Variables.$orange-color
+  width: 11px
+  height: 11px
+  border: 2px solid Variables.$orange-color
+  border-radius: 10px
+  cursor: pointer
+  box-shadow: -180px 0 0 173px #3d4551
+
+input[type='number']
+  outline: none
+  font-size: smaller
+  font-weight: bolder
+  width: 50px
+  border-radius: 5px
+  padding: 3px 0 2px 5px
+
+input[type='color']
+  -webkit-appearance: none
+  -moz-appearance: none
+  appearance: none
+  width: 34px
+  height: 38px
+  background-color: transparent
+  border: none
+  cursor: pointer
+
+input[type='color']::-webkit-color-swatch
+  width: 100%
+  border: 1px solid Variables.$medium-color
+
+input[type='color']::-moz-color-swatch
+  width: 100%
+  border: 1px solid Variables.$medium-color

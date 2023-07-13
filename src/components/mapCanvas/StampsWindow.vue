@@ -28,7 +28,7 @@
               <transition name="scale-anim">
               <div class="deleteConfirm kitConfirm" v-if="kitDeleteConfirm[key]" :key=key>
                 Вы уверены, что хотите удалить данный набор?
-                <div class="flexRow">
+                <div class="flex-row">
                   <button type="button" class="buttonDark buttonSmall" @click="deleteKit(key)">Удалить</button>
                   <button type="button" class="buttonLight buttonSmall" @click="kitDeleteConfirm[key]=false">Отмена</button>
                 </div>
@@ -79,7 +79,7 @@
               <transition name="scale-anim">
                 <div class="deleteConfirm stampConfirm" v-if="stampDeleteConfirm[key]" :key=key>
                   Вы уверены, что хотите удалить данный штамп?
-                  <div class="flexRow">
+                  <div class="flex-row">
                     <button type="button" class="buttonDark buttonSmall" @click="deleteStamp(key)">Удалить</button>
                     <button type="button" class="buttonLight buttonSmall" @click="stampDeleteConfirm[key]=false">Отмена</button>
                   </div>

@@ -7,7 +7,7 @@
 	    <div class="user-avatar-small" @click="modalFlags.showProfile=true">
 		<img :src="user.avatar" class="cursor-pointer" alt="" v-if="user">
 	    </div>
-	    <b class="cursor-pointer" @click="modalFlags.showProfile=true">{{
+	    <b class="cursor-pointer text-orange-colored" @click="modalFlags.showProfile=true">{{
                 user.login ? user.login : user.email
 		}}</b>
 	</div>

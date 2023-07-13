@@ -2,6 +2,7 @@
 @use "elements/Inputs"
 @use "elements/Modals"
 @use "elements/Headers"
+@use "elements/Containers"
 @use "Reset"
 @use "Variables"
 @use "Transitions"
@@ -109,3 +110,14 @@ p
   stroke: Variables.$dark-color
 .svg-dark-fill
   fill: Variables.$dark-color
+
+  /*DROPDOWNS*/
+.dropdown-flag
+  width: 15px
+  height: 15px
+  transition: 0.2s all
+  transform: rotate(90deg)
+  margin-right: 5px
+  &.opened
+    transform: rotate(180deg)
+
