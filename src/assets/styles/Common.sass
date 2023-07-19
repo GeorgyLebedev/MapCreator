@@ -3,6 +3,7 @@
 @use "elements/Modals"
 @use "elements/Headers"
 @use "elements/Containers"
+@use "elements/Scrollbars"
 @use "Reset"
 @use "Variables"
 @use "Transitions"
@@ -15,7 +16,7 @@ html, body
   height: 100%
 
 html, body, button, input, textarea
-  font-family: Comfortaa, SansSerif
+  font-family: Comfortaa, SansSerif, serif
 
 a
   text-decoration: none
@@ -71,6 +72,24 @@ p
   left: 0
   z-index: 4
 
+  /*WIDTH AND HEIGHT*/
+.w-25
+  width: 25%
+.w-50
+  width: 50%
+.w-75
+  width: 75%
+.w-100
+  width: 100%
+
+.h-25
+  height: 25%
+.h-50
+  height: 50%
+.h-75
+  height: 75%
+.h-100
+  height: 100%
   /*TEXT COLORS*/
 .text-light-colored
   color: Variables.$light-color
@@ -110,6 +129,16 @@ p
   stroke: Variables.$dark-color
 .svg-dark-fill
   fill: Variables.$dark-color
+
+.svg-cross-tick
+  transition: all 0.3s ease-out
+  cursor: pointer
+  stroke: Variables.$dark-color
+  height: 24px
+  width: 24px
+  &:hover
+    transform: scale(1.2)
+    stroke: Variables.$orange-color
 
   /*DROPDOWNS*/
 .dropdown-flag

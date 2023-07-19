@@ -1,5 +1,6 @@
 <template>
   <div id="shapesOpt" class="tools-options">
+      <div class="scroll-container">
     <div class="flex-row justify-between align-center">
       <b> Фигуры </b>
     <svg class="close-options-img" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64" @click="$emit('closePanel')">
@@ -70,12 +71,11 @@
             <label for="shapeFillChbx">Заливка</label>
           </div>
         </td>
-        <td>
-          <input type="color" v-model="fillColor" v-if="isFill"
-                 @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
-          <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
-               v-if="!isFill">
-        </td>
+	  <td :style="{'background-color': isFill?fillColor:'unset'}" class="color-picker-cell" @click="$refs.fillColor.click()">
+	      <input v-if="isFill" type="color" ref="fillColor" v-model="fillColor" @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
+				<img src="@/assets/images/Tools/Options/noColor.png" class="none-color-placeholder" alt=""
+						 v-if="!isFill">
+	  </td>
       </tr>
     </table>
     <recent-colors :source="'shapeFill'" @setShapeFill="color=>fillColor=color" v-if="isFill"/>
@@ -90,12 +90,11 @@
             <label for="shapeBorderChbx">Контур</label>
           </div>
         </td>
-        <td>
-          <input type="color" v-model="strokeColor" v-if="isBorder"
-                 @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
-          <img src="@/assets/images/Tools/Options/noColor.png" class="colorPlaceholder" alt="" height="30"
-               v-if="!isBorder">
-        </td>
+	  <td :style="{'background-color': isBorder?strokeColor:'unset'}" class="color-picker-cell" @click="$refs.strokeColor.click()">
+	      <input v-if="isBorder" type="color" ref="strokeColor" v-model="strokeColor" @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
+	      <img src="@/assets/images/Tools/Options/noColor.png" class="none-color-placeholder" alt=""
+		   v-if="!isBorder">
+	  </td>
       </tr>
     </table>
     <recent-colors :source="'shapeStroke'" @setShapeStroke="color=>strokeColor=color" v-if="isBorder"/>
@@ -120,6 +119,7 @@
       <input type="range" step="1" min="-180" max="180" v-model="rotation">
       <input type="number" step="1" min="-180" max="180" v-model="rotation">
     </div>
+      </div>
   </div>
 </template>
 

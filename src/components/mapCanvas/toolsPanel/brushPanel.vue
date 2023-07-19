@@ -1,5 +1,6 @@
 <template>
     <div id="brushOptions" class="tools-options">
+        <div class="scroll-container">
       <div class="flex-row justify-between align-center">
         <b> Кисть </b>
       <svg class="close-options-img" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64" @click="$emit('closePanel')">
@@ -10,27 +11,28 @@
       <table class="style-table">
         <tr>
           <td>
-            <div class="flex-row">Цвет кисти:</div>
+            <div class="flex-row align-center">Цвет кисти:</div>
           </td>
-          <td>
-            <input type="color" v-model="color" @input="this.$store.commit('colorsStore/updateLastColor', color)">
+          <td :style="{'background-color': color}" class="color-picker-cell" @click="$refs.brushColor.click()">
+            <input type="color" ref="brushColor" v-model="color" @input="this.$store.commit('colorsStore/updateLastColor', color)">
           </td>
         </tr>
       </table>
       <recentColors :source="'brushColor'" @setBrushColor="color=>this.color=color"/>
       <colors-palette :color="color" :source="'brushColor'" @setBrushColor="color=>this.color=color"/>
       <hr>
-      <div title="Размер кисти">
+      <div title="Размер кисти" class="flex-row align-center">
         <img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
         <input type="range" step="5" min="1" max="200" v-model="size">
         <input type="number" step="1" min="1" max="200" class="input-number-style" v-model="size">
       </div>
       <hr>
-      <div title="Непрозрачность кисти">
+      <div title="Непрозрачность кисти" class="flex-row align-center">
         <img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
         <input type="range" step="0.01" min="0" max="1" v-model="opacity">
         <input type="number" step="0.01" min="0" max="1" v-model="opacity" class="input-number-style">
       </div>
+        </div>
     </div>
 </template>
 

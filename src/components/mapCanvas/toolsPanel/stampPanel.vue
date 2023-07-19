@@ -1,4 +1,5 @@
 <template>
+    <transition name="show-opt">
     <stampsWindow
         v-if="modalFlags.showStampsWin"
         :stamps-prop="stamps"
@@ -6,7 +7,9 @@
         :selected-stamp-prop="currentStamp"
         @closeWindow="modalFlags.showStampsWin=false"
     />
+    </transition>
     <div class="tools-options">
+        <div class="scroll-container">
       <div class="flex-row justify-between align-center">
         <b> Штамп </b>
       <svg class="close-options-img" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64" @click="$emit('closePanel')">
@@ -15,9 +18,9 @@
       </div>
       <hr>
       <section class="flex-column " v-if="!Object.keys(this.selectedObject).length">
-        <div class="stampsContainer flex-row" v-if="currentKitLength>0">
-          <div class="bigStampContainer flex-column">
-            <div class="bigStamp">
+        <div class="stamps-container flex-row" v-if="currentKitLength>0">
+          <div class="big-stamp-container flex-column">
+            <div class="big-stamp">
               <img :src="currentStamp" alt="">
             </div>
             <div class="flex-row justify-between align-center">
@@ -26,17 +29,17 @@
               <img src="@/assets/images/rightArrow.png" class="cursor-pointer" height="20" @click="getSwitchStamp(false)">
             </div>
           </div>
-          <div class="stampsTable">
-            <div class="smallStamp cursor-pointer"
+          <div class="stamps-table">
+            <div class="small-stamp cursor-pointer"
                  v-for="(key) in visibleStamps"
-                 :class="{currentStamp:stamps[currentKit][key]===currentStamp}"
+                 :class="{'current-stamp':stamps[currentKit][key]===currentStamp}"
                  :key="key"
                  @click="this.currentStamp = this.currentKitObj[key]">
               <img :src="stamps[currentKit][key]" alt="">
             </div>
           </div>
         </div>
-        <button class="buttonLight buttonSmall" @click="modalFlags.showStampsWin=true">Открыть каталог</button>
+        <button class="button-light button-small" @click="modalFlags.showStampsWin=true">Открыть каталог</button>
         <hr>
       </section>
       <div class="flex-row align-center" title="Размер иконок">
@@ -57,6 +60,7 @@
         <input type="number" step="1" min="-180" max="180" v-model="rotation"
                class="input-number-style">
       </div>
+	</div>
     </div>
 </template>
 
@@ -172,65 +176,53 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="sass">
+@use "@/assets/styles/Variables"
+.stamps-container
+  max-width: 100%
+  max-height: 150px
 
-.stampsContainer {
-  max-width: 100%;
-  max-height: 150px;
-}
+.big-stamp
+  width: 100%
+  height: 80%
+  border: 1px solid Variables.$medium-color
+  border-radius: 5px
+  margin-bottom: 5px
+  & img
+    padding: 5px
+    object-fit: contain
+    width: 100%
+    height: 100%
 
-.bigStamp {
-  width: 100%;
-  height: 80%;
-  border: 1px solid gainsboro;
-  border-radius: 5px;
-  margin-bottom: 5px;
-}
+.big-stamp-container
+  width: 115px
+  max-width: 115px
+  height: 150px
 
-.bigStampContainer {
-  width: 115px;
-  max-width: 115px;
-  height:150px;
+.current-stamp
+  border: 1px solid Variables.$medium-color
+  background-color: rgba(0, 0, 0, 0.15)
 
-}
+.small-stamp
+  width: 45px
+  height: 45px
+  border-radius: 5px
+  margin-left: 5px
+  margin-bottom: 5px
+  & img
+    padding: 1px
+    object-fit: contain
+    width: 100%
+    height: 100%
+  &:not(.current-stamp)
+    border: 1px solid Variables.$medium-color
 
-.bigStamp img {
-  padding: 5px;
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-}
 
-.currentStamp {
-  border: 1px solid #232323;
-  background-color: rgba(0, 0, 0, 0.15);
-}
-
-.smallStamp {
-  width: 45px;
-  height: 45px;
-  border-radius: 5px;
-  margin-left: 5px;
-  margin-bottom: 5px;
-}
-
-.smallStamp:not(.currentStamp) {
-  border: 1px solid gainsboro;
-}
-
-.smallStamp img {
-  padding: 1px;
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-}
-
-.stampsTable {
-  height: 150px;
-  width: 150px;
-  display: flex;
-  align-content: flex-start;
-  flex-wrap: wrap;
-}
+.stamps-table
+  height: 150px
+  width: 150px
+  display: flex
+  align-content: flex-start
+  flex-wrap: wrap
 
 </style>

@@ -1,0 +1,14 @@
+@use "../Variables"
+*::-webkit-scrollbar
+  width: 10px
+*
+  scrollbar-width: thin
+  scrollbar-color: Variables.$medium-color Variables.$light-color
+
+*::-webkit-scrollbar-track
+  background: Variables.$medium-light-color
+
+*::-webkit-scrollbar-thumb
+  background-color: Variables.$medium-color
+  border-radius: 6px
+  border: 3px solid Variables.$medium-light-color

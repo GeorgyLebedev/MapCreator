@@ -1,13 +1,13 @@
 <template>
     <header>
-	<img src="@/assets/images/logo.png" alt="" :height="50">
+	<img src="@/assets/images/logo.png" class="header-logo">
 	<button class="button-light button-middle" @click="this.$refs.manualLink.click()">Справка</button>
 	<a href="/mcmanual.pdf" download ref="manualLink" :hidden="true"></a>
 	<div class="user-panel">
 	    <div class="user-avatar-small" @click="modalFlags.showProfile=true">
 		<img :src="user.avatar" class="cursor-pointer" alt="" v-if="user">
 	    </div>
-	    <b class="cursor-pointer text-orange-colored" @click="modalFlags.showProfile=true">{{
+	    <b class="cursor-pointer " @click="modalFlags.showProfile=true">{{
                 user.login ? user.login : user.email
 		}}</b>
 	</div>
@@ -41,12 +41,16 @@
 			    </span>
 			<section class="new-login-form" v-else>
 			    <input class="input-small" type="text" placeholder="От 8 до 30 символов" v-model="newLogin">
-
-			    <img class="cursor-pointer" src="@/assets/images/Service/close.png"
-				 @click="createNewLogin=false">
-			    <img class="cursor-pointer" src="@/assets/images/Service/tick.png"
-				 @click="updateUserData({login: newLogin})"
-				 :hidden="newLogin.length<8 || newLogin.length>30">
+				<div class="flex-row">
+					<svg class="svg-cross-tick" width="30px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" 	@click="createNewLogin=false">
+						<path d="M19 5L4.99998 19M5.00001 5L19 19"  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+					<transition name="scale">
+						<svg v-if="!(newLogin.length<8 || newLogin.length>30)" @click="updateUserData({login: newLogin})"  width="30px" class="svg-cross-tick" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M5.5 12.5L10.167 17L19.5 8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</transition>
+				</div>
 			</section>
 					<hr>
 			<div class="user-field-name">Дата регистрации:</div>
@@ -133,16 +137,26 @@ header
 	position: relative
 	display: flex
 	flex-direction: row
-	justify-content: space-between
+
 	align-items: center
 	border-bottom: 1px solid Variables.$medium-color
 	padding-block: 10px
-	padding-inline: 15px
+	padding-left: 15px
 	z-index: 2
 	background-color: Variables.$medium-light-color
+
 .user-panel
+	position: absolute
+	right: 0
 	display: flex
 	align-items: center
+	background-color: Variables.$light-color
+	color: Variables.$orange-color
+	padding: 5px
+	border-radius: 25px 0 0 25px
+	transition: all 0.3s ease-in
+	&:hover
+		padding: 5px 25px 5px 5px
 
 .user-avatar-small
 	margin-inline: 10px
@@ -208,7 +222,7 @@ header
 	flex-direction: row
 	align-items: center
 	width: 100%
-	height: 40px
+	height: 25px
 
 	input
 		width: 100%
@@ -221,4 +235,8 @@ header
 	margin-bottom: 5px
 	font-weight: bold
 	color: Variables.$dark-color
+
+.header-logo
+	height: 50px
+	margin-right: 25px
 </style>

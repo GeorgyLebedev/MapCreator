@@ -1,13 +1,13 @@
 <template>
-  <div class="modalContainer">
+  <div class="modal-container">
     <div class="modalWindow">
-      <div class="modalHeader">
+      <div class="modal-header">
         Загрузка изображения
         <img class="cursor-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
              @click="this.$emit('closeWindow')">
       </div>
       <hr>
-      <div class="modalBody">
+      <div class="modal-body">
         Размер фонового изображения не соответствует размеру холста.
         Выберите один из вариантов установки изображения:
         <div class="loadOption" :class="{selected: loadMode=='stretch'}" @click="loadMode='stretch'">
@@ -24,8 +24,8 @@
         </div>
       </div>
       <div class="modalFooter">
-        <button type="button" class="buttonLight" @click="this.$emit('closeWindow')">Отмена</button>
-        <button type="button" class="buttonDark" @click="this.$emit('setLoadMode', loadMode)">ОК</button>
+        <button type="button" class="button-light" @click="this.$emit('closeWindow')">Отмена</button>
+        <button type="button" class="button-dark" @click="this.$emit('setLoadMode', loadMode)">ОК</button>
       </div>
     </div>
   </div>

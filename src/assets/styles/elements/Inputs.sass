@@ -1,4 +1,5 @@
 @use "../Variables"
+/*TEXT*/
 input[type='text'], input[type='email'],
 input[type='password'], input[type='number'], textarea
   border: 1px solid Variables.$dark-color
@@ -18,6 +19,14 @@ textarea
   border-radius: 15px
   padding: 10px
 
+input[type='number']
+  outline: none
+  font-size: smaller
+  font-weight: bolder
+  width: 50px
+  border-radius: 5px
+  padding: 3px 0 2px 5px
+/* RANGE */
 input[type='range']
   width: 175px
   height: 13px
@@ -35,47 +44,71 @@ input[type='range']
 
 input[type='range']::-webkit-slider-thumb
   -webkit-appearance: none
-  background: Variables.$orange-color
+  background: Variables.$light-color
   width: 11px
   height: 11px
   border: 2px solid Variables.$orange-color
   border-radius: 10px
   cursor: pointer
-  box-shadow: -180px 0 0 173px #3d4551
-
+  box-shadow: -180px 0 0 173px Variables.$dark-color
 
 input[type='range']::-moz-range-thumb
   -webkit-appearance: none
-  background: Variables.$orange-color
+  background: Variables.$light-color
   width: 11px
   height: 11px
   border: 2px solid Variables.$orange-color
   border-radius: 10px
   cursor: pointer
-  box-shadow: -180px 0 0 173px #3d4551
+  box-shadow: -180px 0 0 173px Variables.$dark-color
 
-input[type='number']
-  outline: none
-  font-size: smaller
-  font-weight: bolder
-  width: 50px
-  border-radius: 5px
-  padding: 3px 0 2px 5px
-
+/* COLOR */
 input[type='color']
-  -webkit-appearance: none
-  -moz-appearance: none
+  visibility: hidden
+
+  /*CHECKBOX*/
+input[type="checkbox"]
   appearance: none
-  width: 34px
-  height: 38px
-  background-color: transparent
-  border: none
+  -webkit-appearance: none
+  background-color: Variables.$dark-color
+  width: 20px
+  height: 20px
+  opacity: 1
+  margin-right: 5px
+  border: 1px solid Variables.$medium-color
+  border-radius: 4px
+  position: relative
   cursor: pointer
+  outline: none
+  transition: all 0.5s ease-in-out
 
-input[type='color']::-webkit-color-swatch
-  width: 100%
-  border: 1px solid Variables.$medium-color
+input[type="checkbox"]:before
+  content: ""
+  display: block
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  width: 10px
+  height: 10px
+  background-color: Variables.$orange-color
+  border-radius: 2px
+  opacity: 1
+  transition: all 0.3s ease-in-out
 
-input[type='color']::-moz-color-swatch
-  width: 100%
-  border: 1px solid Variables.$medium-color
+input[type="checkbox"]:not(:checked)
+  background-color: Variables.$medium-light-color
+
+input[type="checkbox"]:not(:checked):before
+  opacity: 0
+
+input[type="checkbox"]:checked:before
+  transform: translate(-50%, -50%) rotate(45deg)
+
+input[type="checkbox"]+label
+  margin-top: 2px
+  cursor: pointer
+  display: flex
+  align-items: center
+  flex-direction: row
+

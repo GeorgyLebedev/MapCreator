@@ -9,7 +9,7 @@
         </button>
         <section class="changes-content">
         <u><b class="text-dark-colored">Изменений: {{ changes }}</b></u>
-        <span class="text-medium-colored">{{changes>0?'Не сохранено':'Нет изменений'}}</span>
+        <span class="text-dark-colored">{{changes>0?'Не сохранено':'Нет изменений'}}</span>
         </section>
       </div>
       <section class="flex-row align-center">
@@ -73,7 +73,7 @@ export default {
 <style scoped lang="sass">
 @use "@/assets/styles/Variables"
 .bot-menu
-  background-color: Variables.$light-color
+  background-color: Variables.$medium-light-color
   grid-area: BotMenu
   position: fixed
   bottom: 0
@@ -87,7 +87,7 @@ export default {
   border-left: none
   border-bottom: none
   transition: 0.5s all
-  background-color: Variables.$light-color
+  background-color: Variables.$medium-light-color
   max-width: 41px
   max-height: 40px
   border-right: 1px solid Variables.$medium-color
@@ -112,7 +112,7 @@ export default {
 
 .control-panel
   margin-inline: 20px
-  width: 385px
+  width: 400px
 
 
 .reset-button

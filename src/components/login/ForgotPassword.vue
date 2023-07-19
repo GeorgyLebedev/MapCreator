@@ -1,9 +1,10 @@
 <template>
     <form class="login-form">
   <section class="login-section">
-    Введите E-mail, указанный при регистрации: <br>
+      <p>Введите E-mail, указанный при регистрации: </p>
     <input type="email" class="input-medium login-input"  ref="resetEmail" v-model="emailToPasReset"
            placeholder="Ваш E-mail">
+  </section>
     <div>
       <button type="button" class="button-light button-large"  @click="this.$store.commit('userState/setTab','logIn')">
         Отмена
@@ -13,7 +14,7 @@
         Далее
       </button>
     </div>
-  </section>
+
     </form>
 </template>
 

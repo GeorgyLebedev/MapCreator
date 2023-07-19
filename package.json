@@ -29,6 +29,7 @@
     "sass": "^1.63.6",
     "save-dev": "^0.0.1-security",
     "vue": "^3.2.13",
+    "vue-color-kit": "^1.0.6",
     "vue-router": "^4.0.3",
     "vuex": "^4.1.0"
   },

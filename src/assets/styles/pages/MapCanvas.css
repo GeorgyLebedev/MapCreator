@@ -1,6 +1,6 @@
 /*VARIABLES*/
 .main-container {
-  background-color: #e3e9f4;
+  background-color: #EBEBEB;
   display: grid;
   width: 100vw;
   max-height: 100vh;
@@ -24,7 +24,7 @@
   position: relative;
   justify-content: center;
   align-items: center;
-  border-left: 1px solid #728391;
+  border-left: 1px solid #999999;
   overflow-x: hidden;
   overflow-y: hidden;
 }

@@ -208,7 +208,7 @@ export default {
 #tools-panel
   grid-area: ToolsPanel
   position: relative
-  background: Variables.$light-color
+  background: Variables.$medium-light-color
   display: flex
   flex-direction: column
   align-items: center
@@ -237,19 +237,23 @@ export default {
   border-left: none
   background: Variables.$light-color
   border-radius: 0 0 15px 0
-  padding: 10px
+
   left: 41px
   top: 39px
   white-space: nowrap
   text-align: left
   z-index: 2
-  overflow-y: auto
+  overflow: hidden
   max-height: 500px
   max-width: 300px
 
 .tools-options hr
   margin-block: 10px
 
+.scroll-container
+  max-height: 500px
+  overflow-y: auto
+  padding: 10px
 .type-select-button
   width: 35px
   height: 35px
@@ -274,15 +278,23 @@ export default {
   opacity: 0.5
 
 .style-table tr
-  height: 40px
+  height: 30px
 
 .style-table tr>td>div
   width: 200px
 
-.color-placeholder
-  border: 1px solid gray
-  margin-left: 2px
-  margin-top: 3px
+.color-picker-cell
+  max-width: 30px
+  width: 30px
+  max-height: 30px
+  height: 30px
+  border-radius: 5px
+  cursor: pointer
+
+.none-color-placeholder
+  border-radius: 5px
+  height: 30px
+
 
 .close-options-img
   width: 25px

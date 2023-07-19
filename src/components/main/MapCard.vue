@@ -104,7 +104,7 @@ export default {
   & div
     width: 40px
     height: 40px
-    background-color: Variables.$medium-light-color
+    background-color: Variables.$light-color
     margin-inline: 5px
     padding: 5px
     border-radius: 50%

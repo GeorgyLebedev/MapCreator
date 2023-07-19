@@ -1,3 +1,18 @@
+/*VARIABLES*/
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #728391 #e3e9f4;
+}
 
+*::-webkit-scrollbar-track {
+  background: var(--scrollbarBG);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--thumbBG);
+  border-radius: 6px;
+  border: 3px solid var(--scrollbarBG);
+}
 
 /*# sourceMappingURL=Scrollbars.css.map */

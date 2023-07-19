@@ -176,6 +176,9 @@ export default {
 </script>
 <style scoped lang="sass">
 @use '@/assets/styles/Variables'
+#header
+  background-color: Variables.$medium-light-color
+
 summary:not(.button-light)
   padding: 10px
   cursor: pointer

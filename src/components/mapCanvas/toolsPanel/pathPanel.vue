@@ -1,5 +1,6 @@
 <template>
   <div id="pathOptions" class="tools-options">
+      <div class="scroll-container">
     <div class="flex-row justify-between align-center">
       <b> Пути/кривые </b>
     <svg class="close-options-img" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64" @click="$emit('closePanel')">
@@ -99,8 +100,8 @@
             Цвет линии:
           </div>
         </td>
-        <td>
-          <input type="color" v-model="color" @input="this.$store.commit('colorsStore/updateLastColor', color)">
+        <td :style="{'background-color': color}" class="color-picker-cell" @click="$refs.brushColor.click()">
+            <input type="color" ref="brushColor" v-model="color" @input="this.$store.commit('colorsStore/updateLastColor', color)">
         </td>
       </tr>
     </table>
@@ -125,6 +126,7 @@
       <input type="range" step="0.01" min="0" max="1" v-model="opacity">
       <input type="number" step="0.01" min="0" max="1" v-model="opacity">
     </div>
+      </div>
   </div>
 </template>
 

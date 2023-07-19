@@ -1,5 +1,6 @@
 <template>
     <div id="cursorOpt" class="tools-options" >
+        <div class="scroll-container">
       <div class="flex-row justify-between align-center">
         <b> Курсор </b>
 	  <svg class="close-options-img" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64" @click="$emit('closePanel')">
@@ -46,6 +47,7 @@
 					</svg>
         </div>
       </div>
+	</div>
     </div>
 </template>
 

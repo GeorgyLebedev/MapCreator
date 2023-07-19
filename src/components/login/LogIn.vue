@@ -1,12 +1,12 @@
 <template>
   <form class="login-form">
     <section class="login-section">
-	E-mail: <br>
+        <p>E-mail: </p>
       <input class="input-medium login-input" type="email" required  ref="enterEmail" v-model="username"
              placeholder="Введите E-mail ">
     </section>
     <section class="login-section">
-      Пароль:<br>
+	<p>Пароль: </p>
       <input class="input-medium login-input" type="password" required v-model="password"
              placeholder="*********">
       <div class="cursor-pointer forgot-password-link">

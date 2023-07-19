@@ -1,18 +1,18 @@
 <template>
   <form class="login-form">
     <section class="login-section">
-      Введите E-mail: <br>
+       <p>Введите E-mail:</p>
       <input type="email"  class="input-medium login-input"  required ref="regEmail" v-model="email"
              placeholder="Ваш E-mail">
     </section>
     <section  class="login-section">
-      Задайте пароль: <br>
-      <small class="text-medium-colored">(Минимум 8 символов)</small>
+      <p>Задайте пароль: <br>
+      <small class="text-medium-colored">(Минимум 8 символов)</small></p>
       <input type="password" required  class="input-medium login-input"  v-model="password"
              placeholder="*********">
     </section>
     <section  class="login-section">
-      Повторите пароль:<br>
+	<p> Повторите пароль: </p>
       <input type="password" required  class="input-medium login-input"  v-model="passwordRepeat"
              placeholder="*********">
     </section>
