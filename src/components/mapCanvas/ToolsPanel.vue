@@ -62,7 +62,9 @@
     </section>
   </div>
 </template>
-<script>
+<script lang="ts">
+import {defineComponent} from "vue";
+import store from "@/modules/store/store";
 import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
 import cursorPanel from "@/components/mapCanvas/toolsPanel/cursorPanel";
@@ -73,7 +75,7 @@ import pathPanel from "@/components/mapCanvas/toolsPanel/pathPanel";
 import textPanel from "@/components/mapCanvas/toolsPanel/textPanel";
 import {mapGetters} from "vuex";
 
-export default {
+export default defineComponent({
   name: "ToolsPanel",
   components: {
     cursorPanel,
@@ -95,22 +97,22 @@ export default {
   data() {
     return {
       modalFlags: flags,
-      tool: "cursor",
-      lastColor: "",
-      stamps: {},
-      palette: {},
-      recentColors: Array(8).fill("#ffffff"),
-      optionVisible: true
+      tool: "cursor" as string,
+      lastColor: "" as string,
+      stamps: {} as object,
+      palette: {} as object,
+      recentColors: Array(8).fill("#ffffff") as string[],
+      optionVisible: true as boolean
     }
   },
   methods: {
-    async getOptions() {
+    async getOptions():Promise<any> {
       try {
         let request = new AxiosRequest('options/', 'get')
         let response = await request.sendRequest()
         if (response && response.options) return response.options
-      } catch (e) {
-        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
+      } catch (e:any) {
+        store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
     },
 
@@ -124,21 +126,21 @@ export default {
       return this.selectedObject&&this.selectedObject.data?this.selectedObject.data.type:false
     }
   },
-  async mounted() {
+  async mounted():Promise<void> {
     let userOptions = await this.getOptions()
     this.stamps = userOptions.stamps
     this.palette = userOptions.palette
   },
 
   watch: {
-    tool(val) {
-      this.$store.commit("selection/removeSelection")
+    tool(val:string) {
+      store.commit("selection/removeSelection")
       this.optionVisible = true
       this.$emit('toolChange', val)
     },
-    optionVisible(val){
+    optionVisible(val:boolean){
       if(!val&&this.selectedObject){
-        this.$store.commit("selection/removeSelection")
+        store.commit("selection/removeSelection")
       }
     }
   /*  selectedObj: {
@@ -201,7 +203,7 @@ export default {
       }
     },*/
   }
-}
+})
 </script>
 <style lang="sass">
 @use "@/assets/styles/Variables"

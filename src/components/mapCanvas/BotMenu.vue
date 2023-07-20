@@ -32,15 +32,15 @@
     </div>
   </div>
 </template>
-<script>
-
+<script lang="ts">
+import {defineComponent} from "vue";
 import {mapGetters} from "vuex";
 
-export default {
+export default defineComponent({
   name: "BotMenu",
   data() {
     return {
-      scale: 1,
+      scale: 1 as number,
     }
   },
   methods: {
@@ -61,14 +61,14 @@ export default {
     })
   },
   watch: {
-    scaleProp(val) {
+    scaleProp(val:number) {
       this.scale = val
     },
-    changesProp(val) {
+    changesProp(val:number) {
       this.changes = val
     }
   }
-}
+})
 </script>
 <style scoped lang="sass">
 @use "@/assets/styles/Variables"

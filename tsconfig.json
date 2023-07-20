@@ -3,7 +3,7 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "noImplicitReturns": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "target": "esnext",
     "module": "esnext",
     "esModuleInterop": true,

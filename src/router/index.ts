@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+// @ts-ignore
 import Main from '@/views/Main.vue'; //компонент главной страницы
+// @ts-ignore
 import Login from '@/views/Login.vue'; //компонент страницы авторизации/регистрации
+// @ts-ignore
 import MapCanvas from '@/views/MapCanvas.vue'; //компонент страницы редактирования карт
+// @ts-ignore
 import NotFound from '@/views/NotFound.vue'; //компонент страницы 404
 
 const routes: Array<RouteRecordRaw> = [
