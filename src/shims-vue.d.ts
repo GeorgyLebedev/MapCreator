@@ -1,5 +1,3 @@
-/* eslint-disable */
-import {Store} from "vuex";
 import VueRouter  from 'vue-router';
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'

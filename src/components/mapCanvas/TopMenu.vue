@@ -57,8 +57,9 @@
         <div v-if="backgroundFlag">
           <hr>
           Значение:<br>
-          <input type="color" v-model="backgroundColor"
-                 @input="this.$emit('setCanvasBackground', {type: 'color', value:backgroundColor})">
+	    <div :style="{'background-color': backgroundColor}" class="color-picker-cell" @click="$refs.backgroundColor.click()">
+		    <input type="color" ref="backgroundColor" v-model="backgroundColor" @input="this.$emit('setCanvasBackground', {type: 'color', value:backgroundColor})">
+	    </div>
         </div>
       </div>
       </Transition>
@@ -186,8 +187,8 @@ summary:not(.button-light)
 
 .dropdown-menu p:hover
   cursor: pointer
-  background-color: #728391
-  color: white
+  background-color: Variables.$medium-color
+  color: Variables.$light-color
 
 
 .dropdown-menu p
@@ -221,10 +222,10 @@ summary:not(.button-light)
 .dropdown-menu
   position: absolute
   top: 37px
-  background-color: white
+  background-color: Variables.$light-color
   max-width: 300px
   z-index: 4
-  border: 1px solid #dcdcdc
+  border: 1px solid Variables.$medium-color
   border-radius: 10px
   padding: 10px
   user-select: none

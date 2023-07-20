@@ -25,8 +25,10 @@
       </div>
     </div>
 </template>
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "MapEditWindow",
   props: {
     mapName: {
@@ -40,28 +42,23 @@ export default {
   },
   data() {
     return {
-      name: "",
-      description: ""
+      name: "" as string,
+      description: "" as string
     }
   },
   watch: {
-    name:{
-      handler(val){
+    name(val){
         this.$emit('updateName',val)
-      }
     },
-    description:{
-      handler(val){
+    description(val){
         this.$emit('updateDesc',val)
-      }
     }
   },
   mounted() {
-    this.name=this.mapName
-    this.description=this.mapDesc
+    this.name=this.mapName || ""
+    this.description=this.mapDesc || ""
   }
-}
-
+})
 </script>
 <style scoped lang="sass">
 @use "@/assets/styles/Variables"

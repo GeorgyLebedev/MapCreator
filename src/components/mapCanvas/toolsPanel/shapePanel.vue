@@ -71,11 +71,11 @@
             <label for="shapeFillChbx">Заливка</label>
           </div>
         </td>
-	  <td :style="{'background-color': isFill?fillColor:'unset'}" class="color-picker-cell" @click="$refs.fillColor.click()">
+	  <div :style="{'background-color': isFill?fillColor:'unset'}" class="color-picker-cell" @click="$refs.fillColor.click()">
 	      <input v-if="isFill" type="color" ref="fillColor" v-model="fillColor" @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
 				<img src="@/assets/images/Tools/Options/noColor.png" class="none-color-placeholder" alt=""
 						 v-if="!isFill">
-	  </td>
+	  </div>
       </tr>
     </table>
     <recent-colors :source="'shapeFill'" @setShapeFill="color=>fillColor=color" v-if="isFill"/>
@@ -90,11 +90,11 @@
             <label for="shapeBorderChbx">Контур</label>
           </div>
         </td>
-	  <td :style="{'background-color': isBorder?strokeColor:'unset'}" class="color-picker-cell" @click="$refs.strokeColor.click()">
+	  <div :style="{'background-color': isBorder?strokeColor:'unset'}" class="color-picker-cell" @click="$refs.strokeColor.click()">
 	      <input v-if="isBorder" type="color" ref="strokeColor" v-model="strokeColor" @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
 	      <img src="@/assets/images/Tools/Options/noColor.png" class="none-color-placeholder" alt=""
 		   v-if="!isBorder">
-	  </td>
+	  </div>
       </tr>
     </table>
     <recent-colors :source="'shapeStroke'" @setShapeStroke="color=>strokeColor=color" v-if="isBorder"/>

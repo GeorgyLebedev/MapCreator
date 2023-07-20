@@ -1,4 +1,4 @@
-interface Imap{
+interface iMap{
     _id?: string,
     user?: string,
     title?: string,
@@ -9,4 +9,4 @@ interface Imap{
     miniature?: string,
     objects?: any,
 }
-export default Imap
+export default iMap

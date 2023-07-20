@@ -290,11 +290,13 @@ export default {
   height: 30px
   border-radius: 5px
   cursor: pointer
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(34, 60, 80, 0.2)
+  -moz-box-shadow: 0px 0px 0px 1px rgba(34, 60, 80, 0.2)
+  box-shadow: 0px 0px 0px 1px rgba(34, 60, 80, 0.2)
 
 .none-color-placeholder
   border-radius: 5px
   height: 30px
-
 
 .close-options-img
   width: 25px

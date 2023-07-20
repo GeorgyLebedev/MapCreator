@@ -49,13 +49,13 @@
 			    <label for="textFillChbx">Цвет текста</label>
 			</div>
 		    </td>
-		    <td :style="{'background-color': isFill?fillColor:'unset'}" class="color-picker-cell"
+		    <div :style="{'background-color': isFill?fillColor:'unset'}" class="color-picker-cell"
 			@click="$refs.fillColor.click()">
 			<input v-if="isFill" ref="fillColor" v-model="fillColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
 			<img v-if="!isFill" alt="" class="none-color-placeholder"
 			     src="@/assets/images/Tools/Options/noColor.png">
-		    </td>
+		    </div>
 		</tr>
 	    </table>
 	    <transition name="stretch">
@@ -135,13 +135,13 @@
 			    <label for="textBorderChbx">Обводка</label>
 			</div>
 		    </td>
-		    <td :style="{'background-color': isBorder?strokeColor:'unset'}" class="color-picker-cell"
+		    <div :style="{'background-color': isBorder?strokeColor:'unset'}" class="color-picker-cell"
 			@click="$refs.strokeColor.click()">
 			<input v-if="isBorder" ref="strokeColor" v-model="strokeColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
 			<img v-if="!isBorder" alt="" class="none-color-placeholder"
 			     src="@/assets/images/Tools/Options/noColor.png">
-		    </td>
+		    </div>
 		</tr>
 	    </table>
 	    <Transition mode="out-in" name="stretch">
@@ -167,13 +167,13 @@
 			    <label for="textShadowChbx">Тень</label>
 			</div>
 		    </td>
-		    <td :style="{'background-color': isShadow?shadowColor:'unset'}" class="color-picker-cell"
+		    <div :style="{'background-color': isShadow?shadowColor:'unset'}" class="color-picker-cell"
 			@click="$refs.shadowColor.click()">
 			<input v-if="isShadow" ref="shadowColor" v-model="shadowColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', shadowColor)">
 			<img v-if="!isShadow" alt="" class="none-color-placeholder"
 			     src="@/assets/images/Tools/Options/noColor.png">
-		    </td>
+		    </div>
 		</tr>
 	    </table>
 	    <Transition mode="out-in" name="stretch">

@@ -91,6 +91,7 @@ export default {
   flex-direction: row
   align-items: center
   height: 40px
+  background-color: Variables.$medium-light-color
   border: 1px solid Variables.$medium-color
   border-radius: 10px
   user-select: none
@@ -102,17 +103,17 @@ export default {
   height: inherit
   padding: 10px
   cursor: pointer
+  & svg
+    height: 100%
+    object-fit: contain
+    transition: 0.3s all ease-in-out
+  &:hover
+    color: Variables.$orange-color
+    svg
+      fill: Variables.$orange-color
+  &:nth-last-child(n+2)
+    border-right: 1px solid Variables.$medium-color
 
-
-
-.select-option:nth-last-child(n+2)
-  border-right: 1px solid Variables.$medium-color
-
-
-.select-option svg
-  height: 100%
-  object-fit: contain
-  transition: 0.3s all ease-in-out
 
 .option-checked
   transition: 0.3s all ease-in-out
@@ -120,17 +121,9 @@ export default {
   color: Variables.$orange-color
   & svg
     fill: Variables.$orange-color
-
-
-.option-checked:nth-last-child(1)
-  border-radius: 0 10px 10px 0
-
-
-.option-checked:nth-child(1)
-  border-radius: 10px 0 0 10px
-
-
-.option-checked img
-  filter: invert(100%)
+  &:nth-last-child(1)
+    border-radius: 0 10px 10px 0
+  &:nth-child(1)
+    border-radius: 10px 0 0 10px
 
 </style>

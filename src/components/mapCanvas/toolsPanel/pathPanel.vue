@@ -100,9 +100,9 @@
             Цвет линии:
           </div>
         </td>
-        <td :style="{'background-color': color}" class="color-picker-cell" @click="$refs.brushColor.click()">
+        <div :style="{'background-color': color}" class="color-picker-cell" @click="$refs.brushColor.click()">
             <input type="color" ref="brushColor" v-model="color" @input="this.$store.commit('colorsStore/updateLastColor', color)">
-        </td>
+        </div>
       </tr>
     </table>
     <recent-colors :source="'lineColor'" @setLineColor="color=>this.color=color"/>

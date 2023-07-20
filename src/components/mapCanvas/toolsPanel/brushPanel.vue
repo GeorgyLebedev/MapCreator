@@ -13,9 +13,9 @@
           <td>
             <div class="flex-row align-center">Цвет кисти:</div>
           </td>
-          <td :style="{'background-color': color}" class="color-picker-cell" @click="$refs.brushColor.click()">
-            <input type="color" ref="brushColor" v-model="color" @input="this.$store.commit('colorsStore/updateLastColor', color)">
-          </td>
+          <div :style="{'background-color': color}" class="color-picker-cell" @click="$refs.brushColor.click()">
+            <input type="color" ref="brushColor" hidden v-model="color" @input="this.$store.commit('colorsStore/updateLastColor', color)">
+          </div>
         </tr>
       </table>
       <recentColors :source="'brushColor'" @setBrushColor="color=>this.color=color"/>

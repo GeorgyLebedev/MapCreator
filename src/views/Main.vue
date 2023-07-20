@@ -55,7 +55,7 @@ import MapDeleteWindow from "@/components/main/MapDeleteWindow.vue";
 import {defineComponent} from "vue";
 import {logOut, addNewMap, updateMapMetadata, getMaps, deleteMap} from "@/modules/services/mainPageUtils";
 import {mapGetters} from "vuex";
-import Imap from "@/modules/intefaces/map";
+import iMap from "@/modules/intefaces/map";
 
 export default defineComponent({
   name: 'MainPage',
@@ -68,8 +68,8 @@ export default defineComponent({
   },
   data() {
     return {
-      selectedMap: {} as Imap,
-      mapList: [] as Imap[] | undefined,
+      selectedMap: {} as iMap,
+      mapList: [] as iMap[] | undefined,
     }
   },
   methods: {
@@ -78,12 +78,12 @@ export default defineComponent({
       await addNewMap(title, resolution)
       this.mapList = await this.getMaps()
     },
-    async updateMapMetadata(selectedMap:Imap) {
+    async updateMapMetadata(selectedMap:iMap) {
       await updateMapMetadata(selectedMap)
       this.mapList = await this.getMaps()
     },
     getMaps: getMaps,
-    async deleteMap(selectedMap:Imap) {
+    async deleteMap(selectedMap:iMap) {
       await deleteMap(selectedMap)
       this.mapList = await this.getMaps()
     }

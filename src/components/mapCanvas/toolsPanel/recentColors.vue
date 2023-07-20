@@ -1,24 +1,22 @@
 <template>
   <details>
     <summary class="cursor-pointer"><u>Последние цвета:</u></summary>
-    <table class="colorTable">
-      <tr>
-        <td v-for="(color, index) in recentColors" :key="index">
+    <div class="color-table">
+        <div v-for="(color, index) in recentColors" :key="index">
           <template v-if="color !== 'transparent'">
             <div
-                class="colorCell cursor-pointer"
+                class="color-cell cursor-pointer"
                 :style="{ backgroundColor: color }"
                 @click="setToolColor(color)"
             />
           </template>
           <template v-else>
-            <div class="colorCell">
+            <div class="color-cell">
               <img src="@/assets/images/Tools/Options/noColor.png" />
             </div>
           </template>
-        </td>
-      </tr>
-    </table>
+        </div>
+    </div>
   </details>
 </template>
 
@@ -66,34 +64,35 @@ export default {
 }
 </script>
 
-<style scoped>
-details{
-  user-select: none;
-  padding-block: 5px;
-}
-summary{
-  padding-bottom: 5px;
-}
-summary:focus{
-  outline: none;
-}
-.colorTable {
-  border-collapse: initial;
-  border: 1px solid gainsboro;
-}
+<style scoped lang="sass">
+@use "@/assets/styles/Variables"
+details
+  user-select: none
+  padding-block: 5px
 
+summary
+  padding-bottom: 5px
 
-.colorCell {
-  max-height: 30px;
-  height: 30px;
-  width: 30px;
-  min-width: 30px;
-  border: 1px solid gainsboro;
-}
+summary:focus
+  outline: none
 
-.colorCell img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.color-table
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  border: 1px solid Variables.$medium-light-color
+  width: 100%
+  padding: 3px
+
+.color-cell
+  max-height: 30px
+  height: 30px
+  width: 30px
+  min-width: 30px
+  border: 1px solid Variables.$medium-light-color
+
+.color-cell img
+  width: 100%
+  height: 100%
+  object-fit: cover
 </style>

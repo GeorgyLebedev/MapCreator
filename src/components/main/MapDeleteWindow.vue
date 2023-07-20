@@ -24,12 +24,14 @@
 </div>
 </div>
 </template>
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "MapDeleteWindow",
   data(){
     return{
-      inputMapName: ""
+      inputMapName: "" as string
     }
   },
   props:{
@@ -37,12 +39,11 @@ export default {
       type:String,
     }
   }
-}
+})
 </script>
 <style scoped lang="sass">
 .modal-window
   max-width: 400px
-
 .modal-body
   & input
     width: 100%

@@ -40,7 +40,7 @@ router.get('/', authenticateJWT, async (req, res) => {
 	        email: query.email,
 		login:query.login,
 		avatar: query.avatar,
-		regDate: query.regDate
+		registrationDate: query.registrationDate
 	    }
 	});
     }

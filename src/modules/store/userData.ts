@@ -174,7 +174,7 @@ const userState: Module<UserState, any> = {
                     {
                         email: getters.getRegisterDataEmail.toLowerCase(),
                         password: getters.getRegisterDataPassword,
-                        regDate: new Date(),
+                        registrationDate: new Date(),
                     })
                 const response: any = await request.sendRequest()
                 return response
