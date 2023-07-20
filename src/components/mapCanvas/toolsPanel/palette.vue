@@ -1,19 +1,19 @@
 <template>
   <details>
-    <summary class="cursorPointer"><u>Палитра:</u></summary>
-    <div id="palette" class="colorGrid">
+    <summary class="cursor-pointer"><u>Палитра:</u></summary>
+    <div id="palette" class="color-grid">
       <div
           v-for="(color, index) in paletteColors"
           :key="index"
-          class="colorCell"
-          :class="{ 'cursorPointer': color !== null }"
+          class="color-cell"
+          :class="{ 'cursor-pointer': color !== null }"
           :style="{ backgroundColor: color }"
           @click.right="openPaletteContextMenu($event, index)"
           @click.left="setToolColor(color)"
           :tabindex="index">
         <img src="@/assets/images/Tools/Options/noColor.png"  v-if="color==null">
       </div>
-      <div class="invisibleContainer" @click="showPaletteContext=false" v-if="showPaletteContext">
+      <div class="invisible-container" @click="showPaletteContext=false" v-if="showPaletteContext">
         <div class="contextMenu" :style="paletteContextStyle" @contextmenu.prevent>
           <div class="contextMenuItem" @click="showPaletteContext=false">
             Отмена
@@ -118,41 +118,42 @@ export default {
 }
 </script>
 
-<style scoped>
-summary:focus{
-  outline: none;
-}
-summary{
-  padding-bottom: 5px;
-}
-details{
-  user-select: none;
-  padding-block: 5px;
-}
-.colorGrid {
-  display: grid;
-  grid-template-columns: repeat(8, 30px);
-  grid-template-rows: repeat(3, 30px);
-  gap: 1px;
-  padding: 3px;
-  justify-content: space-between;
-  border: 1px solid gainsboro;
-}
-.colorCell {
-  max-height: 30px;
-  width: 30px;
-  height: 30px;
-  max-width: 30px;
-  border: 1px solid gainsboro;
-}
+<style scoped lang="sass">
+@use "@/assets/styles/Variables"
+summary:focus
+  outline: none
 
-.colorCell:focus {
-  border: 1px solid black;
-}
+summary
+  padding-bottom: 5px
 
-.colorCell img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
+details
+  user-select: none
+  padding-block: 5px
+
+.color-grid
+  display: grid
+  grid-template-columns: repeat(8, 30px)
+  grid-template-rows: repeat(3, 30px)
+  gap: 1px
+  padding: 3px
+  justify-content: space-between
+  border: 1px solid Variables.$medium-light-color
+
+.color-cell
+  max-height: 30px
+  width: 30px
+  height: 30px
+  max-width: 30px
+  border: 1px solid Variables.$medium-light-color
+
+
+.color-cell:focus
+  border: 1px solid Variables.$dark-color
+
+
+.color-cell img
+  width: 100%
+  height: 100%
+  object-fit: contain
+
 </style>

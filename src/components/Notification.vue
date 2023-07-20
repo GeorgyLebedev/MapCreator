@@ -3,7 +3,7 @@
     <div :class="'notification ' + notification.type" v-if="Object.keys(notification).length>0">
       <div class="notificationHeader">
         <b>{{ title }}</b>
-        <img class="cursorPointer" src="@/assets/images/Service/close.png" alt="" width="20" height="20"
+        <img class="cursor-pointer" src="@/assets/images/Service/close.png" alt="" width="20" height="20"
              @click="this.$store.commit('clearNotification')">
       </div>
       <div class="notificationBody">
@@ -12,15 +12,20 @@
     </div>
   </transition>
 </template>
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+interface Notification{
+  type:string,
+  message:string
+}
+export default defineComponent({
   name: "NotifyComponent",
   computed: {
-    notification() {
+    notification():Notification {
       return this.$store.state.notification;
     },
-    title() {
-      let value = ""
+    title():string {
+      let value:string = ""
       switch (this.notification.type) {
         case "error":
           value = "\u274c Ошибка!"
@@ -35,7 +40,7 @@ export default {
       return value
     }
   }
-}
+})
 </script>
 <style scoped>
 img{
@@ -78,13 +83,4 @@ img{
   background-color: #308930;
 }
 
-.notification-anim-enter-active,
-.notification-anim-leave-active {
-  transition: all 0.3s ease-out;
-}
-
-.notification-anim-enter-from,
-.notification-anim-leave-to {
-  transform: translateY(-200px)
-}
 </style>

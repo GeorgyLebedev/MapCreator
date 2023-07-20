@@ -6,8 +6,9 @@ const authenticateJWT = require("../authenticateJWT")
 router.get('/', authenticateJWT, async (req, res) => {
     try {
 	res.json({options: await optionsModel.findOne({user: req.user.id})})
-    } catch (e) {
-	res.json({msg: e.message})
+    }
+    catch (e) {
+	res.status(500).send({message:'Ошибка получения настроек пользователя!'})
     }
 });
 router.post('/', authenticateJWT, async (req, res) => {
@@ -15,27 +16,30 @@ router.post('/', authenticateJWT, async (req, res) => {
 	let activeRecord = new optionsModel(req.body)
 	activeRecord.user = req.user.id
 	await activeRecord.save();
-	res.json({state: 'success'});
-    } catch (e) {
-	res.json({msg: e.message})
+	res.sendStatus(201)
+    }
+    catch (e) {
+	res.status(500).send({message:'Ошибка создания настроек пользователя!'})
     }
 
 });
 router.put('/', authenticateJWT, async (req, res) => {
 	try {
 	    await optionsModel.updateOne({user:req.user.id}, req.body)
-	    res.json({state: 'updated'});
-	} catch (e) {
-	    res.json({msg: e.message})
+	    res.sendStatus(200)
+	}
+	catch (e) {
+	    res.status(500).send({message:'Ошибка обновления настроек пользователя!'})
 	}
     }
 )
 router.delete("/:id", authenticateJWT, async (req, res) => {
 	try {
 	    await optionsModel.findByIdAndRemove(req.params.id)
-	    res.json({state: 'deleted'});
-	} catch (e) {
-	    res.json({msg: e.message})
+	    res.sendStatus(200)
+	}
+	catch (e) {
+	    res.status(500).send({message:'Ошибка удаления настроек пользователя!'})
 	}
     }
 )

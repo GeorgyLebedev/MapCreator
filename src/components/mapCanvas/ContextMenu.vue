@@ -22,21 +22,18 @@
   </div>
   </Transition>
 </template>
-<script>
-export default {
-  name: "ContextMenu",
-  data(){
-    return{
+<script lang="ts">
+import {defineComponent} from "vue";
 
-    }
-  },
+export default defineComponent({
+  name: "ContextMenu",
   props:{
     showMenu:{
       type: Boolean,
       default: false
     }
   }
-}
+})
 </script>
 <style>
   .contextMenu{

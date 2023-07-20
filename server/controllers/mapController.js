@@ -6,14 +6,14 @@ router.get('/', authenticateJWT, async (req, res) => {
     try {
 	res.json({maps: await mapModel.find({user: req.user.id})})
     } catch (e) {
-	res.json({msg: e.message})
+	res.status(500).send({message:'Ошибка получения карт!'})
     }
 });
 router.get('/:id', authenticateJWT, async (req, res) => {
     try {
 	res.json({map: await mapModel.findById(req.params.id)})
     } catch (e) {
-	res.json({msg: e.message})
+	res.status(500).send({message:'Ошибка получения данных карты!'})
     }
 });
 router.post('/', authenticateJWT, async (req, res) => {
@@ -21,28 +21,27 @@ router.post('/', authenticateJWT, async (req, res) => {
 	let activeRecord = new mapModel(req.body)
 	activeRecord.user = req.user.id
 	await activeRecord.save();
-	res.json({state: 'success'});
+	res.sendStatus(201)
     } catch (e) {
-	res.json({msg: e.message})
+	res.status(500).send({message:'Ошибка создания карты!'})
     }
-
 });
 router.put('/:id', authenticateJWT, async (req, res) => {
 	try {
 	    await mapModel.updateOne({_id:req.params.id}, req.body)
 	    await mapModel.findByIdAndUpdate(req.params.id, {changeDate: new Date()})
-	    res.json({state: 'updated'});
+	    res.sendStatus(200)
 	} catch (e) {
-	    res.json({msg: e.message})
+	    res.status(500).send({message:'Ошибка обновления карты!'})
 	}
     }
 )
 router.delete("/:id", authenticateJWT, async (req, res) => {
 	try {
 	    await mapModel.findByIdAndRemove(req.params.id)
-	    res.json({state: 'deleted'});
+	    res.sendStatus(200)
 	} catch (e) {
-	    res.json({msg: e.message})
+	    res.status(500).send({message:'Ошибка удаления карты!'})
 	}
     }
 )

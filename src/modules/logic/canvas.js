@@ -39,7 +39,7 @@ export default class canvas {
     }
     getCanvasArea() { //получение размеров доступной области для помещения холста
 	let canvasArea = {
-	    width: document.documentElement.clientWidth - document.getElementById('toolsPanel').offsetWidth,
+	    width: document.documentElement.clientWidth - document.getElementById('tools-panel').offsetWidth,
 	    height: document.documentElement.clientHeight - document.getElementById('footer').offsetHeight - document.getElementById('header').offsetHeight
 	}
 	return canvasArea

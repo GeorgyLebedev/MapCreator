@@ -1,0 +1,56 @@
+/*VARIABLES*/
+.background-fill {
+  position: absolute;
+  inset: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 0;
+  background-color: #EBEBEB;
+}
+
+.main-body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-block: 30px;
+  padding-inline: 10px;
+  z-index: 2;
+  position: relative;
+}
+
+.map {
+  border: 2px dashed #fda443;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 20px;
+  margin-inline: 10px;
+}
+
+.new-map {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.new-map svg {
+  width: 70px;
+  margin-bottom: 10px;
+  transform-origin: center;
+  transition: all 0.15s ease-in;
+}
+.new-map p {
+  transition: all 0.15s ease-out;
+}
+.new-map:hover svg {
+  transform: scale(1.15);
+}
+.new-map:hover p {
+  font-weight: bold;
+  font-size: large;
+}
+
+/*# sourceMappingURL=Main.css.map */

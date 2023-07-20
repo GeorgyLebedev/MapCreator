@@ -40,7 +40,7 @@ router.get('/', authenticateJWT, async (req, res) => {
 	        email: query.email,
 		login:query.login,
 		avatar: query.avatar,
-		regDate: query.regDate
+		registrationDate: query.registrationDate
 	    }
 	});
     }
@@ -64,39 +64,47 @@ router.post('/confirm', async (req, res) => {
 		code: await sendMsg(req.body.email, subject, message),
 	    	id:  query.length>0?query[0]._id:null});
 	else
-	    res.json({msg: errorText});
+	    res.status(500).send({message: errorText})
 });
 //Добавление записи
 router.post('/', async (req, res) => {
-    if(req.body.verified) {
         try {
 	    req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
 	    let activeRecord = new userModel(req.body)
 	    await activeRecord.save();
-	    res.json({status: "success"})
+	    res.sendStatus(201)
 	}
 	catch (e) {
-	    res.json({msg:e.message})
+	    res.status(500).send({message:'Ошибка регистрации пользователя!'})
 	}
-    }
 });
 //Обновление пароля
 router.put('/:id', async (req, res) => {
-    req.body.password=bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
-    await userModel.findByIdAndUpdate(req.params.id, {password: req.body.password});
-    res.json({state: 'updated'});
+    try {
+	req.body.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(12))
+	await userModel.findByIdAndUpdate(req.params.id, {password: req.body.password});
+	res.sendStatus(200)
+    }
+    catch (e) {
+	res.status(500).send({message:'Ошибка обновления пароля!'})
+    }
 });
 router.put('/', authenticateJWT, async (req, res) => {
     try {
 	await userModel.updateOne({_id: req.user.id}, req.body);
-	res.json({state: 'updated'});
+	res.sendStatus(200)
     }
     catch (e) {
-	res.json({msg:e.message})
+	res.status(500).send({message:'Ошибка обновления данных пользователя!'})
     }
 });
 router.delete('/:id', async (req, res) => {
-    await userModel.findByIdAndRemove(req.params.id);
-    res.json({state: 'deleted'});
+    try {
+	await userModel.findByIdAndRemove(req.params.id);
+	res.sendStatus(200)
+    }
+    catch (e){
+	res.status(500).send({message:'Ошибка удаления данных пользователя!'})
+    }
 });
 module.exports = router;

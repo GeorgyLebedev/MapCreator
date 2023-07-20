@@ -18,78 +18,58 @@ input[type='text'],input[type='email'],input[type='password'], textarea{
     border-radius: 10px;
     padding-inline: 10px;
 }
-input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: #3d4551;
-    width: 20px;
-    height: 20px;
-    opacity: 0.7;
-    margin-right: 5px;
-    border:none;
-    border-radius: 4px;
-    position: relative;
-    cursor: pointer;
-    outline: none;
+.defaultInput {
+    width: 300px;
+    font-size: 16pt;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
-input[type="checkbox"]:before {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 10px;
-    background-color: #ea5c41;
-    border-radius: 2px;
-    opacity: 0.3;
-    transition: opacity 0.2s ease-in-out;
-}
-
-input[type="checkbox"]:checked, input[type="checkbox"]:checked:before {
-    opacity: 1;
-}
-input[type="checkbox"]+label{
-    cursor: pointer;
-    display: flex;
-    align-items: flex-end;
-    flex-direction: row;
-}
 .interactive {
     opacity: 0.7;
 }
 .interactive:hover{
     opacity: 1;
 }
-.buttonDark, .buttonLight:enabled:hover{
+.button-dark, .button-light:enabled:hover{
     background-color: #3d4551;
     border-radius: 10px;
     border: 1pt solid #3d4551;
     color: #ea5c41;
     font-weight: bolder;
-    padding-block: 5px;
-    padding-inline: 10px;
     margin:5px;
     cursor: pointer;
     outline: none;
 }
-.buttonLight, .buttonDark:enabled:hover{
+.button-light, .button-dark:enabled:hover{
     background-color: white;
     border-radius: 10px;
     border: 1pt solid #3d4551;
     color: #3d4551;
     font-weight: bolder;
-    padding-block: 5px;
-    padding-inline: 10px;
     margin:5px;
     cursor: pointer;
     outline: none;
 }
-.buttonLight:disabled, .buttonDark:disabled{
+.button-light:disabled, .button-dark:disabled{
     opacity: 0.5;
     cursor: default;
+}
+.button-small, .button-small:hover{
+    font-size: 12pt;
+    padding-block: 5px;
+    padding-inline: 10px;
+}
+.buttonMiddle, .buttonMiddle:hover{
+    font-size: 16pt;
+    padding-block: 5px;
+    padding-inline: 15px;
+}
+.buttonLarge, .buttonLarge:hover{
+    font-size: 18pt;
+    padding-block: 10px;
+    padding-inline: 25px;
 }
 .dropdownFlag{
     width: 15px;
@@ -100,7 +80,7 @@ input[type="checkbox"]+label{
 .openedFlag{
     transform: rotate(180deg);
 }
-.buttonLight:hover .dropdownFlag{
+.button-light:hover .dropdownFlag{
     fill: #ea5c41;
 }
 .selected{
@@ -111,7 +91,9 @@ input[type="checkbox"]+label{
 .selected >img{
     filter: invert(1);
 }
-
+.cursor-pointer{
+    cursor: pointer;
+}
 html {
     --scrollbarBG: #e3e9f4;
     --thumbBG: #728391;
@@ -152,15 +134,15 @@ p{
     left: 0;
     z-index: 4;
 }
-.flexRow{
+.flex-row{
     display: flex;
     flex-direction: row;
 }
-.flexColumn{
+.flex-column{
     display: flex;
     flex-direction: column;
 }
-.alignCenter{
+.align-center{
     align-items: center;
 }
 .alignStart{
@@ -169,7 +151,7 @@ p{
 .alignEnd{
     align-items: flex-end;
 }
-.justifyBetween{
+.justify-between{
     justify-content: space-between;
 }
 .justifyCenter{
@@ -182,7 +164,7 @@ p{
     justify-content: flex-end;
 }
 /* MODAL BOXES STYLES */
-.modalContainer {
+.modal-container {
     min-width: 800px;
     min-height: 750px;
     display: flex;
@@ -201,7 +183,7 @@ p{
     width: 800px;
     border-radius: 15px;
 }
-.modalHeader {
+.modal-header {
     display: flex;
     font-size: large;
     justify-content: space-between;
@@ -209,7 +191,7 @@ p{
     padding: 10px 10px 0 10px;
     width: 100%
 }
-.modalBody {
+.modal-body {
     width: 100%;
     padding-inline: 15px
 }

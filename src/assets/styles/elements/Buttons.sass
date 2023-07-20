@@ -1,0 +1,43 @@
+@use "../Variables"
+.button-dark, .button-light:hover:not(:disabled)
+  background-color: Variables.$dark-color
+  border-radius: 10px
+  color: Variables.$orange-color
+  font-weight: bolder
+  cursor: pointer
+  outline: none
+  margin: 5px
+  transition: 0.4s ease-in-out
+  border: none
+
+.button-light, .button-dark:hover:not(:disabled)
+  background-color: Variables.$orange-color
+  margin: 5px
+  border-radius: 10px
+  color: Variables.$light-color
+  font-weight: bolder
+  cursor: pointer
+  outline: none
+  transition: 0.4s ease-in-out
+  border: none
+
+.button-light:disabled, .button-dark:disabled
+  opacity: 0.5
+  cursor: default
+
+.button-small, .button-small:hover
+  font-size: 12pt
+  padding-block: 5px
+  padding-inline: 10px
+
+.button-middle, .button-middle:hover
+  font-size: 14pt
+  padding-block: 7px
+  padding-inline: 15px
+
+.button-large, .button-large:hover
+  font-size: 16pt
+  padding-block: 10px
+  padding-inline: 25px
+
+
