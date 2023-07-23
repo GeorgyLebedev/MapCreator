@@ -32,6 +32,17 @@ const colorsStore={
 	setPalette(state,palette){
 	    state.paletteColors=palette
 	}
+    },
+    getters:{
+	getPaletteColors(state){
+	    return state.paletteColors
+	},
+	getRecentColors(state){
+	    return state.recentColors
+	},
+	getLastColor(state){
+	    return state.lastColor
+	}
     }
 }
 export default colorsStore

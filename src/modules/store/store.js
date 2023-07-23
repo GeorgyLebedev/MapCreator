@@ -1,14 +1,14 @@
 import {createStore} from 'vuex'
-import cursorOptions from "@/modules/store/cursorOptions";
-import brushOptions from "@/modules/store/brushOptions";
-import stampOptions from "@/modules/store/stampOptions";
-import shapeOptions from "@/modules/store/shapeOptions";
-import pathOptions from "@/modules/store/pathOptions";
-import textOptions from "@/modules/store/textOptions";
-import colorsStore from "@/modules/store/colorsStore";
-import selection from "@/modules/store/selection";
+import cursorOptions from "@/modules/store/toolsOptions/cursorOptions";
+import brushOptions from "@/modules/store/toolsOptions/brushOptions";
+import stampOptions from "@/modules/store/toolsOptions/stampOptions";
+import shapeOptions from "@/modules/store/toolsOptions/shapeOptions";
+import pathOptions from "@/modules/store/toolsOptions/pathOptions";
+import textOptions from "@/modules/store/toolsOptions/textOptions";
+import colorsStore from "@/modules/store/toolsOptions/colorsStore";
+import selection from "@/modules/store/toolsOptions/selection";
 import modalFlags from "@/modules/store/modalFlags";
-import userState from "@/modules/store/userData";
+import userState from "@/modules/store/componentsOptions/loginPage";
 const store = createStore({
     state: {
 	selectedTool: {},

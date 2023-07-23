@@ -130,11 +130,12 @@
   </div>
 </template>
 
-<script>
-import recentColors from "@/components/mapCanvas/toolsPanel/recentColors";
-import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette";
+<script lang="ts">
+import recentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
+import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
+import {defineComponent} from "vue";
 
-export default {
+export default defineComponent({
   name: "pathPanel",
   components: {
     ColorsPalette,
@@ -142,70 +143,69 @@ export default {
   },
   computed: {
     size: {
-      get() {
+      get():number {
         return this.$store.state.pathOptions.size
       },
-      set(value) {
+      set(value:number):void {
         this.$store.commit('pathOptions/updatePathOptions', {size: value})
       }
     },
     opacity: {
-      get() {
+      get():number {
         return this.$store.state.pathOptions.opacity
       },
-      set(value) {
+      set(value:number):void {
         this.$store.commit('pathOptions/updatePathOptions', {opacity: value})
       }
     },
     color: {
-      get() {
+      get():string {
         return this.$store.state.pathOptions.color
       },
-      set(value) {
+      set(value:string):void {
         this.$store.commit('pathOptions/updatePathOptions', {color: value})
       }
     },
     pathType: {
-      get() {
+      get():string {
         return this.$store.state.pathOptions.pathType
       },
-      set(value) {
+      set(value:string):void {
         this.$store.commit('pathOptions/updatePathOptions', {pathType: value})
       }
     },
     roundCap: {
-      get() {
+      get():boolean {
         return this.$store.state.pathOptions.roundCap
       },
-      set(value) {
+      set(value:boolean):void {
         this.$store.commit('pathOptions/updatePathOptions', {roundCap: value})
       }
     },
     style: {
-      get() {
+      get():string {
         return this.$store.state.pathOptions.style
       },
-      set(value) {
+      set(value:string):void {
         this.$store.commit('pathOptions/updatePathOptions', {style: value})
       }
     },
     dashArray: {
-      get() {
+      get():number[] {
         return this.$store.state.pathOptions.dashArray
       },
-      set(value) {
+      set(value:number[]):void {
         this.$store.commit('pathOptions/updatePathOptions', {dashArray: value})
       }
     },
     dotArray: {
-      get() {
+      get():number[] {
         return this.$store.state.pathOptions.dotArray
       },
-      set(value) {
+      set(value:number[]):void {
         this.$store.commit('pathOptions/updatePathOptions', {dotArray: value})
       }
     },
   }
-
-}
+})
 </script>

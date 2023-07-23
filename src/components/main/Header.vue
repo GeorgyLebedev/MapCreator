@@ -67,11 +67,13 @@
 </template>
 
 <script lang="ts">
-import AxiosRequest from "@/modules/services/axiosRequest";
+import {logOut} from "@/modules/services/mainPage";
+import {getUser, updateUserData} from "@/modules/api/mainHeaderMethods";
 import {flags} from "@/modules/logic/flags";
 import {defineComponent} from "vue";
 import iUser from "@/modules/intefaces/user";
 import store from "@/modules/store/store";
+
 export default defineComponent({
     name: 'HeaderComponent',
     data() {
@@ -84,28 +86,25 @@ export default defineComponent({
         }
     },
     methods: {
-        async logOut():Promise<void> {
-            const request:AxiosRequest  = new AxiosRequest("auth/logout", "post")
-            const response = await request.sendRequest()
-            localStorage.clear()
-            if (!response) return
+        logOut: logOut,
+				getUser: getUser,
+				updateUserData:updateUserData,
+        formatUserRegistrationDate(date: string): void {
+            const dateObj = new Date(date)
+            const day = String(dateObj.getDate()).padStart(2, '0')
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+            const year = String(dateObj.getFullYear())
+            this.registrationDate = `${day}.${month}.${year}`
         },
-        async updateUserData(data:any):Promise<void> {
-            const request:AxiosRequest = new AxiosRequest("user/", "put", data)
-            const response = await request.sendRequest()
-            if (response) {
-                this.$router.go(0)
+        loadAvatar(event: Event): void {
+            const extensions: string [] = ['png', 'jpeg', 'jpg', 'svg']
+            const target = event.target as HTMLInputElement
+            let avatar: any
+            if (target && target.files?.[0]) avatar = target.files?.[0]
+            else {
+                store.commit("setNotification", ["error", "Ошибка загрузки файла! Попробуйте позже."])
+                return
             }
-        },
-        loadAvatar(event:Event):void {
-            const extensions:string [] = ['png', 'jpeg', 'jpg', 'svg']
-						const target=event.target as HTMLInputElement
-						let avatar:any
-						if(target && target.files?.[0]) avatar = target.files?.[0]
-						else{
-							store.commit("setNotification", ["error", "Ошибка загрузки файла! Попробуйте позже."])
-							return
-						}
             if (extensions.indexOf(avatar.name.split('.').pop().toLowerCase()) == -1) {
                 store.commit("setNotification", ["message", "Расширение выбранного файла не поддерживается!"])
                 return
@@ -117,28 +116,20 @@ export default defineComponent({
                 reader.onload = () => {
                     try {
                         this.updateUserData({avatar: reader.result})
-												let input=this.$refs.avatarInput as HTMLInputElement
+                        let input = this.$refs.avatarInput as HTMLInputElement
                         input.value = ""
-                    } catch (e:any) {
+                    } catch (e: any) {
                         store.commit("setNotification", ["error", "Ошибка сервера: " + e.message])
                     }
                 };
             }
         },
     },
-    async created():Promise<void> {
-        let request
-        request = new AxiosRequest("user/", "get")
-        this.user = (await request.sendRequest()).user
+    async created(): Promise<void> {
+				this.user=await this.getUser()
         if (this.user.login) this.newLogin = this.user.login
-				const date:string=this.user.registrationDate?? ""
-        let day:string, month:string, year:string
-        day = '' + new Date(date).getDate()
-        if (day.length < 2) day = '0' + day
-        month = '' + (new Date(date).getMonth() + 1)
-        if (month.length < 2) month = '0' + month
-        year = '' + new Date(date).getFullYear()
-        this.registrationDate = day + '.' + month + '.' + year
+        if (this.user.registrationDate)
+            this.formatUserRegistrationDate(this.user.registrationDate)
     }
 })
 </script>
@@ -148,7 +139,6 @@ header
   position: relative
   display: flex
   flex-direction: row
-
   align-items: center
   border-bottom: 1px solid Variables.$medium-color
   padding-block: 10px

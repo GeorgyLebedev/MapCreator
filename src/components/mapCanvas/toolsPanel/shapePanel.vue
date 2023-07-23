@@ -123,12 +123,12 @@
   </div>
 </template>
 
-<script>
-import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette";
-import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors";
+<script lang="ts">
+import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
+import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
 import {mapGetters} from "vuex";
-
-export default {
+import {defineComponent} from "vue";
+export default defineComponent({
   name: "shapePanel",
   components: {
     RecentColors,
@@ -139,106 +139,106 @@ export default {
       selectedObject:'selection/getSelectedObject'
     }),
     shapeType: {
-      get() {
+      get():string {
         return this.$store.state.shapeOptions.shapeType
       },
-      set(value) {
+      set(value:string):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {shapeType: value})
       }
     },
     strokeWidth: {
-      get() {
+      get():number {
         return this.$store.state.shapeOptions.strokeWidth
       },
-      set(value) {
+      set(value:number):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {strokeWidth: value})
       }
     },
     strokeColor: {
-      get() {
+      get():string {
         return this.$store.state.shapeOptions.strokeColor
       },
-      set(value) {
+      set(value:string):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {strokeColor: value})
       }
     },
     fillColor: {
-      get() {
+      get():string {
         return this.$store.state.shapeOptions.fillColor
       },
-      set(value) {
+      set(value:string):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {fillColor: value})
       }
     },
     borderRadius: {
-      get() {
+      get():number {
         return this.$store.state.shapeOptions.borderRadius
       },
-      set(value) {
+      set(value:number):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {borderRadius: value})
       }
     },
     opacity: {
-      get() {
+      get():number {
         return this.$store.state.shapeOptions.opacity
       },
-      set(value) {
+      set(value:number):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {opacity: value})
       }
     },
     rotation: {
-      get() {
+      get():number {
         return this.$store.state.shapeOptions.rotation
       },
-      set(value) {
+      set(value:number):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {rotation: value})
       }
     },
     sides: {
-      get() {
+      get():number {
         return this.$store.state.shapeOptions.sides
       },
-      set(value) {
+      set(value:number):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {sides: value})
       }
     },
     isArbitrary: {
-      get() {
+      get():boolean {
         return this.$store.state.shapeOptions.isArbitrary
       },
-      set(value) {
+      set(value:boolean):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {isArbitrary: value})
       }
     },
     isFill: {
-      get() {
+      get():boolean {
         return this.$store.state.shapeOptions.isFill
       },
-      set(value) {
+      set(value:boolean):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {isFill: value})
       }
     },
     isBorder: {
-      get() {
+      get():boolean {
         return this.$store.state.shapeOptions.isBorder
       },
-      set(value) {
+      set(value:boolean):void {
         this.$store.commit('shapeOptions/updateShapeOptions', {isBorder: value})
       }
     },
   },
   methods: {
-    setArbitraryShape() {
+    setArbitraryShape():void {
       this.shapeType = this.isArbitrary ? "arbitrary" : "rectangle"
     },
-    setFill() {
+    setFill():void {
       this.fillColor = this.isFill ? "#ffffff" : "transparent"
     },
-    setBorder() {
+    setBorder():void {
       this.strokeColor = this.isBorder ? "#000000" : "transparent"
     },
   }
-}
+})
 </script>
 
 <style scoped lang="sass">

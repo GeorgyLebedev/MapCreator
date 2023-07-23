@@ -64,11 +64,13 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import {flags} from "@/modules/logic/flags";
-import stampsWindow from "@/components/mapCanvas/StampsWindow";
+import stampsWindow from "@/components/mapCanvas/StampsWindow.vue";
 import {mapGetters} from "vuex";
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "stampPanel",
   components:{
     stampsWindow
@@ -79,14 +81,14 @@ export default {
   emits:['closePanel'],
   data(){
     return{
-      stamps: {},
+      stamps: {} as { [key: string]: any },
       modalFlags:flags,
     }
   },
   methods:{
-    getSwitchStamp(flag) {
+    getSwitchStamp(flag:boolean) {
       const keys = Object.keys(this.currentKitObj);
-      let key = flag
+      const key = flag
           ? (this.stampNumber - 1 < 0 ? keys[keys.length - 1] : keys[this.stampNumber - 1])
           : (this.stampNumber + 1 > keys.length - 1 ? keys[0] : keys[this.stampNumber + 1]);
       this.currentStamp = this.currentKitObj[key];
@@ -97,26 +99,26 @@ export default {
       selectedObject:'selection/getSelectedObject'
     }),
     size:{
-      get(){
+      get():number{
         return this.$store.state.stampOptions.size
       },
-      set(value){
+      set(value:number):void{
         this.$store.commit('stampOptions/updateStampOptions', {size:value})
       }
     },
     opacity:{
-      get(){
+      get():number{
         return this.$store.state.stampOptions.opacity
       },
-      set(value){
+      set(value:number):void{
         this.$store.commit('stampOptions/updateStampOptions', {opacity:value})
       }
     },
     rotation: {
-      get(){
+      get():number{
         return this.$store.state.stampOptions.rotation
       },
-      set(value){
+      set(value:number):void{
         this.$store.commit('stampOptions/updateStampOptions', {rotation:value})
       }
     },
@@ -124,27 +126,27 @@ export default {
       get(){
         return this.$store.state.stampOptions.currentKit
       },
-      set(value){
+      set(value:string):void{
         this.$store.commit('stampOptions/updateStampOptions', {currentKit:value})
       }
     },
     currentStamp: {
-      get(){
+      get():string{
         return this.$store.state.stampOptions.currentStamp
       },
-      set(value){
+      set(value:string):void{
         this.$store.commit('stampOptions/updateStampOptions', {currentStamp:value})
       }
     },
-    stampNumber(){
+    stampNumber():number{
       return Object.values(this.currentKitObj).indexOf(this.currentStamp)
     },
-    currentKitLength() {
+    currentKitLength():number {
       if(this.stamps[this.currentKit])
       return Object.keys(this.stamps[this.currentKit]).length
       else return 0
     },
-    findRowEnd() {
+    findRowEnd():number {
       if (this.stampNumber % 3 < 0) {
         return this.stampNumber + (3 - this.stampNumber % 3);
       } else {
@@ -156,7 +158,7 @@ export default {
       return this.stamps[this.currentKit]
       else return 0
     },
-    visibleStamps() {
+    visibleStamps():string[]|undefined {
       if(!this.currentKitObj) return
       if (Object.keys(this.currentKitObj).length > 9) {
         if (this.stampNumber % 3 == 0)
@@ -167,13 +169,13 @@ export default {
         return Object.keys(this.stamps[this.currentKit])
     },
   },
-  mounted(){
+  mounted():void{
     if(this.stampsProp)
       this.stamps=this.stampsProp
     this.currentKit = Object.keys(this.stamps)[0]
     this.currentStamp = this.currentKitObj[Object.keys(this.currentKitObj)[0]]
   },
-}
+})
 </script>
 
 <style scoped lang="sass">

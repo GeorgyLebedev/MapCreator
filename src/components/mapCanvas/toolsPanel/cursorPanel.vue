@@ -51,39 +51,41 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+import cursorOptions from "@/modules/store/toolsOptions/cursorOptions";
+import store from "@/modules/store/store";
+export default defineComponent({
   name: "cursorPanel",
   data(){
     return{
-      selectionTypes:this.$store.state.cursorOptions.selectionTypes,
+      selectionTypes:cursorOptions.state.selectionTypes as string[],
     }
   },
   methods:{
-    getSelectType(type) {
+    getSelectType(type:string):boolean {
       if (this.selectionTypes.indexOf(type) !== -1)
         return true
       else return false
     },
-    setSelectType(type) {
+    setSelectType(type:string):void {
       let index = this.selectionTypes.indexOf(type)
       if (index !== -1)
         this.selectionTypes.splice(index, 1)
       else
         this.selectionTypes.push(type)
-      this.$store.commit('cursorOptions/updateCursorOptions', {selectionTypes:this.selectionTypes})
+      store.commit('cursorOptions/updateCursorOptions', {selectionTypes:this.selectionTypes})
     },
-    setAllSelectTypes() {
+    setAllSelectTypes():void {
       if (this.selectionTypes.length == 5)
         this.selectionTypes = []
       else
         this.selectionTypes = ['brush', 'stamp', 'shape', 'path', 'text']
-      this.$store.commit('cursorOptions/updateCursorOptions', {selectionTypes:this.selectionTypes})
+      store.commit('cursorOptions/updateCursorOptions', {selectionTypes:this.selectionTypes})
     },
   },
-}
+})
 </script>
-
 <style lang="sass" scoped>
 @use "@/assets/styles/Variables"
 .select-options-container
