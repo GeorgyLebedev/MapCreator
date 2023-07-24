@@ -65,7 +65,6 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import store from "@/modules/store/store";
-import {flags} from "@/modules/logic/flags";
 import cursorPanel from "@/components/mapCanvas/toolsPanel/cursorPanel.vue";
 import brushPanel from "@/components/mapCanvas/toolsPanel/brushPanel.vue";
 import stampPanel from "@/components/mapCanvas/toolsPanel/stampPanel.vue";
@@ -96,7 +95,6 @@ export default defineComponent({
   emits: ['toolChange', 'optChange', 'update', 'removeSelect'],
   data() {
     return {
-      modalFlags: flags,
       tool: "cursor" as string,
       lastColor: "" as string,
       stamps: {} as object,

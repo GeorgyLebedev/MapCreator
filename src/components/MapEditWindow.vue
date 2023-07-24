@@ -8,7 +8,7 @@
 		      stroke-width="1.5" stroke-linecap="round"/>
 	    </svg>
           Изменить информацию о карте
-	    <svg class="cursor-pointer modal-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" @click="this.$emit('closeWindow')">
+	    <svg class="cursor-pointer modal-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" @click="this.$store.commit('modalFlags/setShowEditMapWin', false)">
 		<path d="M19 5L5 19M5 5L9.5 9.5M12 12L19 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 	    </svg>
                </div>
@@ -19,7 +19,7 @@
           <textarea cols="30" rows="10" class="map-description" v-model="description"></textarea>
         </div>
         <div class="modal-footer">
-          <button type="button" class="button-light button-middle" @click="this.$emit('closeWindow')">Отмена</button>
+          <button type="button" class="button-light button-middle"  @click="this.$store.commit('modalFlags/setShowEditMapWin', false)">Отмена</button>
           <button type="button" class="button-dark button-middle" :disabled="!(name.length>=6)" @click="this.$emit('updateMapMetadata')">Завершить</button>
         </div>
       </div>

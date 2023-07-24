@@ -19,19 +19,17 @@
                  cursorTool.contextMenuVisible(false)
                  this.$store.commit('setCursorStyle', 'default')}"/>
   <MapEditWindow
-      v-if="modalFlags.showEditMapWin"
+      v-if="showEditMapWin"
       :map-name="currentMap.title"
       :map-desc="currentMap.description"
-      @closeWindow="()=>modalFlags.showEditMapWin=false"
       @updateName="(val)=>currentMap.title=val"
       @updateDesc="(val)=>currentMap.description=val"
       @updateMapMetadata="updateMapMetadata(currentMap)"
   />
   <ImageLoadWindow
-      v-if="modalFlags.showImgLoadWin"
-      @closeWindow="()=>{modalFlags.showImgLoadWin=false}"
+      v-if="showImgLoadWin"
       @setLoadMode="(mode)=>{
-        modalFlags.showImgLoadWin=false
+        this.$store.commit('modalFlags/setShowImgLoadWin', false)
         canvas.backgroundOpt.loadMode=mode
         canvas.setBackground(canvas.backgroundOpt)
       }"
@@ -43,10 +41,10 @@
           if(selection.selectedObject) selection.remove()
           exportAs(ext, canvas, currentMap.title)
         }"
-        @showMapEditWindow="()=>{ modalFlags.showEditMapWin = true}"
+        @showMapEditWindow=" this.$store.commit('modalFlags/setShowEditMapWin', true)"
         @showImageLoadWindow="(background)=>{
           canvas.backgroundOpt=background
-          modalFlags.showImgLoadWin = true
+           this.$store.commit('modalFlags/setShowImgLoadWin', true)
         }"
         @setCanvasBackground="(background)=>{canvas.setBackground(background)}"
         @removeCanvasBackground="canvas.removeBackground().bind(this.canvas)"
@@ -87,7 +85,6 @@ import stampTool from "@/modules/tools/stampTool";
 import zoomTool from "@/modules/tools/zoomTool";
 import canvas from "@/modules/logic/canvas";
 import selection from "@/modules/logic/selectionLogic";
-import {flags} from "@/modules/logic/flags";
 import * as paper from "paper" ;
 import {zoom} from "@/modules/logic/zoom";
 import {exportAs} from "@/modules/logic/export"
@@ -104,7 +101,6 @@ export default {
   },
   data() {
     return {
-      modalFlags: flags,
       currentMap: {
         title: "",
         description: ""
@@ -122,13 +118,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCursorStyle'],['cursorOptions/getContextMenuPos']),
-    ...mapGetters('cursorOptions', [
-      'getContextMenuPos',
-    ]),
-    ...mapGetters('cursorOptions', [
-      'getMenuFlag',
-    ]),
+      ...mapGetters({
+	  getContextMenuPos: 'cursorOptions/getContextMenuPos',
+	  getMenuFlag: 'cursorOptions/getMenuFlag',
+	  showEditMapWin:'modalFlags/showEditMapWin',
+	  showImgLoadWin:'modalFlags/showImgLoadWin'
+      }),
     contextMenuStyle() {
       if(!this.getContextMenuPos) return
       return {
@@ -139,7 +134,7 @@ export default {
       };
     },
     cursorStyle(){
-      return this.getCursorStyle
+      return this.getContextMenuPos
     },
 
   },
@@ -190,7 +185,7 @@ export default {
       } catch (e) {
         this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
       }
-      this.modalFlags.showEditMapWin=false
+	    this.$store.commit('modalFlags/setShowEditMapWin', false)
     },
     async updateMapObjects(map){
       this.$store.commit("removeCurrentItem")

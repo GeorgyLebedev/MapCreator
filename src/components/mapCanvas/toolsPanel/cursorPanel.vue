@@ -105,6 +105,7 @@ export default defineComponent({
   height: inherit
   padding: 10px
   cursor: pointer
+  transition: 0.3s all ease-in-out
   & svg
     height: 100%
     object-fit: contain
