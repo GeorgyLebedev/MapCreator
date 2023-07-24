@@ -8,7 +8,7 @@
 		stroke-width="1.5" stroke-linecap="round"/>
       </svg>
     Удаление карты
-      <svg class="cursor-pointer modal-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" @click="this.$emit('closeWindow')">
+      <svg class="cursor-pointer modal-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" @click="this.$store.commit('modalFlags/setShowDelMapWin',false)">
 	  <path d="M19 5L5 19M5 5L9.5 9.5M12 12L19 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
   </div>
@@ -18,7 +18,7 @@
     <input class="input-small" type="text" v-model="inputMapName">
   </div>
   <div class="modal-footer">
-    <button type="button" class="button-light button-middle" @click="this.$emit('closeWindow')">Отмена</button>
+    <button type="button" class="button-light button-middle" @click="this.$store.commit('modalFlags/setShowDelMapWin',false)">Отмена</button>
     <button type="button" class="button-dark button-middle" @click="this.$emit('deleteMap')" :disabled="mapName!=inputMapName">Удалить</button>
   </div>
 </div>

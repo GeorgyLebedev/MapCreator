@@ -11,7 +11,7 @@
 		</svg>
 		<b>Каталог штампов</b>
 		<svg class="cursor-pointer modal-close-icon" fill="none" viewBox="0 0 24 24"
-		     xmlns="http://www.w3.org/2000/svg" @click="this.$emit('closeWindow')">
+		     xmlns="http://www.w3.org/2000/svg" @click="this.$store.commit('modalFlags/setShowStampsWin', false)">
 		    <path d="M19 5L5 19M5 5L9.5 9.5M12 12L19 19" stroke-linecap="round" stroke-linejoin="round"
 			  stroke-width="2"/>
 		</svg>

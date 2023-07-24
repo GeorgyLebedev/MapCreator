@@ -10,7 +10,6 @@
       v-if="showEditMapWin"
       :map-name="this.selectedMap.title"
       :map-desc="this.selectedMap.description"
-      @closeWindow="this.$store.commit('modalFlags/setShowEditMapWin',false)"
       @updateName="(val)=>{this.selectedMap.title=val}"
       @updateDesc="(val)=>{this.selectedMap.description=val}"
       @updateMapMetadata="updateMapMetadata(this.selectedMap)"
@@ -20,7 +19,6 @@
   <MapDeleteWindow
       v-if="showDelMapWin"
       :map-name="this.selectedMap.title"
-      @closeWindow="this.$store.commit('modalFlags/setShowDelMapWin',false)"
       @deleteMap="deleteMap(this.selectedMap)"
   />
     </transition>
@@ -93,7 +91,6 @@ export default defineComponent({
       showEditMapWin: 'modalFlags/showEditMapWin',
       showNewMapWin: 'modalFlags/showNewMapWin',
       showDelMapWin: 'modalFlags/showDelMapWin',
-      showProfile: 'modalFlags/showProfile',
     }),
   },
   async created() {

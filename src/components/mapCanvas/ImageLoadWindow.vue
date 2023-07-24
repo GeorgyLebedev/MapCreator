@@ -1,31 +1,31 @@
 <template>
   <div class="modal-container">
-    <div class="modalWindow">
+    <div class="modal-window">
       <div class="modal-header">
         Загрузка изображения
-        <img class="cursor-pointer" src="@/assets/images/Service/close.png" alt="" width="30" height="30"
-             @click="this.$emit('closeWindow')">
+	  <svg class="cursor-pointer modal-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" @click="this.$store.commit('modalFlags/setShowImgLoadWin', false)">
+	      <path d="M19 5L5 19M5 5L9.5 9.5M12 12L19 19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	  </svg>
       </div>
-      <hr>
       <div class="modal-body">
         Размер фонового изображения не соответствует размеру холста.
         Выберите один из вариантов установки изображения:
-        <div class="loadOption" :class="{selected: loadMode==='stretch'}" @click="loadMode='stretch'">
+        <div class="load-option" :class="{selected: loadMode==='stretch'}" @click="loadMode='stretch'">
           <img src="@/assets/images/Service/ImgResize.png" height="70" alt="">
           <p>Установить изображение по размеру холста</p>
         </div>
-        <div class="loadOption" :class="{selected: loadMode==='integrate'}" @click="loadMode='integrate'">
+        <div class="load-option" :class="{selected: loadMode==='integrate'}" @click="loadMode='integrate'">
           <img src="@/assets/images/Service/CanvasResize.png" height="70" alt="">
           <p>Подстроить размер холста под размер изображения</p>
         </div >
-        <div class="loadOption" :class="{selected: loadMode==='default'}" @click="loadMode='default'">
+        <div class="load-option" :class="{selected: loadMode==='default'}" @click="loadMode='default'">
           <img src="@/assets/images/Service/noResize.png" height="70" alt="">
           <p>Не изменять размер изображения и поместить его по центру холста</p>
         </div>
       </div>
-      <div class="modalFooter">
-        <button type="button" class="button-light" @click="this.$emit('closeWindow')">Отмена</button>
-        <button type="button" class="button-dark" @click="this.$emit('setLoadMode', loadMode)">ОК</button>
+      <div class="modal-footer">
+        <button type="button" class="button-light button-middle" @click="this.$store.commit('modalFlags/setShowImgLoadWin', false)">Отмена</button>
+        <button type="button" class="button-dark button-middle" @click="this.$emit('setLoadMode', loadMode)">ОК</button>
       </div>
     </div>
   </div>
@@ -45,16 +45,16 @@ export default defineComponent({
 
 <style scoped lang="sass">
 @use "@/assets/styles/Variables"
-.modalWindow
+.modal-window
   max-width: 500px
 
-.loadOption
+.load-option
   display: flex
   flex-direction: row
   align-items: center
   margin-block: 10px
   padding: 5px
-  border: 1px solid Variables.$light-color
+  border: 1px solid Variables.$medium-color
   border-radius: 10px
   cursor: pointer
   & p

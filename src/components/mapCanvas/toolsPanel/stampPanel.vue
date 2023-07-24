@@ -1,11 +1,10 @@
 <template>
     <transition name="show-opt">
     <stampsWindow
-        v-if="modalFlags.showStampsWin"
+        v-if="showStampsWin"
         :stamps-prop="stamps"
         :selected-kit-prop="currentKit"
         :selected-stamp-prop="currentStamp"
-        @closeWindow="modalFlags.showStampsWin=false"
     />
     </transition>
     <div class="tools-options">
@@ -39,7 +38,7 @@
             </div>
           </div>
         </div>
-        <button class="button-light button-small" @click="modalFlags.showStampsWin=true">Открыть каталог</button>
+        <button class="button-light button-small" @click="this.$store.commit('modalFlags/setShowStampsWin', true)">Открыть каталог</button>
         <hr>
       </section>
       <div class="flex-row align-center" title="Размер иконок">
@@ -65,7 +64,6 @@
 </template>
 
 <script lang="ts">
-import {flags} from "@/modules/logic/flags";
 import stampsWindow from "@/components/mapCanvas/StampsWindow.vue";
 import {mapGetters} from "vuex";
 import {defineComponent} from "vue";
@@ -82,7 +80,6 @@ export default defineComponent({
   data(){
     return{
       stamps: {} as { [key: string]: any },
-      modalFlags:flags,
     }
   },
   methods:{
@@ -96,7 +93,8 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
-      selectedObject:'selection/getSelectedObject'
+      selectedObject:'selection/getSelectedObject',
+      showStampsWin:'modalFlags/showStampsWin'
     }),
     size:{
       get():number{

@@ -4,17 +4,17 @@
 	<button class="button-light button-middle" @click="this.$refs.manualLink.click()">Справка</button>
 	<a ref="manualLink" :hidden="true" download href="/mcmanual.pdf"></a>
 	<div class="user-panel">
-	    <div class="user-avatar-small" @click="modalFlags.showProfile=true">
+	    <div class="user-avatar-small" @click="this.$store.commit('modalFlags/setShowProfile', true)">
 		<img v-if="user" :src="user.avatar" alt="" class="cursor-pointer">
 	    </div>
-	    <b class="cursor-pointer " @click="modalFlags.showProfile=true">{{
+	    <b class="cursor-pointer " @click="this.$store.commit('modalFlags/setShowProfile', true)">{{
                 user.login ? user.login : user.email
 		}}</b>
 	</div>
     </header>
     <transition name="slide">
-	<div v-if="modalFlags.showProfile" class="invisibleContainer"
-	     @mousedown.self="()=>{modalFlags.showProfile=false; createNewLogin=false}">
+	<div v-if="showProfile" class="invisibleContainer"
+	     @mousedown.self="()=>{this.$store.commit('modalFlags/setShowProfile', false); createNewLogin=false}">
 	    <div class="user-profile" @click.stop>
 		<div class="flex-row">
 		    <div class="flex-column">
@@ -69,7 +69,7 @@
 <script lang="ts">
 import {logOut} from "@/modules/services/mainPage";
 import {getUser, updateUserData} from "@/modules/api/mainHeaderMethods";
-import {flags} from "@/modules/logic/flags";
+import {mapGetters} from "vuex";
 import {defineComponent} from "vue";
 import iUser from "@/modules/intefaces/user";
 import store from "@/modules/store/store";
@@ -78,7 +78,6 @@ export default defineComponent({
     name: 'HeaderComponent',
     data() {
         return {
-            modalFlags: flags,
             user: {} as iUser,
             registrationDate: "" as string,
             createNewLogin: false as boolean,
@@ -125,6 +124,11 @@ export default defineComponent({
             }
         },
     },
+		computed:{
+			...mapGetters({
+				showProfile: 'modalFlags/showProfile'
+			})
+		},
     async created(): Promise<void> {
 				this.user=await this.getUser()
         if (this.user.login) this.newLogin = this.user.login
