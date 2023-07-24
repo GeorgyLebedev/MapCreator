@@ -65,15 +65,15 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import store from "@/modules/store/store";
-import AxiosRequest from "@/modules/services/axiosRequest";
 import {flags} from "@/modules/logic/flags";
-import cursorPanel from "@/components/mapCanvas/toolsPanel/cursorPanel";
-import brushPanel from "@/components/mapCanvas/toolsPanel/brushPanel";
-import stampPanel from "@/components/mapCanvas/toolsPanel/stampPanel";
-import shapePanel from "@/components/mapCanvas/toolsPanel/shapePanel";
-import pathPanel from "@/components/mapCanvas/toolsPanel/pathPanel";
-import textPanel from "@/components/mapCanvas/toolsPanel/textPanel";
+import cursorPanel from "@/components/mapCanvas/toolsPanel/cursorPanel.vue";
+import brushPanel from "@/components/mapCanvas/toolsPanel/brushPanel.vue";
+import stampPanel from "@/components/mapCanvas/toolsPanel/stampPanel.vue";
+import shapePanel from "@/components/mapCanvas/toolsPanel/shapePanel.vue";
+import pathPanel from "@/components/mapCanvas/toolsPanel/pathPanel.vue";
+import textPanel from "@/components/mapCanvas/toolsPanel/textPanel.vue";
 import {mapGetters} from "vuex";
+import {getOptions} from "@/modules/api/toolsPanelMethods";
 
 export default defineComponent({
   name: "ToolsPanel",
@@ -106,16 +106,7 @@ export default defineComponent({
     }
   },
   methods: {
-    async getOptions():Promise<any> {
-      try {
-        let request = new AxiosRequest('options/', 'get')
-        let response = await request.sendRequest()
-        if (response && response.options) return response.options
-      } catch (e:any) {
-        store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
-      }
-    },
-
+      getOptions:getOptions,
   },
   computed:{
     ...mapGetters('selection', ['getSelectedObject']),

@@ -152,7 +152,7 @@ const userState: Module<UserState, any> = {
             await store.dispatch('userState/enter')
             await store.dispatch('userState/createUserOptions')
         },
-        async updatePassword({getters}) {
+        async updatePassword({getters}):Promise<void> {
             try {
                 const request: AxiosRequest = await new AxiosRequest(`user/${getters.getLoginDataId}`, "put", {password: getters.getLoginDataNewPassword})
                 await request.sendRequest()

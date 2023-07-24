@@ -50,7 +50,7 @@
 			</div>
 		    </td>
 		    <div :style="{'background-color': isFill?fillColor:'unset'}" class="color-picker-cell"
-			@click="$refs.fillColor.click()">
+			 @click="$refs.fillColor.click()">
 			<input v-if="isFill" ref="fillColor" v-model="fillColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
 			<img v-if="!isFill" alt="" class="none-color-placeholder"
@@ -136,7 +136,7 @@
 			</div>
 		    </td>
 		    <div :style="{'background-color': isBorder?strokeColor:'unset'}" class="color-picker-cell"
-			@click="$refs.strokeColor.click()">
+			 @click="$refs.strokeColor.click()">
 			<input v-if="isBorder" ref="strokeColor" v-model="strokeColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
 			<img v-if="!isBorder" alt="" class="none-color-placeholder"
@@ -168,7 +168,7 @@
 			</div>
 		    </td>
 		    <div :style="{'background-color': isShadow?shadowColor:'unset'}" class="color-picker-cell"
-			@click="$refs.shadowColor.click()">
+			 @click="$refs.shadowColor.click()">
 			<input v-if="isShadow" ref="shadowColor" v-model="shadowColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', shadowColor)">
 			<img v-if="!isShadow" alt="" class="none-color-placeholder"
@@ -214,170 +214,170 @@
 	</div>
     </div>
 </template>
-<script>
-import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette";
-import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors";
-
-export default {
+<script lang="ts">
+import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
+import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
+import {defineComponent} from "vue";
+export default defineComponent({
     name: "textPanel",
     components: {
-	RecentColors,
-	ColorsPalette
+        RecentColors,
+        ColorsPalette
     },
     props: {
-	selectedObject: Object,
+        selectedObject: Object,
     },
     data() {
-	return {
-	    fontsCollection: ["Cambria", "Roboto", "Neucha", "Comic Sans MS", "Consolas", "Mason Chronicles", "Linux Biolinum", "Aniron"],
-	    showFontsList: false,
-	}
+        return {
+            fontsCollection: ["Cambria", "Roboto", "Neucha", "Comic Sans MS", "Consolas", "Mason Chronicles", "Linux Biolinum", "Aniron"] as string[],
+            showFontsList: false as boolean,
+        }
     },
     methods: {
-	openFontsList() {
-	    this.showFontsList = !this.showFontsList
-	},
-	setShadow() {
-	    this.shadowColor = this.isShadow ? "#000000" : "transparent"
-	},
-	setFill() {
-	    this.fillColor = this.isFill ? "#ffffff" : "transparent"
-	},
-	setBorder() {
-	    this.strokeColor = this.isBorder ? "#000000" : "transparent"
-	},
+        openFontsList():void {
+            this.showFontsList = !this.showFontsList
+        },
+        setShadow():void {
+            this.shadowColor = this.isShadow ? "#000000" : "transparent"
+        },
+        setFill():void {
+            this.fillColor = this.isFill ? "#ffffff" : "transparent"
+        },
+        setBorder():void {
+            this.strokeColor = this.isBorder ? "#000000" : "transparent"
+        },
     },
     computed: {
-	content: {
-	    get() {
-		return this.$store.state.textOptions.content
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {content: value})
-	    }
-	},
-	fontFamily: {
-	    get() {
-		return this.$store.state.textOptions.fontFamily
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {fontFamily: value})
-	    }
-	},
-	fontSize: {
-	    get() {
-		return this.$store.state.textOptions.fontSize
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {fontSize: value})
-	    }
-	},
-	justification: {
-	    get() {
-		return this.$store.state.textOptions.justification
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {justification: value})
-	    }
-	},
-	fillColor: {
-	    get() {
-		return this.$store.state.textOptions.fillColor
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {fillColor: value})
-	    }
-	},
-	strokeColor: {
-	    get() {
-		return this.$store.state.textOptions.strokeColor
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {strokeColor: value})
-	    }
-	},
-	strokeWidth: {
-	    get() {
-		return this.$store.state.textOptions.strokeWidth
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {strokeWidth: value})
-	    }
-	},
-	shadowColor: {
-	    get() {
-		return this.$store.state.textOptions.shadowColor
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {shadowColor: value})
-	    }
-	},
-	shadowBlur: {
-	    get() {
-		return this.$store.state.textOptions.shadowBlur
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {shadowBlur: value})
-	    }
-	},
-	shOffsetX: {
-	    get() {
-		return this.$store.state.textOptions.shadowOffset[0]
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {shadowOffset: [value, this.$store.state.textOptions.shadowOffset[1]]})
-	    }
-	},
-	shOffsetY: {
-	    get() {
-		return this.$store.state.textOptions.shadowOffset[1]
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {shadowOffset: [this.$store.state.textOptions.shadowOffset[0], value]})
-	    }
-	},
-	opacity: {
-	    get() {
-		return this.$store.state.textOptions.opacity
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {opacity: value})
-	    }
-	},
-	rotation: {
-	    get() {
-		return this.$store.state.textOptions.rotation
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {rotation: value})
-	    }
-	},
-	isBorder: {
-	    get() {
-		return this.$store.state.textOptions.isBorder
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {isBorder: value})
-	    }
-	},
-	isFill: {
-	    get() {
-		return this.$store.state.textOptions.isFill
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {isFill: value})
-	    }
-	},
-	isShadow: {
-	    get() {
-		return this.$store.state.textOptions.isShadow
-	    },
-	    set(value) {
-		this.$store.commit('textOptions/updateTextOptions', {isShadow: value})
-	    }
-	},
+        content: {
+            get():string {
+                return this.$store.state.textOptions.content
+            },
+            set(value:string):void {
+                this.$store.commit('textOptions/updateTextOptions', {content: value})
+            }
+        },
+        fontFamily: {
+            get():string {
+                return this.$store.state.textOptions.fontFamily
+            },
+            set(value:string):void {
+                this.$store.commit('textOptions/updateTextOptions', {fontFamily: value})
+            }
+        },
+        fontSize: {
+            get():number {
+                return this.$store.state.textOptions.fontSize
+            },
+            set(value:number):void {
+                this.$store.commit('textOptions/updateTextOptions', {fontSize: value})
+            }
+        },
+        justification: {
+            get():string {
+                return this.$store.state.textOptions.justification
+            },
+            set(value:string):void {
+                this.$store.commit('textOptions/updateTextOptions', {justification: value})
+            }
+        },
+        fillColor: {
+            get():string {
+                return this.$store.state.textOptions.fillColor
+            },
+            set(value:string):void {
+                this.$store.commit('textOptions/updateTextOptions', {fillColor: value})
+            }
+        },
+        strokeColor: {
+            get():string {
+                return this.$store.state.textOptions.strokeColor
+            },
+            set(value:string):void {
+                this.$store.commit('textOptions/updateTextOptions', {strokeColor: value})
+            }
+        },
+        strokeWidth: {
+            get():number {
+                return this.$store.state.textOptions.strokeWidth
+            },
+            set(value:number):void {
+                this.$store.commit('textOptions/updateTextOptions', {strokeWidth: value})
+            }
+        },
+        shadowColor: {
+            get():string {
+                return this.$store.state.textOptions.shadowColor
+            },
+            set(value:string):void {
+                this.$store.commit('textOptions/updateTextOptions', {shadowColor: value})
+            }
+        },
+        shadowBlur: {
+            get():number {
+                return this.$store.state.textOptions.shadowBlur
+            },
+            set(value:number):void {
+                this.$store.commit('textOptions/updateTextOptions', {shadowBlur: value})
+            }
+        },
+        shOffsetX: {
+            get():number {
+                return this.$store.state.textOptions.shadowOffset[0]
+            },
+            set(value:number):void {
+                this.$store.commit('textOptions/updateTextOptions', {shadowOffset: [value, this.$store.state.textOptions.shadowOffset[1]]})
+            }
+        },
+        shOffsetY: {
+            get():number {
+                return this.$store.state.textOptions.shadowOffset[1]
+            },
+            set(value:number):void {
+                this.$store.commit('textOptions/updateTextOptions', {shadowOffset: [this.$store.state.textOptions.shadowOffset[0], value]})
+            }
+        },
+        opacity: {
+            get():number {
+                return this.$store.state.textOptions.opacity
+            },
+            set(value:number):void {
+                this.$store.commit('textOptions/updateTextOptions', {opacity: value})
+            }
+        },
+        rotation: {
+            get():number {
+                return this.$store.state.textOptions.rotation
+            },
+            set(value:number):void {
+                this.$store.commit('textOptions/updateTextOptions', {rotation: value})
+            }
+        },
+        isBorder: {
+            get():boolean {
+                return this.$store.state.textOptions.isBorder
+            },
+            set(value:boolean):void {
+                this.$store.commit('textOptions/updateTextOptions', {isBorder: value})
+            }
+        },
+        isFill: {
+            get():boolean {
+                return this.$store.state.textOptions.isFill
+            },
+            set(value:boolean):void {
+                this.$store.commit('textOptions/updateTextOptions', {isFill: value})
+            }
+        },
+        isShadow: {
+            get():boolean {
+                return this.$store.state.textOptions.isShadow
+            },
+            set(value:boolean):void {
+                this.$store.commit('textOptions/updateTextOptions', {isShadow: value})
+            }
+        },
     }
-}
+})
 </script>
 
 <style lang="sass" scoped>

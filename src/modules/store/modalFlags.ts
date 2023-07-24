@@ -1,64 +1,72 @@
 import { Module } from "vuex";
 
+enum flags {
+    ShowDelMapWin = 'showDelMapWin',
+    ShowStampsWin = 'showStampsWin',
+    ShowImgLoadWin = 'showImgLoad',
+    ShowNewMapWin = 'showNewMapWin',
+    ShowEditMapWin = 'showEditMapWin',
+    ShowProfile = 'showProfile',
+}
+
 interface FlagsState {
-    showEditMapWin: boolean;
-    showStampsWin: boolean;
-    showImgLoadWin: boolean;
-    showNewMapWin: boolean;
-    showDelMapWin: boolean;
-    showProfile: boolean;
+    [flags.ShowDelMapWin]: boolean
+    [flags.ShowStampsWin]: boolean
+    [flags.ShowImgLoadWin]: boolean
+    [flags.ShowNewMapWin]: boolean
+    [flags.ShowEditMapWin]: boolean
+    [flags.ShowProfile]: boolean
 }
 
 const modalFlags: Module<FlagsState, any> = {
     namespaced: true,
     state: (): FlagsState => ({
-        showDelMapWin: false,
-        showStampsWin: false,
-        showImgLoadWin: false,
-        showNewMapWin: false,
-        showEditMapWin: false,
-        showProfile: false,
+        [flags.ShowDelMapWin]: false,
+        [flags.ShowStampsWin]: false,
+        [flags.ShowImgLoadWin]: false,
+        [flags.ShowNewMapWin]: false,
+        [flags.ShowEditMapWin]: false,
+        [flags.ShowProfile]: false,
     }),
     mutations: {
         setShowEditMapWin(state: FlagsState, value: boolean): void {
-            state.showEditMapWin = value;
+            state[flags.ShowEditMapWin] = value;
         },
         setShowStampsWin(state: FlagsState, value: boolean): void {
-            state.showStampsWin = value;
+            state[flags.ShowStampsWin] = value;
         },
         setShowImgLoadWin(state: FlagsState, value: boolean): void {
-            state.showImgLoadWin = value;
+            state[flags.ShowImgLoadWin] = value;
         },
         setShowNewMapWin(state: FlagsState, value: boolean): void {
-            state.showNewMapWin = value;
+            state[flags.ShowNewMapWin] = value;
         },
         setShowDelMapWin(state: FlagsState, value: boolean): void {
-            state.showDelMapWin = value;
+            state[flags.ShowDelMapWin] = value;
         },
         setShowProfile(state: FlagsState, value: boolean): void {
-            state.showProfile = value;
-        }
+            state[flags.ShowProfile] = value;
+        },
     },
     getters: {
         showEditMapWin(state: FlagsState): boolean {
-            return state.showEditMapWin;
+            return state[flags.ShowEditMapWin];
         },
         showStampsWin(state: FlagsState): boolean {
-            return state.showStampsWin;
+            return state[flags.ShowStampsWin];
         },
         showImgLoadWin(state: FlagsState): boolean {
-            return state.showImgLoadWin;
+            return state[flags.ShowImgLoadWin];
         },
         showNewMapWin(state: FlagsState): boolean {
-            return state.showNewMapWin;
+            return state[flags.ShowNewMapWin];
         },
         showDelMapWin(state: FlagsState): boolean {
-            return state.showDelMapWin;
+            return state[flags.ShowDelMapWin];
         },
         showProfile(state: FlagsState): boolean {
-            return state.showProfile;
-        }
-    }
+            return state[flags.ShowProfile];
+        },
+    },
 };
-
 export default modalFlags;

@@ -53,7 +53,7 @@ import NewMapWindow from "@/components/main/NewMapWindow.vue";
 import MapEditWindow from "@/components/MapEditWindow.vue";
 import MapDeleteWindow from "@/components/main/MapDeleteWindow.vue";
 import {defineComponent} from "vue";
-import {logOut, addNewMap, updateMapMetadata, getMaps, deleteMap} from "@/modules/services/mainPageUtils";
+import {logOut, addNewMap, updateMapMetadata, getMaps, deleteMap} from "@/modules/services/mainPage";
 import {mapGetters} from "vuex";
 import iMap from "@/modules/intefaces/map";
 
