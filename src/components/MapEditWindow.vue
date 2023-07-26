@@ -20,7 +20,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="button-light button-middle"  @click="this.$store.commit('modalFlags/setShowEditMapWin', false)">Отмена</button>
-          <button type="button" class="button-dark button-middle" :disabled="!(name.length>=6)" @click="this.$emit('updateMapMetadata')">Завершить</button>
+          <button type="button" class="button-dark button-middle" :disabled="!(name.length>=6)" @click="this.$store.dispatch('mainState/updateMapMetadata')">Завершить</button>
         </div>
       </div>
     </div>
@@ -30,33 +30,27 @@ import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "MapEditWindow",
-  props: {
-    mapName: {
-      type: String,
-      default: ""
-    },
-    mapDesc: {
-      type: String,
-      default: ""
-    }
-  },
-  data() {
-    return {
-      name: "" as string,
-      description: "" as string
-    }
-  },
-  watch: {
-    name(val){
-        this.$emit('updateName',val)
-    },
-    description(val){
-        this.$emit('updateDesc',val)
-    }
-  },
-  mounted() {
-    this.name=this.mapName || ""
-    this.description=this.mapDesc || ""
+  computed:{
+      name:{
+          get():string{
+              return this.$store.getters['mainState/getSelectedMap'].title
+          },
+          set(value:string):void{
+              const selectedMap = { ...this.$store.getters['mainState/getSelectedMap'] };
+              selectedMap.title = value;
+              this.$store.commit('mainState/setSelectedMap', selectedMap);
+          }
+      },
+      description:{
+          get():string{
+              return this.$store.getters['mainState/getSelectedMap'].description
+          },
+          set(value:string):void{
+              const selectedMap = { ...this.$store.getters['mainState/getSelectedMap'] };
+              selectedMap.description = value;
+              this.$store.commit('mainState/setSelectedMap', selectedMap);
+          }
+      }
   }
 })
 </script>

@@ -9,7 +9,7 @@
 		</svg>
 		Настройки холста
 		<svg class="cursor-pointer modal-close-icon" fill="none" viewBox="0 0 24 24"
-		     xmlns="http://www.w3.org/2000/svg" @click="this.$emit('closeWindow')">
+		     xmlns="http://www.w3.org/2000/svg" @click="this.$store.commit('modalFlags/setShowNewMapWin',false)">
 		    <path d="M19 5L5 19M5 5L9.5 9.5M12 12L19 19" stroke-linecap="round" stroke-linejoin="round"
 			  stroke-width="2"/>
 		</svg>
@@ -163,7 +163,7 @@
 		</div>
 	    </div>
 	    <div class="modal-footer">
-		<button class="button-middle button-light" type="button" @click="this.$emit('closeWindow')">
+		<button class="button-middle button-light" type="button" @click="this.$store.commit('modalFlags/setShowNewMapWin',false)">
 		    Закрыть
 		</button>
 		<button :disabled="mapData.name.length<6 ||
@@ -195,7 +195,8 @@ export default defineComponent({
     },
     methods: {
         createCanvas() {
-            this.$emit('newMap', this.mapData.name, (this.mapData.resX + "x" + this.mapData.resY))
+					this.$store.dispatch('mainState/addNewMap',{title:this.mapData.name, resolution:(this.mapData.resX + "x" + this.mapData.resY)})
+					this.$store.commit('modalFlags/setShowNewMapWin',false)
         }
     },
     watch: {

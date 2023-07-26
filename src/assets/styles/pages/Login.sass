@@ -14,15 +14,6 @@ form
   z-index: 3
   position: relative
 
-.logo-container
-  max-width: 400px
-  max-height: 400px
-
-.logo-image
-  width: 100%
-  height: 100%
-  object-fit: contain
-
 
 .login
   display: flex
@@ -102,3 +93,19 @@ form
 .login-form
   width: 80%
   padding: 15px
+
+.logo
+  display: flex
+  flex-direction: row
+  align-items: center
+  &>svg
+    height: 80px
+
+.logo-text
+  font-family: a_RewinderMedium,serif
+  font-size: 36pt
+  user-select: none
+  margin-right: 25px
+  margin-left: 10px
+  color: Variables.$dark-color
+  text-shadow: -2px -2px 0 Variables.$orange-color, 2px -2px 0 Variables.$orange-color, -2px 2px 0 Variables.$orange-color, 2px 2px 0 Variables.$orange-color

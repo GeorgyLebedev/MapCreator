@@ -1,21 +1,21 @@
 <template>
   <Transition name="popup-anim">
-  <div class="contextMenu" @contextmenu.prevent v-show="showMenu">
-    <div class="contextMenuItem" @click="this.$emit('copyItem')">
+  <div class="context-menu" @contextmenu.prevent v-show="showMenu">
+    <div class="context-menu-item" @click="this.$emit('copyItem')">
       <img src="@/assets/images/Service/copy.png" alt="">
       Копировать
     </div>
     <hr class="contextMenuDivider">
-    <div class="contextMenuItem" @click="this.$emit('toFront')">
+    <div class="context-menu-item" @click="this.$emit('toFront')">
       <img src="@/assets/images/Service/toFront.png" alt="">
       На передний план
     </div>
-    <div class="contextMenuItem" @click="this.$emit('toBack')">
+    <div class="context-menu-item" @click="this.$emit('toBack')">
       <img src="@/assets/images/Service/toBack.png" alt="" >
       На задний план
     </div>
     <hr class="contextMenuDivider">
-    <div class="contextMenuItem" @click="this.$emit('removeItem')">
+    <div class="context-menu-item" @click="this.$emit('removeItem')">
       <img src="@/assets/images/Service/delete.png" alt="">
       Удалить
     </div>
@@ -35,38 +35,37 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-  .contextMenu{
-    user-select: none;
-    z-index: 5;
-    padding-block: 7px;
-    position: fixed;
-    background-color: white;
-    border: 1px solid #dcdcdc;
-    border-radius: 10px;
-    width: auto;
-    height:auto;
-  }
-  .contextMenuItem{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 40px;
-    padding-block: 5px;
-    padding-inline: 10px;
-    color: #3d4551;
-    cursor: pointer;
-  }
-  .contextMenuItem:hover{
-    background-color: #3d4551;
-    color: white;
-  }
-  .contextMenuItem img{
-    margin-right: 5px;
-    object-fit: contain;
-    height: 80%;
-  }
-  .contextMenuDivider{
-    margin:0!important;
-  }
+<style scoped lang="sass">
+@use "@/assets/styles/Variables"
+.context-menu
+  user-select: none
+  z-index: 5
+  padding-block: 7px
+  position: fixed
+  background-color: Variables.$light-color
+  border: 1px solid Variables.$medium-color
+  border-radius: 10px
+  width: auto
+  height: auto
+
+.context-menu-item
+  display: flex
+  flex-direction: row
+  align-items: center
+  height: 40px
+  padding-block: 5px
+  padding-inline: 10px
+  color: #3d4551
+  cursor: pointer
+
+.context-menu-item:hover
+  background-color: Variables.$dark-color
+  color: Variables.$light-color
+
+.context-menu-item img
+  margin-right: 5px
+  object-fit: contain
+  height: 80%
+
+
 </style>

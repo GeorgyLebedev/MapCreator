@@ -51,10 +51,6 @@ export default defineComponent({
         map: {
             type: Object as ()=>iMap,
             required: true,
-        },
-        showEditMapWin: {
-            type: Boolean,
-            default: false
         }
     },
 })
@@ -126,7 +122,7 @@ export default defineComponent({
   object-fit: cover
   width: 100%
   height: 100%
-  border-radius: 5px 5px 0 0
+  border-radius: 10px 10px 0 0
 
 
 .option
