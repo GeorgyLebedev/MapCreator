@@ -16,7 +16,7 @@
       </svg>
       </div>
       <hr>
-      <section class="flex-column " v-if="!Object.keys(this.selectedObject).length">
+      <section class="flex-column " v-if="1==1">
         <div class="stamps-container flex-row" v-if="currentKitLength>0">
           <div class="big-stamp-container flex-column">
             <div class="big-stamp">
@@ -67,6 +67,7 @@
 import stampsWindow from "@/components/mapCanvas/StampsWindow.vue";
 import {mapGetters} from "vuex";
 import {defineComponent} from "vue";
+import store from "@/modules/store/store";
 
 export default defineComponent({
   name: "stampPanel",
@@ -93,47 +94,46 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
-      selectedObject:'selection/getSelectedObject',
       showStampsWin:'modalFlags/showStampsWin'
     }),
     size:{
       get():number{
-        return this.$store.state.stampOptions.size
+        return this.$store.getters['stampOptions/getStampSize']
       },
       set(value:number):void{
-        this.$store.commit('stampOptions/updateStampOptions', {size:value})
+        this.$store.commit('stampOptions/setStampSize', Number(value))
       }
     },
     opacity:{
       get():number{
-        return this.$store.state.stampOptions.opacity
+          return this.$store.getters['stampOptions/getStampOpacity']
       },
       set(value:number):void{
-        this.$store.commit('stampOptions/updateStampOptions', {opacity:value})
+        this.$store.commit('stampOptions/setStampOpacity', Number(value))
       }
     },
     rotation: {
       get():number{
-        return this.$store.state.stampOptions.rotation
+          return this.$store.getters['stampOptions/getStampRotation']
       },
       set(value:number):void{
-        this.$store.commit('stampOptions/updateStampOptions', {rotation:value})
+        this.$store.commit('stampOptions/setStampRotation',Number(value))
       }
     },
     currentKit: {
       get(){
-        return this.$store.state.stampOptions.currentKit
+          return this.$store.getters['stampOptions/getCurrentKit']
       },
       set(value:string):void{
-        this.$store.commit('stampOptions/updateStampOptions', {currentKit:value})
+        this.$store.commit('stampOptions/setCurrentKit', value)
       }
     },
     currentStamp: {
       get():string{
-        return this.$store.state.stampOptions.currentStamp
+          return this.$store.getters['stampOptions/getCurrentStamp']
       },
       set(value:string):void{
-        this.$store.commit('stampOptions/updateStampOptions', {currentStamp:value})
+        this.$store.commit('stampOptions/setCurrentStamp', value)
       }
     },
     stampNumber():number{
@@ -170,8 +170,8 @@ export default defineComponent({
   mounted():void{
     if(this.stampsProp)
       this.stamps=this.stampsProp
-    this.currentKit = Object.keys(this.stamps)[0]
-    this.currentStamp = this.currentKitObj[Object.keys(this.currentKitObj)[0]]
+      store.commit('stampOptions/setCurrentKit',Object.keys(this.stamps)[0])
+      store.commit('stampOptions/setCurrentStamp',this.currentKitObj[Object.keys(this.currentKitObj)[0]])
   },
 })
 </script>

@@ -13,17 +13,85 @@
 		</svg>
 	    </div>
 	    <hr>
-	    <textarea v-model="content"
-		      :style="{'font-family':fontFamily}"></textarea>
+	    <section class="text-settings">
+		<div class="flex-row">
+		    <button :class="{'selected':align=='left'}"
+			    class="type-select-button"
+			    title="Слева"
+			    @click="align='left'">
+			<svg class="svg-dark-fill" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+			    <g>
+				<rect height="3.98" rx="1.96" width="63.52" x="0.24" y="6.01"/>
+				<rect height="3.74" rx="1.84" width="45.76" x="0.22" y="22.01"/>
+				<rect height="3.74" rx="1.78" width="63.54" x="0.22" y="38.25"/>
+				<rect height="3.98" rx="1.94" width="30.50" x="0.24" y="54.01"/>
+			    </g>
+			</svg>
+		    </button>
+		    <button :class="{'selected':align=='center'}"
+			    class="type-select-button"
+			    title="По центру"
+			    @click="align='center'">
+			<svg class="svg-dark-fill" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+			    <g>
+				<rect height="3.98" rx="1.96" width="63.52" x="0.24" y="6.01"/>
+				<rect height="3.74" rx="1.80" width="63.52" x="0.23" y="22.01"/>
+				<rect height="3.74" rx="1.78" width="63.54" x="0.22" y="38.25"/>
+				<rect height="3.96" rx="1.93" width="23.42" x="20.33" y="54.02"/>
+			    </g>
+			</svg>
+		    </button>
+		    <button :class="{'selected':align=='right'}"
+			    class="type-select-button"
+			    title="По центру"
+			    @click="align='right'">
+			<svg class="svg-dark-fill" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+			    <g>
+				<rect height="3.98" rx="1.96" width="63.52" x="0.24" y="6.01"/>
+				<rect height="3.74" rx="1.84" width="45.74" x="18.02" y="22.01"/>
+				<rect height="3.74" rx="1.78" width="63.54" x="0.22" y="38.25"/>
+				<rect height="3.98" rx="1.94" width="30.48" x="33.26" y="54.01"/>
+			    </g>
+			</svg>
+		    </button>
+		</div>
+		<div class="flex-row">
+		    <button :class="{'selected':fontStyle.indexOf('bold')>0}"
+			    class="type-select-button"
+			    title="Полужирное начертание"
+			    @click="fontStyle.indexOf('bold')>0?fontStyle=fontStyle.replace('bold', ''): fontStyle=fontStyle.concat(' bold')">
+			<svg class="svg-dark-fill" height="800px" version="1.1" viewBox="0 0 281.332 281.332" width="800px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    		<path d="M198.102,134.449c15.233-11.431,28.497-29.829,28.497-59.239v-0.753c0-18.694-6.274-34.93-18.649-48.258	c-0.059-0.064-0.12-0.127-0.181-0.189C191.021,8.994,165.96,0,135.294,0H49.656c-4.971,0-9,4.029-9,9v263.332c0,4.971,4.029,9,9,9	h90.331c29.385,0,54.297-7.214,72.043-20.863c18.741-14.414,28.647-35.157,28.647-59.988v-0.753	C240.677,170.226,226.043,147.94,198.102,134.449z M140.709,236.624H86.813v-74.919h48.842c19.735,0,35.34,3.551,45.129,10.27	c8.757,6.011,13.015,14.474,13.015,25.872v0.752C193.799,232.919,156.671,236.624,140.709,236.624z M130.58,117.372H86.813V44.709	h45.955c29.839,0,46.952,12.351,46.952,33.886v0.752C179.719,112.432,148.932,117.372,130.58,117.372z"/>
+			</svg>
+		    </button>
+		    <button :class="{'selected':fontStyle.indexOf('italic')>0}"
+			    class="type-select-button"
+			    title="Курсив"
+			    @click="fontStyle.indexOf('italic')>0?fontStyle=fontStyle.replace('italic', ''): fontStyle=fontStyle.concat(' italic')">
+			<svg class="svg-dark" height="800px" viewBox="0 0 24 24" width="800px" xmlns="http://www.w3.org/2000/svg">
+			    <path d="M10 3H20M4 21H14M15 3L9 21" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+			</svg>
+		    </button>
+			<button :class="{'selected':textDecoration.length>0}"
+							class="type-select-button"
+							title="Подчеркнутый текст"
+							@click="textDecoration.length>0?textDecoration='': textDecoration='underline'">
+				<svg class="svg-dark" width="800px" height="800px" viewBox="0 0 15 15"  xmlns="http://www.w3.org/2000/svg">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M3 7.5V1H4V7.5C4 9.433 5.567 11 7.5 11C9.433 11 11 9.433 11 7.5V1H12V7.5C12 9.98528 9.98528 12 7.5 12C5.01472 12 3 9.98528 3 7.5ZM13 13V14H2V13H13Z" fill="#000000"/>
+				</svg>
+			</button>
+		</div>
+	    </section>
+	    <textarea v-model="content" spellcheck="false" :style="textAreaStyle"></textarea>
 	    <hr>
 	    <div v-if="showFontsList" class="invisibleContainer" @click="showFontsList=false"></div>
 	    <div class="flex-row align-center justify-between">
 		Шрифт
 		<button class="button-light button-small" @click="openFontsList">
 		    <div class="flex-row align-center">
-					<svg :class="{opened:showFontsList}" class="dropdown-flag svg-light-fill" height="20px" version="1.1" viewBox="-6.5 0 32 32" width="20px" xmlns="http://www.w3.org/2000/svg">
-						<path d="M18.813 11.406l-7.906 9.906c-0.75 0.906-1.906 0.906-2.625 0l-7.906-9.906c-0.75-0.938-0.375-1.656 0.781-1.656h16.875c1.188 0 1.531 0.719 0.781 1.656z"></path>
-					</svg>
+			<svg :class="{opened:showFontsList}" class="dropdown-flag svg-light-fill" height="20px" version="1.1" viewBox="-6.5 0 32 32" width="20px" xmlns="http://www.w3.org/2000/svg">
+			    <path d="M18.813 11.406l-7.906 9.906c-0.75 0.906-1.906 0.906-2.625 0l-7.906-9.906c-0.75-0.938-0.375-1.656 0.781-1.656h16.875c1.188 0 1.531 0.719 0.781 1.656z"></path>
+			</svg>
 			{{ fontFamily }}
 		    </div>
 		</button>
@@ -42,22 +110,22 @@
 		<tr>
 		    <td>
 			<div class="flex-row">
-			    <input id="textFillChbx" v-model="isFill" checked
+			    <input id="textFillChbx" v-model="fillEnabled" checked
 				   type="checkbox" @change="setFill()">
 			    <label for="textFillChbx">Цвет текста</label>
 			</div>
 		    </td>
-		    <div :style="{'background-color': isFill?fillColor:'unset'}" class="color-picker-cell"
+		    <div :style="{'background-color': fillEnabled?fillColor:'unset'}" class="color-picker-cell"
 			 @click="$refs.fillColor.click()">
-			<input v-if="isFill" ref="fillColor" v-model="fillColor" type="color"
+			<input v-if="fillEnabled" ref="fillColor" v-model="fillColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
-			<img v-if="!isFill" alt="" class="none-color-placeholder"
+			<img v-if="!fillEnabled" alt="" class="none-color-placeholder"
 			     src="@/assets/images/Tools/Options/noColor.png">
 		    </div>
 		</tr>
 	    </table>
 	    <transition name="stretch">
-		<div v-if="isFill">
+		<div v-if="fillEnabled">
 		    <recent-colors :source="'textFill'" @setTextFill="color=>fillColor=color"/>
 		    <colors-palette :color="fillColor" :source="'textFill'" @setTextFill="color=>fillColor=color"/>
 		</div>
@@ -80,70 +148,28 @@
 		<input v-model="rotation" max="180" min="-180" step="1" type="range">
 		<input v-model="rotation" max="180" min="-180" step="1" type="number">
 	    </div>
-	    <hr>
-	    <p>Положение текста:</p>
-	    <div class="flex-row">
-		<button :class="{'selected':justification=='left'}"
-			class="type-select-button"
-			title="Слева"
-			@click="justification='left'">
-		    <svg class="svg-dark-fill" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-			<g>
-			    <rect height="3.98" rx="1.96" width="63.52" x="0.24" y="6.01"/>
-			    <rect height="3.74" rx="1.84" width="45.76" x="0.22" y="22.01"/>
-			    <rect height="3.74" rx="1.78" width="63.54" x="0.22" y="38.25"/>
-			    <rect height="3.98" rx="1.94" width="30.50" x="0.24" y="54.01"/>
-			</g>
-		    </svg>
-		</button>
-		<button :class="{'selected':justification=='center'}"
-			class="type-select-button"
-			title="По центру"
-			@click="justification='center'">
-		    <svg class="svg-dark-fill" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-			<g>
-			    <rect height="3.98" rx="1.96" width="63.52" x="0.24" y="6.01"/>
-			    <rect height="3.74" rx="1.80" width="63.52" x="0.23" y="22.01"/>
-			    <rect height="3.74" rx="1.78" width="63.54" x="0.22" y="38.25"/>
-			    <rect height="3.96" rx="1.93" width="23.42" x="20.33" y="54.02"/>
-			</g>
-		    </svg>
-		</button>
-		<button :class="{'selected':justification=='right'}"
-			class="type-select-button"
-			title="По центру"
-			@click="justification='right'">
-		    <svg class="svg-dark-fill" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-			<g>
-			    <rect height="3.98" rx="1.96" width="63.52" x="0.24" y="6.01"/>
-			    <rect height="3.74" rx="1.84" width="45.74" x="18.02" y="22.01"/>
-			    <rect height="3.74" rx="1.78" width="63.54" x="0.22" y="38.25"/>
-			    <rect height="3.98" rx="1.94" width="30.48" x="33.26" y="54.01"/>
-			</g>
-		    </svg>
-		</button>
-	    </div>
+
 	    <hr>
 	    <table class="style-table">
 		<tr>
 		    <td>
 			<div class="flex-row">
-			    <input id="textBorderChbx" v-model="isBorder"
+			    <input id="textBorderChbx" v-model="strokeEnabled"
 				   type="checkbox" @change="setBorder()">
 			    <label for="textBorderChbx">Обводка</label>
 			</div>
 		    </td>
-		    <div :style="{'background-color': isBorder?strokeColor:'unset'}" class="color-picker-cell"
+		    <div :style="{'background-color': strokeEnabled?strokeColor:'unset'}" class="color-picker-cell"
 			 @click="$refs.strokeColor.click()">
-			<input v-if="isBorder" ref="strokeColor" v-model="strokeColor" type="color"
+			<input v-if="strokeEnabled" ref="strokeColor" v-model="strokeColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
-			<img v-if="!isBorder" alt="" class="none-color-placeholder"
+			<img v-if="!strokeEnabled" alt="" class="none-color-placeholder"
 			     src="@/assets/images/Tools/Options/noColor.png">
 		    </div>
 		</tr>
 	    </table>
 	    <Transition mode="out-in" name="stretch">
-		<div v-if="isBorder">
+		<div v-if="strokeEnabled">
 		    <recent-colors :source="'textStroke'" @setTextStroke="color=>strokeColor=color"/>
 		    <colors-palette :color="strokeColor" :source="'textStroke'"
 				    @setTextStroke="color=>strokeColor=color"/>
@@ -160,36 +186,36 @@
 		<tr>
 		    <td>
 			<div class="flex-row ">
-			    <input id="textShadowChbx" v-model="isShadow" :disabled="!isFill"
+			    <input id="textShadowChbx" v-model="shadowEnabled" :disabled="!fillEnabled"
 				   type="checkbox" @change="setShadow()">
 			    <label for="textShadowChbx">Тень</label>
 			</div>
 		    </td>
-		    <div :style="{'background-color': isShadow?shadowColor:'unset'}" class="color-picker-cell"
+		    <div :style="{'background-color': shadowEnabled?shadowColor:'unset'}" class="color-picker-cell"
 			 @click="$refs.shadowColor.click()">
-			<input v-if="isShadow" ref="shadowColor" v-model="shadowColor" type="color"
+			<input v-if="shadowEnabled" ref="shadowColor" v-model="shadowColor" type="color"
 			       @input="this.$store.commit('colorsStore/updateLastColor', shadowColor)">
-			<img v-if="!isShadow" alt="" class="none-color-placeholder"
+			<img v-if="!shadowEnabled" alt="" class="none-color-placeholder"
 			     src="@/assets/images/Tools/Options/noColor.png">
 		    </div>
 		</tr>
 	    </table>
 	    <Transition mode="out-in" name="stretch">
-		<div v-if="isShadow">
+		<div v-if="shadowEnabled">
 		    <recent-colors :source="'textShadow'" @setTextShadow="color=>shadowColor=color"/>
 		    <colors-palette :color="shadowColor" :source="'textShadow'"
 				    @setTextShadow="color=>shadowColor=color"/>
 		    <hr>
 		    <div class="flex-row justify-between align-center" title="Смещение тени по Х">
-			<img alt="" src="@/assets/images/Tools/Options/shOffsetX.png" width="20">
-			<input v-model="shOffsetX" max="10" min="-10" step="1" type="range">
-			<input v-model="shOffsetX" max="10" min="-10" step="1" type="number">
+			<img alt="" src="@/assets/images/Tools/Options/shadowOffsetX.png" width="20">
+			<input v-model="shadowOffsetX" max="10" min="-10" step="1" type="range">
+			<input v-model="shadowOffsetX" max="10" min="-10" step="1" type="number">
 		    </div>
 		    <hr>
 		    <div class="flex-row justify-between align-center" title="Смещение тени по Y">
-			<img alt="" src="@/assets/images/Tools/Options/shOffsetY.png" width="20">
-			<input v-model="shOffsetY" max="10" min="-10" step="1" type="range">
-			<input v-model="shOffsetY" max="10" min="-10" step="1" type="number">
+			<img alt="" src="@/assets/images/Tools/Options/shadowOffsetY.png" width="20">
+			<input v-model="shadowOffsetY" max="10" min="-10" step="1" type="range">
+			<input v-model="shadowOffsetY" max="10" min="-10" step="1" type="number">
 		    </div>
 		    <hr>
 		    <div class="flex-row justify-between align-center" title="Размытие тени">
@@ -216,6 +242,7 @@
 import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
 import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
 import {defineComponent} from "vue";
+
 export default defineComponent({
     name: "textPanel",
     components: {
@@ -232,148 +259,175 @@ export default defineComponent({
         }
     },
     methods: {
-        openFontsList():void {
+        openFontsList(): void {
             this.showFontsList = !this.showFontsList
         },
-        setShadow():void {
-            this.shadowColor = this.isShadow ? "#000000" : "transparent"
+        setShadow(): void {
+            this.shadowColor = this.shadowEnabled ? "#000000" : "transparent"
         },
-        setFill():void {
-            this.fillColor = this.isFill ? "#ffffff" : "transparent"
+        setFill(): void {
+            this.fillColor = this.fillEnabled ? "#ffffff" : "transparent"
         },
-        setBorder():void {
-            this.strokeColor = this.isBorder ? "#000000" : "transparent"
+        setBorder(): void {
+            this.strokeColor = this.strokeEnabled ? "#000000" : "transparent"
         },
     },
     computed: {
         content: {
-            get():string {
-                return this.$store.state.textOptions.content
+            get(): string {
+                return this.$store.getters['textOptions/getText']
             },
-            set(value:string):void {
-                this.$store.commit('textOptions/updateTextOptions', {content: value})
+            set(value: string): void {
+                this.$store.commit('textOptions/setText', value)
             }
         },
         fontFamily: {
-            get():string {
-                return this.$store.state.textOptions.fontFamily
+            get(): string {
+                return this.$store.getters['textOptions/getFontFamily']
             },
-            set(value:string):void {
-                this.$store.commit('textOptions/updateTextOptions', {fontFamily: value})
+            set(value: string): void {
+                this.$store.commit('textOptions/setFontFamily', value)
             }
         },
         fontSize: {
-            get():number {
-                return this.$store.state.textOptions.fontSize
+            get(): number {
+                return this.$store.getters['textOptions/getFontSize']
             },
-            set(value:number):void {
-                this.$store.commit('textOptions/updateTextOptions', {fontSize: value})
+            set(value: number): void {
+                this.$store.commit('textOptions/setFontSize', Number(value))
             }
         },
-        justification: {
-            get():string {
-                return this.$store.state.textOptions.justification
+        fontStyle: {
+            get(): string {
+                return this.$store.getters['textOptions/getFontStyle']
             },
-            set(value:string):void {
-                this.$store.commit('textOptions/updateTextOptions', {justification: value})
+            set(value: string): void {
+                this.$store.commit('textOptions/setFontStyle', value)
+            }
+        },
+        textDecoration: {
+            get(): string {
+                return this.$store.getters['textOptions/getTextDecoration']
+            },
+            set(value: string): void {
+                this.$store.commit('textOptions/setTextDecoration', value)
+            }
+        },
+        align: {
+            get(): string {
+                return this.$store.getters['textOptions/getAlign']
+            },
+            set(value: string): void {
+                this.$store.commit('textOptions/setAlign', value)
             }
         },
         fillColor: {
-            get():string {
-                return this.$store.state.textOptions.fillColor
+            get(): string {
+                return this.$store.getters['textOptions/getFillColor']
             },
-            set(value:string):void {
-                this.$store.commit('textOptions/updateTextOptions', {fillColor: value})
+            set(value: string): void {
+                this.$store.commit('textOptions/setFillColor', value)
+            }
+        },
+        fillEnabled: {
+            get(): boolean {
+                return this.$store.getters['textOptions/getFillEnabled']
+            },
+            set(value: boolean): void {
+                this.$store.commit('textOptions/setFillEnabled', value)
             }
         },
         strokeColor: {
-            get():string {
-                return this.$store.state.textOptions.strokeColor
+            get(): string {
+                return this.$store.getters['textOptions/getStrokeColor']
             },
-            set(value:string):void {
-                this.$store.commit('textOptions/updateTextOptions', {strokeColor: value})
+            set(value: string): void {
+                this.$store.commit('textOptions/setStrokeColor', value)
+            }
+        },
+        strokeEnabled: {
+            get(): boolean {
+                return this.$store.getters['textOptions/getStrokeEnabled']
+            },
+            set(value: boolean): void {
+                this.$store.commit('textOptions/setStrokeEnabled', value)
             }
         },
         strokeWidth: {
-            get():number {
-                return this.$store.state.textOptions.strokeWidth
+            get(): number {
+                return this.$store.getters['textOptions/getStrokeWidth']
             },
-            set(value:number):void {
-                this.$store.commit('textOptions/updateTextOptions', {strokeWidth: value})
+            set(value: number): void {
+                this.$store.commit('textOptions/setStrokeWidth', Number(value))
             }
         },
         shadowColor: {
-            get():string {
-                return this.$store.state.textOptions.shadowColor
+            get(): string {
+                return this.$store.getters['textOptions/getShadowColor']
             },
-            set(value:string):void {
-                this.$store.commit('textOptions/updateTextOptions', {shadowColor: value})
+            set(value: string): void {
+                this.$store.commit('textOptions/setShadowColor', value)
+            }
+        },
+        shadowEnabled: {
+            get(): boolean {
+                return this.$store.getters['textOptions/getShadowEnabled']
+            },
+            set(value: boolean): void {
+                this.$store.commit('textOptions/setShadowEnabled', value)
             }
         },
         shadowBlur: {
-            get():number {
-                return this.$store.state.textOptions.shadowBlur
+            get(): number {
+                return this.$store.getters['textOptions/getShadowBlur']
             },
-            set(value:number):void {
-                this.$store.commit('textOptions/updateTextOptions', {shadowBlur: value})
+            set(value: number): void {
+                this.$store.commit('textOptions/setShadowBlur', Number(value))
             }
         },
-        shOffsetX: {
-            get():number {
-                return this.$store.state.textOptions.shadowOffset[0]
+        shadowOffsetX: {
+            get(): number {
+                return this.$store.getters['textOptions/getShadowOffsetX']
             },
-            set(value:number):void {
-                this.$store.commit('textOptions/updateTextOptions', {shadowOffset: [value, this.$store.state.textOptions.shadowOffset[1]]})
+            set(value: number): void {
+                this.$store.commit('textOptions/setShadowOffsetX', Number(value))
             }
         },
-        shOffsetY: {
-            get():number {
-                return this.$store.state.textOptions.shadowOffset[1]
+        shadowOffsetY: {
+            get(): number {
+                return this.$store.getters['textOptions/getShadowOffsetY']
             },
-            set(value:number):void {
-                this.$store.commit('textOptions/updateTextOptions', {shadowOffset: [this.$store.state.textOptions.shadowOffset[0], value]})
+            set(value: number): void {
+                this.$store.commit('textOptions/setShadowOffsetY', Number(value))
             }
         },
         opacity: {
-            get():number {
-                return this.$store.state.textOptions.opacity
+            get(): number {
+                return this.$store.getters['textOptions/getOpacity']
             },
-            set(value:number):void {
-                this.$store.commit('textOptions/updateTextOptions', {opacity: value})
+            set(value: number): void {
+                this.$store.commit('textOptions/setOpacity', Number(value))
             }
         },
         rotation: {
-            get():number {
-                return this.$store.state.textOptions.rotation
+            get(): number {
+                return this.$store.getters['textOptions/getRotation']
             },
-            set(value:number):void {
-                this.$store.commit('textOptions/updateTextOptions', {rotation: value})
+            set(value: number): void {
+                this.$store.commit('textOptions/setRotation', Number(value))
             }
         },
-        isBorder: {
-            get():boolean {
-                return this.$store.state.textOptions.isBorder
-            },
-            set(value:boolean):void {
-                this.$store.commit('textOptions/updateTextOptions', {isBorder: value})
-            }
-        },
-        isFill: {
-            get():boolean {
-                return this.$store.state.textOptions.isFill
-            },
-            set(value:boolean):void {
-                this.$store.commit('textOptions/updateTextOptions', {isFill: value})
-            }
-        },
-        isShadow: {
-            get():boolean {
-                return this.$store.state.textOptions.isShadow
-            },
-            set(value:boolean):void {
-                this.$store.commit('textOptions/updateTextOptions', {isShadow: value})
-            }
-        },
+
+				textAreaStyle(){
+					const style={
+						fontFamily: this.fontFamily,
+						fontWeight: this.fontStyle.indexOf('bold')>0? 'bold': 'unset',
+						fontStyle: this.fontStyle.indexOf('italic')>0? 'italic': 'normal',
+						textDecoration: this.textDecoration.length>0? 'underline':'unset',
+						borderColor: this.content.length>0? 'inherit':'red'
+					}
+					return style
+				}
     }
 })
 </script>
@@ -409,4 +463,10 @@ textarea
   width: 20px
   height: 20px
   filter: blur(1px)
+
+.text-settings
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  padding-bottom: 10px
 </style>

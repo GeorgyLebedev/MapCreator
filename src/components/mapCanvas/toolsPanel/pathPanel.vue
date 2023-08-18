@@ -19,8 +19,8 @@
         </svg>
       </button>
       <button class="type-select-button"
-              :class="{'selected':pathType=='poly'}"
-              @click="pathType='poly'"
+              :class="{'selected':pathType=='polyline'}"
+              @click="pathType='polyline'"
               title="Ломаная">
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64">
             <path d="  M 43.86 37.01  A 0.33 0.33 0.0 0 0 44.46 36.97  L 57.93 3.95  A 1.79 1.78 23.7 0 1 60.35 3.01  Q 61.99 3.79 61.28 5.67  Q 54.40 23.71 47.04 41.56  C 46.01 44.05 43.73 44.35 42.27 41.99  Q 36.26 32.23 30.28 22.35  A 0.30 0.30 0.0 0 0 29.72 22.52  Q 30.24 36.65 30.51 50.99  C 30.56 54.13 28.91 54.86 26.23 53.64  Q 21.44 51.45 16.72 49.19  A 0.68 0.66 -55.7 0 0 15.94 49.35  Q 10.73 55.11 5.80 61.00  Q 4.35 62.74 2.42 62.00  A 1.60 1.60 0.0 0 1 1.74 59.50  Q 7.62 52.27 13.62 45.61  C 16.00 42.98 23.10 47.62 25.86 48.62  A 0.34 0.34 0.0 0 0 26.32 48.29  L 25.46 13.57  A 1.59 1.58 3.5 0 1 27.28 11.97  Q 29.12 12.25 29.95 13.60  Q 37.08 25.15 43.86 37.01  Z"/>
@@ -86,8 +86,8 @@
         <hr>
         <div class="flex-row align-center" title="Длина штриха">
           <img src="@/assets/images/Tools/Options/dash.png" alt="" height="20">
-          <input type="range" step="1" min="10" max="50" v-model="dashArray[0]">
-          <input type="number" step="1" min="10" max="50"
+          <input type="range" step="1" min="5" max="50" v-model="dashArray[0]">
+          <input type="number" step="1" min="5" max="50"
                  v-model="dashArray[0]">
         </div>
       </div>
@@ -144,66 +144,66 @@ export default defineComponent({
   computed: {
     size: {
       get():number {
-        return this.$store.state.pathOptions.size
+        return this.$store.getters['pathOptions/getPathSize']
       },
       set(value:number):void {
-        this.$store.commit('pathOptions/updatePathOptions', {size: value})
+        this.$store.commit('pathOptions/setPathSize',  Number(value))
       }
     },
     opacity: {
       get():number {
-        return this.$store.state.pathOptions.opacity
+          return this.$store.getters['pathOptions/getPathOpacity']
       },
       set(value:number):void {
-        this.$store.commit('pathOptions/updatePathOptions', {opacity: value})
+        this.$store.commit('pathOptions/setPathOpacity', Number(value))
       }
     },
     color: {
       get():string {
-        return this.$store.state.pathOptions.color
+          return this.$store.getters['pathOptions/getPathColor']
       },
       set(value:string):void {
-        this.$store.commit('pathOptions/updatePathOptions', {color: value})
+        this.$store.commit('pathOptions/setPathColor',  value)
       }
     },
     pathType: {
       get():string {
-        return this.$store.state.pathOptions.pathType
+          return this.$store.getters['pathOptions/getPathType']
       },
       set(value:string):void {
-        this.$store.commit('pathOptions/updatePathOptions', {pathType: value})
+        this.$store.commit('pathOptions/setPathType',  value)
       }
     },
     roundCap: {
       get():boolean {
-        return this.$store.state.pathOptions.roundCap
+          return this.$store.getters['pathOptions/getPathRoundCap']
       },
       set(value:boolean):void {
-        this.$store.commit('pathOptions/updatePathOptions', {roundCap: value})
+        this.$store.commit('pathOptions/setPathRoundCap', value)
       }
     },
     style: {
       get():string {
-        return this.$store.state.pathOptions.style
+          return this.$store.getters['pathOptions/getPathStyle']
       },
       set(value:string):void {
-        this.$store.commit('pathOptions/updatePathOptions', {style: value})
+        this.$store.commit('pathOptions/setPathStyle',  value)
       }
     },
     dashArray: {
       get():number[] {
-        return this.$store.state.pathOptions.dashArray
+          return this.$store.getters['pathOptions/getPathDashArray']
       },
       set(value:number[]):void {
-        this.$store.commit('pathOptions/updatePathOptions', {dashArray: value})
+        this.$store.commit('pathOptions/setPathDashArray',  value)
       }
     },
     dotArray: {
       get():number[] {
-        return this.$store.state.pathOptions.dotArray
+          return this.$store.getters['pathOptions/getPathDotArray']
       },
       set(value:number[]):void {
-        this.$store.commit('pathOptions/updatePathOptions', {dotArray: value})
+        this.$store.commit('pathOptions/setPathDotArray',  value)
       }
     },
   }

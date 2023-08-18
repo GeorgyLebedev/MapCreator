@@ -1,0 +1,5 @@
+$orange-color: #e34234
+$dark-color: #313741
+$medium-color: #728391
+$medium-light-color:#ced4d9
+$light-color: #e3e9f4

@@ -8,7 +8,7 @@
 	<transition name="show-opt">
 	    <div v-if="isOpen" class="color-table">
 		<div v-for="(color, index) in recentColors" :key="index">
-		    <template v-if="color !== 'transparent'">
+		    <template v-if="color !== null">
 			<div
 				:style="{ backgroundColor: color }"
 				class="color-cell cursor-pointer"
@@ -104,9 +104,11 @@ summary:focus
   width: 30px
   min-width: 30px
   border: 1px solid Variables.$medium-light-color
+  border-radius: 5px
 
 .color-cell img
   width: 100%
   height: 100%
   object-fit: cover
+  border-radius: inherit
 </style>

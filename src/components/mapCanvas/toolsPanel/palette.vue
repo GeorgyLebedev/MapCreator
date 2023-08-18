@@ -137,15 +137,14 @@ details
 	height: 30px
 	max-width: 30px
 	border: 1px solid Variables.$medium-light-color
-
+	border-radius: 5px
 
 .color-cell:focus
 	border: 1px solid Variables.$dark-color
-
 
 .color-cell img
 	width: 100%
 	height: 100%
 	object-fit: contain
-
+	border-radius: inherit
 </style>

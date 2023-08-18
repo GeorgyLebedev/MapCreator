@@ -191,8 +191,8 @@ export default {
 	selectStamp(val, key) {
 	    this.selectedStampVal = val
 	    this.selectedStampKey = key
-	    this.$store.commit('stampOptions/updateStampOptions', {currentStamp: this.selectedStampVal})
-	    this.$emit('closeWindow')
+	    this.$store.commit('stampOptions/setCurrentStamp', this.selectedStampVal)
+	    this.$store.commit('modalFlags/setShowStampsWin',false)
 	},
 	showStampDeleteConfirm(key) {
 	    this.stampDeleteConfirm = this.kitDeleteConfirm = this.isFocusStamp = {}
@@ -260,11 +260,11 @@ export default {
     },
     watch: {
 	selectedKit(value) {
-	    this.$store.commit('stampOptions/updateStampOptions', {currentKit: value})
+	    this.$store.commit('stampOptions/setCurrentKit',  value)
 	    if (Object.values(this.selectedKitObj).indexOf(this.selectedStampVal) === -1) {
 		this.selectedStampVal = this.selectedKitObj[(Object.keys(this.selectedKitObj))[0]]
 		this.selectedStampKey = Object.keys(this.selectedKitObj)[0]
-		this.$store.commit('stampOptions/updateStampOptions', {currentStamp: this.selectedStampVal})
+		this.$store.commit('stampOptions/setCurrentStamp', this.selectedStampVal)
 	    }
 	},
     },

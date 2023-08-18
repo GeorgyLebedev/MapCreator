@@ -1,6 +1,5 @@
 <template>
-  <Transition name="popup-anim">
-  <div class="context-menu" @contextmenu.prevent v-show="showMenu">
+  <div class="context-menu" :style="contextMenuStyle" @contextmenu.prevent>
     <div class="context-menu-item" @click="this.$emit('copyItem')">
       <img src="@/assets/images/Service/copy.png" alt="">
       Копировать
@@ -20,19 +19,27 @@
       Удалить
     </div>
   </div>
-  </Transition>
+
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-
+import {mapGetters} from "vuex";
 export default defineComponent({
   name: "ContextMenu",
-  props:{
-    showMenu:{
-      type: Boolean,
-      default: false
+    computed: {
+        ...mapGetters({
+            contextMenuPosition: 'cursorOptions/getContextMenuPos'
+        }),
+        contextMenuStyle() {
+            if (!this.contextMenuPosition) return
+            return {
+                top: this.contextMenuPosition.top ? `${this.contextMenuPosition.top}px` : 'auto',
+                right: this.contextMenuPosition.right ? `${this.contextMenuPosition.right}px` : 'auto',
+                left: this.contextMenuPosition.left ? `${this.contextMenuPosition.left}px` : 'auto',
+                bottom: this.contextMenuPosition.bottom ? `${this.contextMenuPosition.bottom}px` : 'auto',
+            };
+        },
     }
-  }
 })
 </script>
 <style scoped lang="sass">

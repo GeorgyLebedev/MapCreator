@@ -24,7 +24,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Login
   },
   {
-    path: '/MapCanvas/:id', //страница редактирования принимает url-параметр с id выбранной карты
+    path: '/MapCanvas/', //страница редактирования принимает url-параметр с id выбранной карты
     name: 'MapCanvas',
     component: MapCanvas,
     props: true

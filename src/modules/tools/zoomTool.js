@@ -15,11 +15,11 @@ export default class zoomTool {
 	this.instance.onMouseUp = (event) => {
 	    let mode
 	    if (event.event.button == 0) {
-		store.commit('setCursorStyle', 'zoom-in')
+		store.commit('cursorState/setCursorStyle', 'zoom-in')
 		mode = "+"
 	    }
 	    if (event.event.button == 2) {
-		store.commit('setCursorStyle', 'zoom-out')
+		store.commit('cursorState/setCursorStyle', 'zoom-out')
 		mode = "-"
 	    }
 	    drag = false
@@ -38,7 +38,7 @@ export default class zoomTool {
 	this.instance.onMouseDown = () => {
 	    isZoom = true
 	    drag = true
-	    store.commit('setCursorStyle', 'move')
+	    store.commit('cursorState/setCursorStyle', 'move')
 	}
     }
     activate(){

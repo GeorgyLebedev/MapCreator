@@ -1,212 +1,126 @@
 <template>
-  <ContextMenu
-               :style="contextMenuStyle"
-               :show-menu="this.getMenuFlag"
-               @copyItem="()=>{
-                 cursorTool.copyItem()
-                 cursorTool.contextMenuVisible(false)
-                 this.$store.commit('setCursorStyle', 'default')}"
-               @removeItem="()=>{
-                  cursorTool.removeItem()
-                  cursorTool.contextMenuVisible(false)
-                  this.$store.commit('setCursorStyle', 'default')}"
-               @toFront="()=>{
-                 cursorTool.setToFront()
-                 cursorTool.contextMenuVisible(false)
-                 this.$store.commit('setCursorStyle', 'default')}"
-               @toBack="()=>{
-                 cursorTool.setToBack()
-                 cursorTool.contextMenuVisible(false)
-                 this.$store.commit('setCursorStyle', 'default')}"/>
-  <MapEditWindow
-      v-if="showEditMapWin"
-      :map-name="currentMap.title"
-      :map-desc="currentMap.description"
-      @updateName="(val)=>currentMap.title=val"
-      @updateDesc="(val)=>currentMap.description=val"
-      @updateMapMetadata="updateMapMetadata(currentMap)"
-  />
-  <ImageLoadWindow
-      v-if="showImgLoadWin"
-      @setLoadMode="(mode)=>{
-        this.$store.commit('modalFlags/setShowImgLoadWin', false)
-        canvas.backgroundOpt.loadMode=mode
-        canvas.setBackground(canvas.backgroundOpt)
-      }"
-  />
-  <div class="main-container" @contextmenu.prevent>
-    <TopMenu
-        :canvas-size="{width:canvas.resoX, height:canvas.resoY}"
-        @saveAs="(ext)=>{
-          if(selection.selectedObject) selection.remove()
-          exportAs(ext, canvas, currentMap.title)
-        }"
-        @showMapEditWindow=" this.$store.commit('modalFlags/setShowEditMapWin', true)"
-        @showImageLoadWindow="(background)=>{
-          canvas.backgroundOpt=background
-           this.$store.commit('modalFlags/setShowImgLoadWin', true)
-        }"
-        @setCanvasBackground="(background)=>{canvas.setBackground(background)}"
-        @removeCanvasBackground="canvas.removeBackground().bind(this.canvas)"
-        @loadJson="canvas.loadProject"
-    />
-    <ToolsPanel
-        @toolChange="setTool"
-    />
-    <BotMenu
-        @resetAlign="canvas.hardReset()"
-        @zoom="(event, step, mode)=>{zoom(event, step, mode, this.canvas)}"
-        @resetScale="canvas.resetScale()"
-        @saveMap="updateMapObjects(currentMap)"
-        :scale-prop="Number(canvas.scale)"/>
-    <div class="canvas-area" id="canvasBox" @wheel="zoom(event,0.2, null, canvas)">
-      <canvas id="map" :width="this.canvas.CSSwidth" :height="this.canvas.CSSheight"
-              :style="{cursor: cursorStyle, width:this.canvas.CSSwidth+'px', height:this.canvas.CSSheight+'px' }"
-      @mouseout="this.$store.commit('setCenterItemFlag',true)"
-      @mouseover="this.$store.commit('setCenterItemFlag',false)"
-      ></canvas>
+    <Transition name="dropdown-show">
+	<contextMenu v-if="showMenuFlag"/>
+    </Transition>
+    <cursor v-if="cursorVisible"/>
+    <MapEditWindow v-if="showEditMapWin"/>
+    <div class="main-container" @contextmenu.prevent>
+	<TopMenu/>
+	<ToolsPanel
+		@toolChange="setTool"
+	/>
+	<BotMenu/>
+	<div class="canvas-area" id="area">
+	    <div id="canvasBox" :style="{cursor: cursorStyle}" @mousemove="cursorVisible?updateCursorPos($event):''"></div>
+	</div>
     </div>
-  </div>
 </template>
 <script>
 import TopMenu from "@/components/mapCanvas/TopMenu.vue"
 import BotMenu from "@/components/mapCanvas/BotMenu";
 import ToolsPanel from "@/components/mapCanvas/ToolsPanel";
-import MapEditWindow from "@/components/MapEditWindow";
-import ImageLoadWindow from "@/components/mapCanvas/ImageLoadWindow";
-import AxiosRequest from "@/modules/services/axiosRequest";
-import ContextMenu from "@/components/mapCanvas/ContextMenu";
-import cursorTool from "@/modules/tools/cursorTool";
+import cursor from "@/components/mapCanvas/CursorCircle.vue";
+import contextMenu from "@/components/mapCanvas/ContextMenu.vue";
+import Canvas from "@/modules/logic/canvas";
+import store from "@/modules/store/store";
 import brushTool from "@/modules/tools/brushTool";
-import shapeTool from "@/modules/tools/shapeTool";
-import pathTool from "@/modules/tools/pathTool";
-import textTool from "@/modules/tools/textTool";
 import stampTool from "@/modules/tools/stampTool";
-import zoomTool from "@/modules/tools/zoomTool";
-import canvas from "@/modules/logic/canvas";
-import selection from "@/modules/logic/selectionLogic";
-import * as paper from "paper" ;
-import {zoom} from "@/modules/logic/zoom";
-import {exportAs} from "@/modules/logic/export"
+import pathTool from "@/modules/tools/pathTool";
+import cursorTool from "@/modules/tools/cursorTool";
+import shapeTool from "@/modules/tools/shapeTool";
+import textTool from "@/modules/tools/textTool";
 import {mapGetters} from 'vuex'
-export default {
-  name: "MapCanvas",
-  components: {
-    TopMenu,
-    BotMenu,
-    ToolsPanel,
-    MapEditWindow,
-    ImageLoadWindow,
-    ContextMenu
-  },
-  data() {
-    return {
-      currentMap: {
-        title: "",
-        description: ""
-      },
-      canvas: null,
-      activeLayer: null,
-      selection: null,
-      cursorTool: null,
-      brushTool: null,
-      stampTool: null,
-      pathTool: null,
-      shapeTool: null,
-      textTool: null,
-      zoomTool: null,
-    }
-  },
-  computed: {
-      ...mapGetters({
-	  getContextMenuPos: 'cursorOptions/getContextMenuPos',
-	  getMenuFlag: 'cursorOptions/getMenuFlag',
-	  showEditMapWin:'modalFlags/showEditMapWin',
-	  showImgLoadWin:'modalFlags/showImgLoadWin'
-      }),
-    contextMenuStyle() {
-      if(!this.getContextMenuPos) return
-      return {
-        top: this.getContextMenuPos.top ? `${this.getContextMenuPos.top}px` : 'auto',
-        right: this.getContextMenuPos.right ? `${this.getContextMenuPos.right }px` : 'auto',
-        left: this.getContextMenuPos.left ? `${ this.getContextMenuPos.left}px` : 'auto',
-        bottom: this.getContextMenuPos.bottom ? `${this.getContextMenuPos.bottom}px` : 'auto',
-      };
-    },
-    cursorStyle(){
-      return this.getContextMenuPos
-    },
+import clean from "@/modules/services/canvasCleaner";
 
-  },
-  methods: {
-    zoom: zoom,
-    exportAs: exportAs,
-    setTool(tool) {
-      switch (tool){
-        case "cursor":
-          this.$store.commit("setSelectedTool",this.cursorTool)
-          break
-        case "brush":
-          this.$store.commit("setSelectedTool",this.brushTool)
-          break
-        case "stamp":
-          this.$store.commit("setSelectedTool",this.stampTool)
-          break
-        case "shape":
-          this.$store.commit("setSelectedTool",this.shapeTool)
-          break
-        case "path":
-          this.$store.commit("setSelectedTool",this.pathTool)
-          break
-        case "text":
-          this.$store.commit("setSelectedTool",this.textTool)
-          break
-        case "zoom":
-          this.$store.commit("setSelectedTool",this.zoomTool)
-          break
-      }
+export default {
+    name: "MapCanvas",
+    components: {
+	cursor,
+	contextMenu,
+	TopMenu,
+	BotMenu,
+	ToolsPanel,
     },
-    async getCurrentMap() {
-      try {
-        let request = new AxiosRequest(`map/${this.$route.params.id}`, 'get')
-        let response = (await request.sendRequest())
-        if (response && response.map) return response.map
-      } catch (e) {
-        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
-        this.$router.push("/Main")
-      }
+    data() {
+	return {
+	    currentMap: {
+		title: "",
+		description: ""
+	    },
+	    canvas: null,
+	    showCursor: false,
+	    cursorTool: null,
+	    brushTool: null,
+	    stampTool: null,
+	    shapeTool: null,
+	    pathTool: null,
+	    textTool: null
+	}
     },
-    async updateMapMetadata(map) { //обновление названия/описания карты
-      let request
-      try { //запрос на сервер с использованием AxiosRequest
-        request = new AxiosRequest(`map/${map._id}`, "put", {title: map.title, description: map.description}) //запрос
-        await request.sendRequest()
-        this.showEditMapWin = false
-      } catch (e) {
-        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
-      }
-	    this.$store.commit('modalFlags/setShowEditMapWin', false)
+    computed: {
+	...mapGetters({
+	    getContextMenuPos: 'cursorOptions/getContextMenuPos',
+	    showMenuFlag: 'cursorOptions/getMenuFlag',
+	    showEditMapWin: 'modalFlags/showEditMapWin',
+	    showImgLoadWin: 'modalFlags/showImgLoadWin',
+	    cursorVisible: 'cursorState/getCursorVisibility'
+	}),
+	contextMenuStyle() {
+	    if (!this.getContextMenuPos) return
+	    return {
+		top: this.getContextMenuPos.top ? `${this.getContextMenuPos.top}px` : 'auto',
+		right: this.getContextMenuPos.right ? `${this.getContextMenuPos.right}px` : 'auto',
+		left: this.getContextMenuPos.left ? `${this.getContextMenuPos.left}px` : 'auto',
+		bottom: this.getContextMenuPos.bottom ? `${this.getContextMenuPos.bottom}px` : 'auto',
+	    };
+	},
+	cursorStyle() {
+	    return store.getters['cursorState/getCursorStyle']
+	},
+	tool() {
+	    return store.getters['getSelectedTool']
+	}
     },
-    async updateMapObjects(map){
-      this.$store.commit("removeCurrentItem")
-      if(this.selection)
-        this.selection.remove()
-      const objects=paper.project.exportJSON()
-      let request
-      try{
-        request = new AxiosRequest(`map/${map._id}`, "put", {objects:objects}) //запрос
-        await request.sendRequest()
-        this.$store.commit("setNotification", ["success","Успешно сохранено!"])
-        this.$store.commit("clearChanges")
-      }
-      catch (e) {
-        this.$store.commit("setNotification", ["error","Ошибка сервера: " + e.message])
-    }
-    this.toolSwitch('on')
-    }
-  },
-  async mounted() {
-    this.currentMap = await this.getCurrentMap()
+    methods: {
+	updateCursorPos(event) {
+	    store.commit('cursorState/setCursorPosition', {top: event.pageY, left: event.pageX})
+	},
+	setTool(tool) {
+	    clean(this.canvas)
+	    switch (tool) {
+		case "cursor":
+		    this.cursorTool.set()
+		    break;
+		case "brush":
+		    this.brushTool.set()
+		    break
+		case "stamp":
+		    this.stampTool.set()
+		    break
+		case "shape":
+		    this.shapeTool.set()
+		    break
+		case "path":
+		    this.pathTool.set()
+		    break
+		case "text":
+		    this.textTool.set()
+		    break
+	    }
+	},
+
+    },
+    async mounted() {
+	this.canvas = new Canvas()
+	this.canvas.setup("1200x780", "canvasBox")
+	this.brushTool = new brushTool(this.canvas)
+	this.stampTool = new stampTool(this.canvas)
+	this.cursorTool = new cursorTool(this.canvas)
+	this.pathTool = new pathTool(this.canvas)
+	this.shapeTool = new shapeTool(this.canvas)
+	this.textTool = new textTool(this.canvas)
+	this.cursorTool.set()
+	/*  this.currentMap = await this.getCurrentMap()
     if (!this.currentMap || !this.currentMap.title)
       this.$router.push("/Main")
     this.canvas.setup(this.currentMap.resolution, document.getElementById("map"))
@@ -225,35 +139,33 @@ export default {
     this.pathTool = new pathTool()
     this.textTool = new textTool()
     this.zoomTool = new zoomTool(this.canvas)
-    this.$store.commit("setSelectedTool",this.cursorTool)
-    /*window.onbeforeunload = () =>{
-      return "";
-    }*/
-  },
-  created() {
-    this.canvas = new canvas()
-    this.selection=new selection()
-    this.cursorTool=new cursorTool(this.selection)
-    window.addEventListener("resize", this.canvas.setDefaultSizes.bind(this.canvas));
-    window.addEventListener("resize", this.canvas.resetCoords.bind(this.canvas));
-  },
-  watch: {
- /*   'activeLayer.children.length'(old, val) {
-      if(val) {
-        console.log(this.activeLayer.children)
-        const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
-        if(filteredArr.length>0) {
-          const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
-          console.log(obj.data.type)
-          if (obj && obj.data && obj.data.type && ['brush', 'path', 'stamp', 'text', 'shape'].includes(obj.data.type))
-            this.canvas.changes++
-        }
-        this.saveStatus=this.canvas.changes>0?"Не сохранено":"Нет изменений"
-      }
-    },*/
-  }
+    this.$store.commit("setSelectedTool",this.cursorTool)*/
+	/*window.onbeforeunload = () =>{
+    return "";
+  }*/
+    },
+    created() {
+    },
+    watch: {
+	tool(val) {
+	    this.setTool(val)
+	}
+	/*   'activeLayer.children.length'(old, val) {
+       if(val) {
+         console.log(this.activeLayer.children)
+         const filteredArr = this.activeLayer.children.filter(obj => (obj.name !== 'brushCursor' || obj.name !== 'pathCursor'));
+         if(filteredArr.length>0) {
+           const obj = filteredArr.reduce((prev, current) => prev.id > current.id ? prev : current);
+           console.log(obj.data.type)
+           if (obj && obj.data && obj.data.type && ['brush', 'path', 'stamp', 'text', 'shape'].includes(obj.data.type))
+             this.canvas.changes++
+         }
+         this.saveStatus=this.canvas.changes>0?"Не сохранено":"Нет изменений"
+       }
+     },*/
+    }
 }
 </script>
-<style scoped lang="sass">
+<style lang="sass" scoped>
 @use "@/assets/styles/pages/MapCanvas"
 </style>

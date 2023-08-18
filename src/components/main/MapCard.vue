@@ -1,6 +1,6 @@
 <template>
     <div class="card-list d-flex flex-wrap">
-	<div class="map cursor-pointer" @click="this.$router.push(`/MapCanvas/${map._id}`)" @mouseenter="showOpt=true"
+	<div class="map cursor-pointer" @click="openMap" @mouseenter="showOpt=true"
 	     @mouseleave="showOpt=false">
 	    <transition name="show-opt">
 		<div v-if="showOpt" class="top-options">
@@ -53,6 +53,12 @@ export default defineComponent({
             required: true,
         }
     },
+	methods:{
+			openMap():void{
+				this.$store.commit('mainState/setSelectedMap', this.map);
+				this.$router.push(`/MapCanvas/${this.map._id}`)
+			}
+	}
 })
 </script>
 <style lang="sass" scoped>
