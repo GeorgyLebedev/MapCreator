@@ -1,64 +1,64 @@
 <template>
     <transition name="show-opt">
-    <stampsWindow
-        v-if="showStampsWin"
-        :stamps-prop="stamps"
-        :selected-kit-prop="currentKit"
-        :selected-stamp-prop="currentStamp"
-    />
+	<stampsWindow
+		v-if="showStampsWin"
+		:stamps-prop="stamps"
+		:selected-kit-prop="currentKit"
+		:selected-stamp-prop="currentStamp"
+	/>
     </transition>
     <div class="tools-options">
-        <div class="scroll-container">
-      <div class="flex-row justify-between align-center">
-        <b> Штамп </b>
-      <svg class="close-options-img" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64" @click="$emit('closePanel')">
-          <g><path d="  M 17.05 31.58  A 0.46 0.45 46.3 0 0 17.04 32.24  Q 26.02 41.06 34.88 50.04  C 36.05 51.23 36.53 52.34 35.07 53.54  A 1.86 1.86 0.0 0 1 32.58 53.42  Q 22.85 43.77 13.02 33.97  Q 11.05 32.01 13.03 30.04  Q 22.85 20.25 32.67 10.47  Q 34.39 8.75 35.63 10.84  Q 36.35 12.05 35.35 13.11  Q 26.50 22.63 17.05 31.58  Z"/><path d="  M 33.04 31.58  A 0.47 0.46 44.6 0 0 33.05 32.24  Q 42.02 41.07 50.88 50.04  C 52.05 51.23 52.53 52.34 51.07 53.54  A 1.86 1.86 0.0 0 1 48.58 53.42  Q 38.85 43.77 29.02 33.97  Q 27.05 32.01 29.03 30.04  Q 38.74 20.36 48.56 10.81  Q 50.10 9.32 51.51 10.67  A 1.80 1.79 -45.5 0 1 51.53 13.24  L 33.04 31.58  Z"/></g>
-      </svg>
-      </div>
-      <hr>
-      <section class="flex-column " v-if="!Object.keys(this.selectedObject).length">
-        <div class="stamps-container flex-row" v-if="currentKitLength>0">
-          <div class="big-stamp-container flex-column">
-            <div class="big-stamp">
-              <img :src="currentStamp" alt="">
-            </div>
-            <div class="flex-row justify-between align-center">
-              <img src="@/assets/images/leftArrow.png" class="cursor-pointer" height="20" @click="getSwitchStamp(true)">
-              {{ stampNumber + 1 }}/{{ currentKitLength }}
-              <img src="@/assets/images/rightArrow.png" class="cursor-pointer" height="20" @click="getSwitchStamp(false)">
-            </div>
-          </div>
-          <div class="stamps-table">
-            <div class="small-stamp cursor-pointer"
-                 v-for="(key) in visibleStamps"
-                 :class="{'current-stamp':stamps[currentKit][key]===currentStamp}"
-                 :key="key"
-                 @click="this.currentStamp = this.currentKitObj[key]">
-              <img :src="stamps[currentKit][key]" alt="">
-            </div>
-          </div>
-        </div>
-        <button class="button-light button-small" @click="this.$store.commit('modalFlags/setShowStampsWin', true)">Открыть каталог</button>
-        <hr>
-      </section>
-      <div class="flex-row align-center" title="Размер иконок">
-        <img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
-        <input type="range" step="10" min="10" max="500" v-model="size">
-        <input type="number" step="1" min="10" max="500" class="input-number-style" v-model="size">
-      </div>
-      <hr>
-      <div class="flex-row align-center" title="Непрозрачность иконок">
-        <img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
-        <input type="range" step="0.1" min="0" max="1" v-model="opacity">
-        <input type="number" step="0.1" min="0" max="1" class="input-number-style" v-model="opacity">
-      </div>
-      <hr>
-      <div class="flex-row align-center" title="Поворот иконок">
-        <img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
-        <input type="range" step="1" min="-180" max="180" v-model="rotation">
-        <input type="number" step="1" min="-180" max="180" v-model="rotation"
-               class="input-number-style">
-      </div>
+	<div class="scroll-container">
+	    <div class="flex-row justify-between align-center">
+		<b> Штамп </b>
+		<svg class="close-options-img" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64" @click="$emit('closePanel')">
+		    <g><path d="  M 17.05 31.58  A 0.46 0.45 46.3 0 0 17.04 32.24  Q 26.02 41.06 34.88 50.04  C 36.05 51.23 36.53 52.34 35.07 53.54  A 1.86 1.86 0.0 0 1 32.58 53.42  Q 22.85 43.77 13.02 33.97  Q 11.05 32.01 13.03 30.04  Q 22.85 20.25 32.67 10.47  Q 34.39 8.75 35.63 10.84  Q 36.35 12.05 35.35 13.11  Q 26.50 22.63 17.05 31.58  Z"/><path d="  M 33.04 31.58  A 0.47 0.46 44.6 0 0 33.05 32.24  Q 42.02 41.07 50.88 50.04  C 52.05 51.23 52.53 52.34 51.07 53.54  A 1.86 1.86 0.0 0 1 48.58 53.42  Q 38.85 43.77 29.02 33.97  Q 27.05 32.01 29.03 30.04  Q 38.74 20.36 48.56 10.81  Q 50.10 9.32 51.51 10.67  A 1.80 1.79 -45.5 0 1 51.53 13.24  L 33.04 31.58  Z"/></g>
+		</svg>
+	    </div>
+	    <hr>
+	    <section class="flex-column " v-if="1==1">
+		<div class="stamps-container flex-row" v-if="currentKitLength>0">
+		    <div class="big-stamp-container flex-column">
+			<div class="big-stamp">
+			    <img :src="currentStamp" alt="">
+			</div>
+			<div class="flex-row justify-between align-center">
+			    <img src="@/assets/images/leftArrow.png" class="cursor-pointer" height="20" @click="getSwitchStamp(true)">
+			    {{ stampNumber + 1 }}/{{ currentKitLength }}
+			    <img src="@/assets/images/rightArrow.png" class="cursor-pointer" height="20" @click="getSwitchStamp(false)">
+			</div>
+		    </div>
+		    <div class="stamps-table">
+			<div class="small-stamp cursor-pointer"
+			     v-for="(key) in visibleStamps"
+			     :class="{'current-stamp':stamps[currentKit][key]===currentStamp}"
+			     :key="key"
+			     @click="this.currentStamp = this.currentKitObj[key]">
+			    <img :src="stamps[currentKit][key]" alt="">
+			</div>
+		    </div>
+		</div>
+		<button class="button-light button-small" @click="this.$store.commit('modalFlags/setShowStampsWin', true)">Открыть каталог</button>
+		<hr>
+	    </section>
+	    <div class="flex-row align-center" title="Размер иконок">
+		<img src="@/assets/images/Tools/Options/size.png" alt="" height="20">
+		<input type="range" step="10" min="10" max="500" v-model="size">
+		<input type="number" step="1" min="10" max="500" class="input-number-style" v-model="size">
+	    </div>
+	    <hr>
+	    <div class="flex-row align-center" title="Непрозрачность иконок">
+		<img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
+		<input type="range" step="0.1" min="0" max="1" v-model="opacity">
+		<input type="number" step="0.1" min="0" max="1" class="input-number-style" v-model="opacity">
+	    </div>
+	    <hr>
+	    <div class="flex-row align-center" title="Поворот иконок">
+		<img src="@/assets/images/Tools/Options/rotate.png" alt="" height="20">
+		<input type="range" step="1" min="-180" max="180" v-model="rotation">
+		<input type="number" step="1" min="-180" max="180" v-model="rotation"
+		       class="input-number-style">
+	    </div>
 	</div>
     </div>
 </template>
@@ -67,112 +67,112 @@
 import stampsWindow from "@/components/mapCanvas/StampsWindow.vue";
 import {mapGetters} from "vuex";
 import {defineComponent} from "vue";
+import store from "@/modules/store/store";
 
 export default defineComponent({
-  name: "stampPanel",
-  components:{
-    stampsWindow
-  },
-  props:{
-    stampsProp: Object,
-  },
-  emits:['closePanel'],
-  data(){
-    return{
-      stamps: {} as { [key: string]: any },
-    }
-  },
-  methods:{
-    getSwitchStamp(flag:boolean) {
-      const keys = Object.keys(this.currentKitObj);
-      const key = flag
-          ? (this.stampNumber - 1 < 0 ? keys[keys.length - 1] : keys[this.stampNumber - 1])
-          : (this.stampNumber + 1 > keys.length - 1 ? keys[0] : keys[this.stampNumber + 1]);
-      this.currentStamp = this.currentKitObj[key];
-    }
-  },
-  computed: {
-    ...mapGetters({
-      selectedObject:'selection/getSelectedObject',
-      showStampsWin:'modalFlags/showStampsWin'
-    }),
-    size:{
-      get():number{
-        return this.$store.state.stampOptions.size
-      },
-      set(value:number):void{
-        this.$store.commit('stampOptions/updateStampOptions', {size:value})
-      }
+    name: "stampPanel",
+    components:{
+        stampsWindow
     },
-    opacity:{
-      get():number{
-        return this.$store.state.stampOptions.opacity
-      },
-      set(value:number):void{
-        this.$store.commit('stampOptions/updateStampOptions', {opacity:value})
-      }
+    props:{
+        stampsProp: Object,
     },
-    rotation: {
-      get():number{
-        return this.$store.state.stampOptions.rotation
-      },
-      set(value:number):void{
-        this.$store.commit('stampOptions/updateStampOptions', {rotation:value})
-      }
+    emits:['closePanel'],
+    data(){
+        return{
+            stamps: {} as { [key: string]: any },
+        }
     },
-    currentKit: {
-      get(){
-        return this.$store.state.stampOptions.currentKit
-      },
-      set(value:string):void{
-        this.$store.commit('stampOptions/updateStampOptions', {currentKit:value})
-      }
+    methods:{
+        getSwitchStamp(flag:boolean) {
+            const keys = Object.keys(this.currentKitObj);
+            const key = flag
+                ? (this.stampNumber - 1 < 0 ? keys[keys.length - 1] : keys[this.stampNumber - 1])
+                : (this.stampNumber + 1 > keys.length - 1 ? keys[0] : keys[this.stampNumber + 1]);
+            this.currentStamp = this.currentKitObj[key];
+        }
     },
-    currentStamp: {
-      get():string{
-        return this.$store.state.stampOptions.currentStamp
-      },
-      set(value:string):void{
-        this.$store.commit('stampOptions/updateStampOptions', {currentStamp:value})
-      }
+    computed: {
+        ...mapGetters({
+            showStampsWin:'modalFlags/showStampsWin'
+        }),
+        size:{
+            get():number{
+                return this.$store.getters['stampOptions/getStampSize']
+            },
+            set(value:number):void{
+                this.$store.commit('stampOptions/setStampSize', Number(value))
+            }
+        },
+        opacity:{
+            get():number{
+                return this.$store.getters['stampOptions/getStampOpacity']
+            },
+            set(value:number):void{
+                this.$store.commit('stampOptions/setStampOpacity', Number(value))
+            }
+        },
+        rotation: {
+            get():number{
+                return this.$store.getters['stampOptions/getStampRotation']
+            },
+            set(value:number):void{
+                this.$store.commit('stampOptions/setStampRotation',Number(value))
+            }
+        },
+        currentKit: {
+            get(){
+                return this.$store.getters['stampOptions/getCurrentKit']
+            },
+            set(value:string):void{
+                this.$store.commit('stampOptions/setCurrentKit', value)
+            }
+        },
+        currentStamp: {
+            get():string{
+                return this.$store.getters['stampOptions/getCurrentStamp']
+            },
+            set(value:string):void{
+                this.$store.commit('stampOptions/setCurrentStamp', value)
+            }
+        },
+        stampNumber():number{
+            return Object.values(this.currentKitObj).indexOf(this.currentStamp)
+        },
+        currentKitLength():number {
+            if(this.stamps[this.currentKit])
+                return Object.keys(this.stamps[this.currentKit]).length
+            else return 0
+        },
+        findRowEnd():number {
+            if (this.stampNumber % 3 < 0) {
+                return this.stampNumber + (3 - this.stampNumber % 3);
+            } else {
+                return this.stampNumber - this.stampNumber % 3;
+            }
+        },
+        currentKitObj() {
+            if(this.stamps[this.currentKit])
+                return this.stamps[this.currentKit]
+            else return 0
+        },
+        visibleStamps():string[]|undefined {
+            if(!this.currentKitObj) return
+            if (Object.keys(this.currentKitObj).length > 9) {
+                if (this.stampNumber % 3 == 0)
+                    return Object.keys(this.currentKitObj).slice(this.stampNumber, this.stampNumber + 9)
+                else
+                    return Object.keys(this.currentKitObj).slice(this.findRowEnd, this.findRowEnd + 9)
+            } else
+                return Object.keys(this.stamps[this.currentKit])
+        },
     },
-    stampNumber():number{
-      return Object.values(this.currentKitObj).indexOf(this.currentStamp)
+    mounted():void{
+        if(this.stampsProp)
+            this.stamps=this.stampsProp
+        store.commit('stampOptions/setCurrentKit',Object.keys(this.stamps)[0])
+        store.commit('stampOptions/setCurrentStamp',this.currentKitObj[Object.keys(this.currentKitObj)[0]])
     },
-    currentKitLength():number {
-      if(this.stamps[this.currentKit])
-      return Object.keys(this.stamps[this.currentKit]).length
-      else return 0
-    },
-    findRowEnd():number {
-      if (this.stampNumber % 3 < 0) {
-        return this.stampNumber + (3 - this.stampNumber % 3);
-      } else {
-        return this.stampNumber - this.stampNumber % 3;
-      }
-    },
-    currentKitObj() {
-      if(this.stamps[this.currentKit])
-      return this.stamps[this.currentKit]
-      else return 0
-    },
-    visibleStamps():string[]|undefined {
-      if(!this.currentKitObj) return
-      if (Object.keys(this.currentKitObj).length > 9) {
-        if (this.stampNumber % 3 == 0)
-          return Object.keys(this.currentKitObj).slice(this.stampNumber, this.stampNumber + 9)
-        else
-          return Object.keys(this.currentKitObj).slice(this.findRowEnd, this.findRowEnd + 9)
-      } else
-        return Object.keys(this.stamps[this.currentKit])
-    },
-  },
-  mounted():void{
-    if(this.stampsProp)
-      this.stamps=this.stampsProp
-    this.currentKit = Object.keys(this.stamps)[0]
-    this.currentStamp = this.currentKitObj[Object.keys(this.currentKitObj)[0]]
-  },
 })
 </script>
 

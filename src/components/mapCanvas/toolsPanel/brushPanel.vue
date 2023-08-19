@@ -44,7 +44,7 @@ import recentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
 import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
 import {defineComponent} from "vue";
 import store from "@/modules/store/store";
-import brushOptions from "@/modules/store/toolsOptions/brushOptions";
+
 export default defineComponent({
     name: "brushPanel",
     components: {
@@ -54,26 +54,26 @@ export default defineComponent({
     computed: {
         size: {
             get(): number {
-                return brushOptions.state.size
+                return store.getters['brushOptions/getBrushSize']
             },
             set(value: number): void {
-                store.commit('brushOptions/updateBrushOptions', {size: value})
+                store.commit('brushOptions/setBrushSize', Number(value))
             }
         },
         color: {
             get(): string {
-                return brushOptions.state.color
+                return store.getters['brushOptions/getBrushColor']
             },
             set(value: string): void {
-                store.commit('brushOptions/updateBrushOptions', {color: value})
+                store.commit('brushOptions/setBrushColor', value)
             }
         },
         opacity: {
             get(): number {
-                return brushOptions.state.opacity
+                return store.getters['brushOptions/getBrushOpacity']
             },
             set(value: number): void {
-                store.commit('brushOptions/updateBrushOptions', {opacity: value})
+                store.commit('brushOptions/setBrushOpacity', Number(value))
             }
         }
     }

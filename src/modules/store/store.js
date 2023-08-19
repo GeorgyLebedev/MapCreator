@@ -9,6 +9,7 @@ import colorsStore from "@/modules/store/toolsOptions/colorsStore";
 import selection from "@/modules/store/toolsOptions/selection";
 import modalFlags from "@/modules/store/modalFlags";
 import userState from "@/modules/store/componentsOptions/loginPage";
+import cursorState from "@/modules/store/cursorState";
 import AxiosRequest from "@/modules/services/axiosRequest";
 import router from "@/router";
 import mainState from "@/modules/store/componentsOptions/mainPage";
@@ -21,12 +22,6 @@ const store = createStore({
 	changes: 0,
     },
     getters: {
-	getSelectedToolName(state) {
-	    return state.selectedTool.name
-	},
-	getCursorStyle(state) {
-	    return state.cursorStyle
-	},
 	getCenterFlag(state) {
 	    return state.centerFlag
 	},
@@ -51,43 +46,8 @@ const store = createStore({
 	addChanges(state) {
 	    state.changes++
 	},
-	setSelectedTool(state, tool) {
-	    store.commit("removeCurrentItem")
-	    if (selection.getters.getSelectedObject) {
-		store.commit("selection/removeSelection")
-	    }
-	    if (cursorOptions.getters.getMenuFlag) {
-		store.commit("cursorOptions/updateCursorOptions", {showContextMenu: false})
-	    }
-	    state.selectedTool = {}
-	    Object.assign(state.selectedTool, tool)
-	    switch (tool.name) {
-		case "cursor":
-		    store.commit("setCursorStyle", "default")
-		    break
-		case "brush":
-		case "stamp":
-		case "path":
-		case "text":
-		    store.commit("setCursorStyle", "none")
-		    break
-		case "shape":
-		    store.commit("setCursorStyle", "crosshair")
-		    break
-		case "zoom":
-		    store.commit("setCursorStyle", "zoom-in")
-		    break
-	    }
-	    tool.activate()
-	},
 	setCenterItemFlag(state, value) {
 	    state.centerFlag = value
-	},
-	removeCurrentItem(state) {
-	    if (state.selectedTool.currentItem)
-		state.selectedTool.currentItem.remove()
-	    if (state.selectedTool.name == "path" || state.selectedTool.name == "brush")
-		state.selectedTool.cursor.remove()
 	},
 	updateSelectedTool(state, tool) {
 	    state.selectedTool = tool
@@ -158,6 +118,7 @@ const store = createStore({
 	selection,
 	modalFlags,
 	userState,
+	cursorState,
 	mainState
     }
 })

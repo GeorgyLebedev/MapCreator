@@ -7,30 +7,30 @@
 			<u>Палитра:</u>
 		</summary>
 		<transition name="show-opt">
-		<div id="palette" class="color-grid" v-if="isOpen">
-			<div
-					v-for="(color, index) in paletteColors"
-					:key="index"
-					class="color-cell"
-					:class="{ 'cursor-pointer': color !== null }"
-					:style="{ backgroundColor: color }"
-					@click.right="openPaletteContextMenu($event, index)"
-					@click.left="setToolColor(color)"
-					:tabindex="index">
-				<img src="@/assets/images/Tools/Options/noColor.png"  v-if="color==null">
-			</div>
-			<div class="invisible-container" @click="showPaletteContext=false" v-if="showPaletteContext">
-				<div class="contextMenu" :style="paletteContextStyle" @contextmenu.prevent>
-					<div class="contextMenuItem" @click="showPaletteContext=false">
-						Отмена
-					</div>
-					<hr class="contextMenuDivider">
-					<div class="contextMenuItem" @click="updatePalette(index,this.$props.color)">
-						Записать текущий цвет
+			<div id="palette" class="color-grid" v-if="isOpen">
+				<div
+						v-for="(color, index) in paletteColors"
+						:key="index"
+						class="color-cell"
+						:class="{ 'cursor-pointer': color !== null }"
+						:style="{ backgroundColor: color }"
+						@click.right="openPaletteContextMenu($event, index)"
+						@click.left="setToolColor(color)"
+						:tabindex="index">
+					<img src="@/assets/images/Tools/Options/noColor.png"  v-if="color==null">
+				</div>
+				<div class="invisible-container" @click="showPaletteContext=false" v-if="showPaletteContext">
+					<div class="contextMenu" :style="paletteContextStyle" @contextmenu.prevent>
+						<div class="contextMenuItem" @click="showPaletteContext=false">
+							Отмена
+						</div>
+						<hr class="contextMenuDivider">
+						<div class="contextMenuItem" @click="updatePalette(index,this.$props.color)">
+							Записать текущий цвет
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		</transition>
 	</details>
 </template>
@@ -137,15 +137,14 @@ details
 	height: 30px
 	max-width: 30px
 	border: 1px solid Variables.$medium-light-color
-
+	border-radius: 5px
 
 .color-cell:focus
 	border: 1px solid Variables.$dark-color
-
 
 .color-cell img
 	width: 100%
 	height: 100%
 	object-fit: contain
-
+	border-radius: inherit
 </style>

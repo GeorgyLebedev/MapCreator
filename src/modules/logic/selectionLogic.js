@@ -31,7 +31,7 @@ export default class selectionLogic {
         this.selectionGroup = undefined
         this.selectedObject=undefined
         store.commit("selection/removeSelection")
-        store.commit('setCursorStyle', 'default')
+        store.commit('cursorState/setCursorStyle', 'default')
     }
     build(group, item){
         if(!item) return
@@ -56,16 +56,16 @@ export default class selectionLogic {
         let boundCircle = boundCircleFull.exclude(boundRect)
         boundCircleFull.remove()
         item.onMouseEnter = () => {
-            store.commit('setCursorStyle', 'grab')
+            store.commit('cursorState/setCursorStyle', 'grab')
         }
         item.onMouseLeave = () => {
-            store.commit('setCursorStyle', 'default')
+            store.commit('cursorState/setCursorStyle', 'default')
         }
         item.onMouseDown = () => {
-            store.commit('setCursorStyle', 'grabbing')
+            store.commit('cursorState/setCursorStyle', 'grabbing')
         }
         item.onMouseUp = () => {
-            store.commit('setCursorStyle', 'grab')
+            store.commit('cursorState/setCursorStyle', 'grab')
         }
         let corners = ['topLeft', 'topRight', 'bottomRight', 'bottomLeft']
         let twoLast = []
@@ -81,15 +81,15 @@ export default class selectionLogic {
             })
             boundSq.bringToFront()
             boundSq.onMouseLeave = () => {
-                store.commit('setCursorStyle', 'default')
+                store.commit('cursorState/setCursorStyle', 'default')
             }
             if (corner == 'topLeft' || corner == 'bottomRight') {
                 boundSq.onMouseEnter = () => {
-                    store.commit('setCursorStyle', 'nwse-resize')
+                    store.commit('cursorState/setCursorStyle', 'nwse-resize')
                 }
             } else {
                 boundSq.onMouseEnter = () => {
-                    store.commit('setCursorStyle',  'nesw-resize')
+                    store.commit('cursorState/setCursorStyle',  'nesw-resize')
                 }
             }
             group.addChild(boundSq)
@@ -149,10 +149,10 @@ export default class selectionLogic {
             }
         })
         boundCircle.onMouseLeave = () => {
-            store.commit('setCursorStyle', 'default')
+            store.commit('cursorState/setCursorStyle', 'default')
         }
         boundCircle.onMouseEnter = () => {
-            store.commit('setCursorStyle', 'url(' + require('@/assets/images/Service/rotate.png') + '), auto')
+            store.commit('cursorState/setCursorStyle', 'url(' + require('@/assets/images/Service/rotate.png') + '), auto')
         }
         boundCircle.onMouseDown = (event) => {
             rotateStart = new paper.Point({
