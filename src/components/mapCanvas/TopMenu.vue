@@ -11,7 +11,7 @@
 	</button>
 	<Transition name="dropdown-show">
 	    <div v-if="showMenuOptions" class="dropdown-menu">
-		<p class="" @click="this.$emit('showMapEditWindow')">Изменить информацию о карте</p>
+		<p class="" @click="this.$store.commit('modalFlags/setShowEditMapWin', true)">Изменить информацию о карте</p>
 		<p>Сохранить</p>
 		<details>
 		    <summary @click="fileOpenFlag=!fileOpenFlag">
@@ -71,10 +71,10 @@
 	<input ref="imgInput" :hidden="true" accept=".png, .jpg, .jpeg, .svg" type="file" @change="imgLoad">
 	<input ref="jsonInput" :hidden="true" accept=".json" type="file" @change="jsonLoad">
 	<button class="button-light step-button" hidden title="На шаг назад" type="button">
-	    <img alt="" class="hoverInvert" src="@/assets/images/undo.png">
+	    <img alt="" src="@/assets/images/undo.png">
 	</button>
 	<button class="button-light step-button" hidden title="На шаг вперёд" type="button">
-	    <img alt="" class="hoverInvert" src="@/assets/images/redo.png">
+	    <img alt="" src="@/assets/images/redo.png">
 	</button>
     </div>
 </template>
@@ -121,7 +121,7 @@ export default defineComponent({
             else
                 this.$emit('removeCanvasBackground')
         },
-        imgLoad(event: Event & { target: HTMLInputElement }):void {
+        imgLoad(event: Event & { target:HTMLInputElement }):void {
             let extensions = ['png', 'jpeg', 'jpg', 'svg']
             const imgFile = event.target.files?.[0];
 						if(!imgFile) return
@@ -142,7 +142,7 @@ export default defineComponent({
                 };
             }
         },
-        jsonLoad(event: Event & { target: HTMLInputElement }):void{
+        jsonLoad(event: Event & { target:HTMLInputElement }):void{
             try {
                 const jsonFile = event.target.files?.[0];
 								if(!jsonFile) return

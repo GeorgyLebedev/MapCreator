@@ -17,7 +17,7 @@
 						@click.right="openPaletteContextMenu($event, index)"
 						@click.left="setToolColor(color)"
 						:tabindex="index">
-					<img src="@/assets/images/Tools/Options/noColor.png"  v-if="color==null">
+					<img src="../../../../assets/images/Tools/Options/noColor.png" v-if="color==null">
 				</div>
 				<div class="invisible-container" @click="showPaletteContext=false" v-if="showPaletteContext">
 					<div class="contextMenu" :style="paletteContextStyle" @contextmenu.prevent>
@@ -36,8 +36,8 @@
 </template>
 
 <script lang="ts">
-import {updatePalette} from "@/modules/api/paletteMethods";
-import {getPalette} from "@/modules/api/paletteMethods";
+import {updatePalette} from "@/components/mapCanvas/toolsPanel/paletteMethods";
+import {getPalette} from "@/components/mapCanvas/toolsPanel/paletteMethods";
 import {defineComponent} from "vue";
 import {mapGetters} from "vuex";
 export default defineComponent({

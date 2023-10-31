@@ -16,14 +16,7 @@
     <Header/>
     <section class="main-body">
 	<div class="flex-row">
-	    <MapCard v-for="map in this.mapList" :key="map._id"
-		     :map="map"
-		     @showDelMapWin="()=>{
-               this.$store.commit('mainState/setSelectedMap', map)
-               this.$store.commit('modalFlags/setShowDelMapWin',true)}"
-		     @showEditMapWin="()=>{
-                this.$store.commit('mainState/setSelectedMap', map)
-               this.$store.commit('modalFlags/setShowEditMapWin',true)}"/>
+	    <MapCard v-for="map in this.mapList" :key="map._id" :map="map"/>
 	    <section class="map">
 		<div class="new-map cursor-pointer" @click="this.$store.commit('modalFlags/setShowNewMapWin',true)">
 		    <svg class="new-map-img svg-orange" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

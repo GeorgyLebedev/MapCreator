@@ -25,13 +25,13 @@
 	    <colors-palette :color="color" :source="'brushColor'" @setBrushColor="color=>this.color=color"/>
 	    <hr>
 	    <div class="flex-row align-center" title="Размер кисти">
-		<img alt="" height="20" src="@/assets/images/Tools/Options/thicknss.png">
+		<img alt="" height="20" src="../../../../assets/images/Tools/Options/thicknss.png">
 		<input v-model="size" max="200" min="1" step="5" type="range">
 		<input v-model="size" class="input-number-style" max="200" min="1" step="1" type="number">
 	    </div>
 	    <hr>
 	    <div class="flex-row align-center" title="Непрозрачность кисти">
-		<img alt="" height="20" src="@/assets/images/Tools/Options/opacity.png">
+		<img alt="" height="20" src="../../../../assets/images/Tools/Options/opacity.png">
 		<input v-model="opacity" max="1" min="0" step="0.01" type="range">
 		<input v-model="opacity" class="input-number-style" max="1" min="0" step="0.01" type="number">
 	    </div>
@@ -40,8 +40,8 @@
 </template>
 
 <script lang="ts">
-import recentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
-import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
+import recentColors from "@/components/mapCanvas/toolsPanel/colors/recentColors.vue";
+import ColorsPalette from "@/components/mapCanvas/toolsPanel/colors/palette.vue";
 import {defineComponent} from "vue";
 import store from "@/modules/store/store";
 

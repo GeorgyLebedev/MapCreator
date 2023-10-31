@@ -1,7 +1,7 @@
 /*VARIABLES*/
 .button-dark, .button-light:hover:not(:disabled) {
   background-color: #3D3D3D;
-  border-radius: 10px;
+  border-radius: 5px;
   color: #fda443;
   font-weight: bolder;
   cursor: pointer;
@@ -14,7 +14,7 @@
 .button-light, .button-dark:hover:not(:disabled) {
   background-color: #fda443;
   margin: 5px;
-  border-radius: 10px;
+  border-radius: 5px;
   color: #EBEBEB;
   font-weight: bolder;
   cursor: pointer;

@@ -1,32 +1,12 @@
 <template>
     <cursor-circle v-if="cursorVisible"/>
-    <ContextMenu
-	    :show-menu="this.getMenuFlag"
-	    :style="contextMenuStyle"
-	    @copyItem="()=>{
-                 cursorTool.copyItem()
-                 cursorTool.contextMenuVisible(false)
-                 this.$store.commit('setCursorStyle', 'default')}"
-	    @removeItem="()=>{
-                  cursorTool.removeItem()
-                  cursorTool.contextMenuVisible(false)
-                  this.$store.commit('setCursorStyle', 'default')}"
-	    @toBack="()=>{
-                 cursorTool.setToBack()
-                 cursorTool.contextMenuVisible(false)
-                 this.$store.commit('setCursorStyle', 'default')}"
-	    @toFront="()=>{
-                 cursorTool.setToFront()
-                 cursorTool.contextMenuVisible(false)
-                 this.$store.commit('setCursorStyle', 'default')}"/>
-    <MapEditWindow
-	    v-if="showEditMapWin"
-	    :map-desc="currentMap.description"
-	    :map-name="currentMap.title"
-	    @updateDesc="(val)=>currentMap.description=val"
-	    @updateMapMetadata="updateMapMetadata(currentMap)"
-	    @updateName="(val)=>currentMap.title=val"
-    />
+	<Transition name="dropdown-show">
+		<ContextMenu v-if="showMenuFlag"/>
+	</Transition>
+	<transition name="show-opt">
+    <MapEditWindow v-if="showEditMapWin"/>
+	</transition>
+	<transition name="show-opt">
     <ImageLoadWindow
 	    v-if="showImgLoadWin"
 	    @setLoadMode="(mode)=>{
@@ -35,6 +15,7 @@
         canvas.setBackground(canvas.backgroundOpt)
       }"
     />
+	</transition>
     <div class="main-container" @contextmenu.prevent>
 	<TopMenu
 		:canvas-size="{width:canvas.resoX, height:canvas.resoY}"
@@ -49,7 +30,6 @@
           canvas.backgroundOpt=background
            this.$store.commit('modalFlags/setShowImgLoadWin', true)
         }"
-		@showMapEditWindow=" this.$store.commit('modalFlags/setShowEditMapWin', true)"
 	/>
 	<ToolsPanel
 		@toolChange="setTool"
@@ -61,8 +41,10 @@
 		@saveMap="updateMapObjects(currentMap)"
 		@zoom="(event, step, mode)=>{zoom(event, step, mode, this.canvas)}"/>
 	<div id="canvasBox" class="canvas-area" @wheel="zoom(event,0.2, null, canvas)">
-	    <canvas id="map" :height="this.canvas.CSSheight" :style="{cursor: cursorStyle, width:this.canvas.CSSwidth+'px', height:this.canvas.CSSheight+'px' }"
+	    <canvas id="map"
+				:height="this.canvas.CSSheight"
 		    :width="this.canvas.CSSwidth"
+				:style="{cursor: cursorStyle, width:this.canvas.CSSwidth+'px', height:this.canvas.CSSheight+'px' }"
 		    @mousemove="cursorVisible?updateCursorPos($event):''"
 		    @mouseout="this.$store.commit('setCenterItemFlag',true)"
 		    @mouseover="this.$store.commit('setCenterItemFlag',false)"
@@ -78,16 +60,16 @@ import MapEditWindow from "@/components/MapEditWindow";
 import ImageLoadWindow from "@/components/mapCanvas/ImageLoadWindow";
 import AxiosRequest from "@/modules/services/axiosRequest";
 import ContextMenu from "@/components/mapCanvas/ContextMenu";
-import cursorTool from "@/modules/tools/cursorTool";
-import brushTool from "@/modules/tools/brushTool";
-import shapeTool from "@/modules/tools/shapeTool";
-import pathTool from "@/modules/tools/pathTool";
-import textTool from "@/modules/tools/textTool";
-import stampTool from "@/modules/tools/stampTool";
+import cursorTool from "@/components/mapCanvas/toolsPanel/cursorPanel/cursorTool";
+import brushTool from "@/components/mapCanvas/toolsPanel/brushPanel/brushTool";
+import shapeTool from "@/components/mapCanvas/toolsPanel/shapePanel/shapeTool";
+import pathTool from "@/components/mapCanvas/toolsPanel/pathPanel/pathTool";
+import textTool from "@/components/mapCanvas/toolsPanel/textPanel/textTool";
+import stampTool from "@/components/mapCanvas/toolsPanel/stampPanel/stampTool";
 import zoomTool from "@/modules/tools/zoomTool";
 import canvas from "@/modules/logic/canvas";
 import selection from "@/modules/logic/selectionLogic";
-import cursorCircle from "@/components/mapCanvas/cursorCircle.vue";
+import cursorCircle from "@/components/mapCanvas/cursorCircle/СursorCircle.vue";
 import * as paper from "paper" ;
 import {zoom} from "@/modules/logic/zoom";
 import {exportAs} from "@/modules/logic/export"
@@ -129,7 +111,8 @@ export default {
 	    showEditMapWin: 'modalFlags/showEditMapWin',
 	    showImgLoadWin: 'modalFlags/showImgLoadWin',
 	    cursorVisible: 'cursorState/getCursorVisibility',
-	    cursorStyle: 'cursorState/getCursorStyle'
+	    cursorStyle: 'cursorState/getCursorStyle',
+		showMenuFlag: 'cursorOptions/getMenuFlag',
 	}),
 	contextMenuStyle() {
 	    if (!this.getContextMenuPos) return
@@ -208,7 +191,8 @@ export default {
 	this.currentMap = await this.getCurrentMap()
 	if (!this.currentMap || !this.currentMap.title)
 	    this.$router.push("/Main")
-	this.canvas.setup(this.currentMap.resolution, document.getElementById("map"))
+			this.$store.commit('mainState/setSelectedMap', this.currentMap)
+	this.canvas.setup(this.currentMap.resolution,document.getElementById("map"))
 	if (this.currentMap.objects) {
 	    this.canvas.loadProject(this.currentMap.objects)
 	} else {

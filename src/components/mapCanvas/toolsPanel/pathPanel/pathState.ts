@@ -1,26 +1,9 @@
 import {Module} from "vuex";
+import {iPath} from "./iPath";
+import {pathTypes} from "./iPath";
+import {pathStyles} from "./iPath";
 
-enum pathTypes{
-    line="line",
-    polyline="polyline",
-    curve="curve"
-}
-enum pathStyles{
-    default="default",
-    dashed="dashed",
-    dotted="dotted"
-}
-interface pathState{
-    size:number,
-    opacity:number,
-    color:string,
-    pathType: pathTypes,
-    roundCap: boolean,
-    pathStyle:pathStyles,
-    dashArray: number[],
-    dotArray: number[]
-}
-const PathState: Module<pathState, any> = {
+const PathState: Module<iPath, any> = {
     namespaced: true,
     state: {
         size: 1,

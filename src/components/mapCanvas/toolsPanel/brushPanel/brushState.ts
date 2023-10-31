@@ -1,13 +1,8 @@
 import {Module} from "vuex";
 
-interface brushState {
-    size: number,
-    opacity: number,
-    color: string,
-    brushType: string,
-}
+import iBrush from "./iBrush"
 
-const BrushState: Module<brushState, any> = {
+const BrushState: Module<iBrush, any> = {
     namespaced: true,
     state: {
         size: 5,
@@ -16,7 +11,7 @@ const BrushState: Module<brushState, any> = {
         brushType: "color"
     },
     getters: {
-        getBrushOptions: (state): brushState => state,
+        getBrushOptions: (state): iBrush => state,
         getBrushSize: (state): number => state.size,
         getBrushOpacity: (state): number => state.opacity,
         getBrushColor: (state): string => state.color,

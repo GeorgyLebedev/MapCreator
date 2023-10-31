@@ -1,18 +1,8 @@
 import {Module} from "vuex";
+import iShape from "./iShape";
 
-interface shapeState {
-    shapeType: string
-    strokeColor: string
-    strokeWidth: number
-    strokeEnabled: boolean
-    fillColor: string
-    fillEnabled: boolean
-    opacity: number
-    rotation: number
-    sides: number
-}
 
-const ShapeState: Module<shapeState, any> = {
+const ShapeState: Module<iShape, any> = {
     namespaced: true,
     state: {
         shapeType: "rectangle",
@@ -26,7 +16,7 @@ const ShapeState: Module<shapeState, any> = {
         sides: 5
     },
     getters: {
-        getShapeOptions: (state): shapeState => state,
+        getShapeOptions: (state): iShape => state,
         getShapeType: (state): string => state.shapeType,
         getStrokeColor: (state): string => state.strokeColor,
         getStrokeWidth: (state): number => state.strokeWidth,
@@ -38,6 +28,7 @@ const ShapeState: Module<shapeState, any> = {
         getSides: (state): number => state.sides
     },
     mutations: {
+        setShapeOptions:(state, options)=> Object.assign(state, options),
         setShapeType: (state, value: string) => state.shapeType = value,
         setStrokeColor: (state, value: string) => state.strokeColor = value,
         setStrokeWidth: (state, value: number) => state.strokeWidth = value,

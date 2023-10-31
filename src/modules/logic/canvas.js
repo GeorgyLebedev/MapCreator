@@ -17,7 +17,7 @@ export default class canvas {
 	this.backgroundOpt=null //параметры фона
     }
     setup(resolution, ref){
-        this.ref=ref
+	this.ref=ref
 	this.resoX = resolution.split('x', 2)[0] //установка ширины холста
 	this.resoY = resolution.split('x', 2)[1] //установка высоты холста
 	this.XtoY = this.resoX / this.resoY
@@ -80,7 +80,7 @@ export default class canvas {
     }
     setBackground(background){ //установка фона
 	this.removeBackground() //если фон есть, удаляем
-        if(background.type=="color"){ //если тип фона -цвет
+	if(background.type=="color"){ //если тип фона -цвет
 	    this.background = new paper.Layer({ //тогда рисуем слой с прямоугольником размером с холст с заданным цветом
 		children: [new paper.Path.Rectangle({
 		    point: new paper.Point(-this.CSSwidth / 2, -this.CSSheight / 2),
@@ -114,14 +114,14 @@ export default class canvas {
 		this.background.children["backgroundRectangle"].scale( //масштабируем его относительно размеров холста
 		    this.resoX/background.width,
 		    this.resoY/background.height,
-		    )
+		)
 	    }
 	    paper.project.addLayer(this.background)//добавляем слой на холст
 	    this.background.sendToBack()//и отправляем на задний план
 	}
     }
     updateBackground(){ //перерисовка фона
-        if(!this.background) return
+	if(!this.background) return
 	if(this.background.children["backgroundRectangle"].fillColor) {
 	    let color = this.background.children["backgroundRectangle"].fillColor
 	    this.background.children["backgroundRectangle"].remove()
@@ -142,11 +142,11 @@ export default class canvas {
 	if(this.background) this.background.remove()
     }
     loadProject(jsonData){ //загрузка внешнего json-файла
-        try{
-            paper.project.importJSON(jsonData)
+	try{
+	    paper.project.importJSON(jsonData)
 	}
 	catch (e) {
-            this.error=e
+	    this.error=e
 	    return
 	}
 	paper.project.clear() //если ошибок при загрузке не было, полностью очищаем холст

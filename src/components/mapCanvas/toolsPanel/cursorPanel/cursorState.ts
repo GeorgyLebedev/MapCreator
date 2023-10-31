@@ -1,12 +1,8 @@
 import {Module} from "vuex";
+import iCursor from "@/components/mapCanvas/toolsPanel/cursorPanel/iCursor";
 
-interface cursorState {
-    selectionTypes: string[],
-    contextMenuPos: object,
-    showContextMenu: boolean
-}
 
-const CursorState: Module<cursorState, any> = {
+const CursorState: Module<iCursor, any> = {
     namespaced: true,
     state: {
         selectionTypes: ['stamp', 'shape', 'text'],

@@ -17,7 +17,7 @@
 					</template>
 					<template v-else>
 						<div class="color-cell">
-							<img src="@/assets/images/Tools/Options/noColor.png"/>
+							<img src="../../../../assets/images/Tools/Options/noColor.png"/>
 						</div>
 					</template>
 				</div>

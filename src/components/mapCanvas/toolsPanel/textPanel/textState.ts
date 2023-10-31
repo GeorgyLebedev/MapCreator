@@ -1,24 +1,6 @@
 import {Module} from "vuex";
-
-interface textState{
-	content: string
-	fontFamily: string
-	fontSize: number
-	justification: string
-	fillColor: string
-	fillEnabled: boolean
-	strokeColor: string
-	strokeEnabled: boolean
-	strokeWidth: number
-	shadowColor: string
-	shadowEnabled: boolean
-	shadowBlur: number
-	shadowOffsetX: number
-	shadowOffsetY: number
-	opacity: number
-	rotation: number
-}
-const TextState:Module<textState, any>={
+import iText from "./iText";
+const TextState:Module<iText, any>={
 	namespaced: true,
 	state:{
 		content:"Текст",
@@ -39,7 +21,7 @@ const TextState:Module<textState, any>={
 		rotation: 1
 	},
 	getters:{
-		getTextOptions:(state):textState=>state,
+		getTextOptions:(state):iText=>state,
 		getContent:(state):string=>state.content,
 		getFontFamily:(state):string=>state.fontFamily,
 		getFontSize:(state):number=>state.fontSize,
@@ -58,6 +40,7 @@ const TextState:Module<textState, any>={
 		getRotation:(state):number=>state.rotation
 	},
 	mutations:{
+		setTextOptions:(state, options:iText)=> Object.assign(state, options),
 		setContent:(state, value:string)=>state.content = value,
 		setFontFamily:(state, value:string)=>state.fontFamily = value,
 		setFontSize:(state, value:number)=>state.fontSize = value,

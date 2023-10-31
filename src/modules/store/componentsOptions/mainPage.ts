@@ -10,10 +10,10 @@ interface MainState {
 }
 const mainState: Module<MainState,any>={
     namespaced:true,
-    state:()=>({
+    state:{
         selectedMap: {},
         mapList: []
-    } as unknown as MainState),
+    },
     getters:{
         getSelectedMap:(state)=> state.selectedMap,
         getMapList:(state)=>state.mapList

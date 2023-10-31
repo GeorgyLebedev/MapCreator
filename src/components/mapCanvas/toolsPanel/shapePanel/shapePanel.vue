@@ -11,7 +11,7 @@
 		</svg>
 	    </div>
 	    <hr>
-	    <div>
+	    <div v-if="selectedObjectType!='shape'">
 		<p> Вид фигуры:</p>
 		<div class="flex-row">
 		    <button :class="{'selected':shapeType=='rectangle'}"
@@ -77,7 +77,7 @@
 		    <div :style="{'background-color': fillEnabled?fillColor:'unset'}" class="color-picker-cell" @click="$refs.fillColor.click()">
 			<input v-if="fillEnabled" ref="fillColor" v-model="fillColor" type="color" @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
 			<img v-if="!fillEnabled" alt="" class="none-color-placeholder"
-			     src="@/assets/images/Tools/Options/noColor.png">
+			     src="../../../../assets/images/Tools/Options/noColor.png">
 		    </div>
 		</tr>
 	    </table>
@@ -96,7 +96,7 @@
 		    <div :style="{'background-color': strokeEnabled?strokeColor:'unset'}" class="color-picker-cell" @click="$refs.strokeColor.click()">
 			<input v-if="strokeEnabled" ref="strokeColor" v-model="strokeColor" type="color" @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
 			<img v-if="!strokeEnabled" alt="" class="none-color-placeholder"
-			     src="@/assets/images/Tools/Options/noColor.png">
+			     src="../../../../assets/images/Tools/Options/noColor.png">
 		    </div>
 		</tr>
 	    </table>
@@ -105,20 +105,20 @@
 			    @setShapeStroke="color=>strokeColor=color"/>
 	    <hr>
 	    <div class="flex-row align-center" title="Толщина контура">
-		<img alt="" height="20" src="@/assets/images/Tools/Options/thicknss.png">
+		<img alt="" height="20" src="../../../../assets/images/Tools/Options/thicknss.png">
 		<input v-model="strokeWidth" max="50" min="1" step="1" type="range">
 		<input v-model="strokeWidth" max="50" min="1" step="1"
 		       type="number">
 	    </div>
 	    <hr>
 	    <div class="flex-row align-center" title="Непрозрачность фигуры">
-		<img alt="" height="20" src="@/assets/images/Tools/Options/opacity.png">
+		<img alt="" height="20" src="../../../../assets/images/Tools/Options/opacity.png">
 		<input v-model="opacity" max="1" min="0" step="0.01" type="range">
 		<input v-model="opacity" max="1" min="0" step="0.01" type="number">
 	    </div>
 	    <hr>
 	    <div class="flex-row align-center" title="Поворот фигуры">
-		<img alt="" height="20" src="@/assets/images/Tools/Options/rotate.png">
+		<img alt="" height="20" src="../../../../assets/images/Tools/Options/rotate.png">
 		<input v-model="rotation" max="180" min="-180" step="1" type="range">
 		<input v-model="rotation" max="180" min="-180" step="1" type="number">
 	    </div>
@@ -127,10 +127,9 @@
 </template>
 
 <script lang="ts">
-import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
-import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
+import ColorsPalette from "@/components/mapCanvas/toolsPanel/colors/palette.vue";
+import RecentColors from "@/components/mapCanvas/toolsPanel/colors/recentColors.vue";
 import {defineComponent} from "vue";
-
 export default defineComponent({
     name: "shapePanel",
     components: {
@@ -138,6 +137,9 @@ export default defineComponent({
         ColorsPalette
     },
     computed: {
+				selectedObjectType(){
+					return this.$store.getters['selection/getSelectedItem']?.data?.type
+				},
         shapeType: {
             get(): string {
                 return this.$store.getters['shapeOptions/getShapeType']
@@ -196,7 +198,7 @@ export default defineComponent({
         },
         rotation: {
             get(): number {
-                return this.$store.getters['shapeOptions/getRotation']
+                return Math.round(this.$store.getters['shapeOptions/getRotation'])
             },
             set(value: number): void {
                 this.$store.commit('shapeOptions/setRotation',  Number(value))

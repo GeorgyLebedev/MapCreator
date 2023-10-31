@@ -1,7 +1,8 @@
 import * as paper from "paper" ;
 import store from "@/modules/store/store";
 import clean from "@/modules/services/canvasCleaner";
-export default class brushTool {
+import iBrush from "./iBrush"
+export default class brushTool implements iBrush{
 	brushType: string
 	color: string
 	opacity: number

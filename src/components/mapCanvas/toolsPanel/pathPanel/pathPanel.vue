@@ -67,7 +67,7 @@
 		<div v-if=" style=='dotted'">
 		    <hr>
 		    <div class="flex-row align-center" title="Расстояние между точками">
-			<img src="@/assets/images/Tools/Options/gapDot.png" alt="" height="20">
+			<img src="../../../../assets/images/Tools/Options/gapDot.png" alt="" height="20">
 			<input type="range" step="1" min="5" max="50" v-model="dotArray[1]">
 			<input type="number" step="1" min="5" max="50"
 			       v-model="dotArray[1]">
@@ -78,14 +78,14 @@
 		<div v-if="style=='dashed'">
 		    <hr>
 		    <div class="flex-row align-center" title="Расстояние между штрихами">
-			<img src="@/assets/images/Tools/Options/gapDash.png" alt="" height="20">
+			<img src="../../../../assets/images/Tools/Options/gapDash.png" alt="" height="20">
 			<input type="range" step="1" min="5" max="50" v-model="dashArray[1]">
 			<input type="number" step="1" min="5" max="50"
 			       v-model="dashArray[1]">
 		    </div>
 		    <hr>
 		    <div class="flex-row align-center" title="Длина штриха">
-			<img src="@/assets/images/Tools/Options/dash.png" alt="" height="20">
+			<img src="../../../../assets/images/Tools/Options/dash.png" alt="" height="20">
 			<input type="range" step="1" min="5" max="50" v-model="dashArray[0]">
 			<input type="number" step="1" min="5" max="50"
 			       v-model="dashArray[0]">
@@ -116,13 +116,13 @@
 	    </div>
 	    <hr>
 	    <div class="flex-row align-center" title="Толщина линии">
-		<img src="@/assets/images/Tools/Options/thicknss.png" alt="" height="20">
+		<img src="../../../../assets/images/Tools/Options/thicknss.png" alt="" height="20">
 		<input type="range" step="1" min="1" max="50" v-model="size">
 		<input type="number" step="1" min="1" max="50" v-model="size">
 	    </div>
 	    <hr>
 	    <div class="flex-row align-center" title="Непрозрачность линии">
-		<img src="@/assets/images/Tools/Options/opacity.png" alt="" height="20">
+		<img src="../../../../assets/images/Tools/Options/opacity.png" alt="" height="20">
 		<input type="range" step="0.01" min="0" max="1" v-model="opacity">
 		<input type="number" step="0.01" min="0" max="1" v-model="opacity">
 	    </div>
@@ -131,8 +131,8 @@
 </template>
 
 <script lang="ts">
-import recentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
-import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
+import recentColors from "@/components/mapCanvas/toolsPanel/colors/recentColors.vue";
+import ColorsPalette from "@/components/mapCanvas/toolsPanel/colors/palette.vue";
 import {defineComponent} from "vue";
 
 export default defineComponent({

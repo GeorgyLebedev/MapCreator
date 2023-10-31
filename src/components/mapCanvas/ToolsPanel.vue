@@ -6,16 +6,16 @@
     <brush-panel v-if="tool=='brush' && optionVisible" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
-    <stamp-panel v-if="((tool=='stamp' && optionVisible) || selectedObjectType=='stamp')" :stamps-prop="this.stamps" @closePanel="optionVisible=false"/>
+    <stamp-panel v-if="((tool=='stamp' && optionVisible) || selectedItemType=='stamp')" :stamps-prop="this.stamps" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
-    <shape-panel v-if="((tool=='shape' && optionVisible) || selectedObjectType=='shape')" @closePanel="optionVisible=false"/>
+    <shape-panel v-if="((tool=='shape' && optionVisible) || selectedItemType=='shape')" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
     <path-panel v-if="tool=='path' && optionVisible" @closePanel="optionVisible=false"/>
   </Transition>
   <Transition name="show">
-    <text-panel v-if="((tool=='text' && optionVisible) || selectedObjectType=='text')" @closePanel="optionVisible=false"/>
+    <text-panel v-if="((tool=='text' && optionVisible) || selectedItemType=='text')" @closePanel="optionVisible=false"/>
   </Transition>
   <div id="tools-panel">
     <section class="tool" :class="{selected:tool=='cursor' }" title="Курсор"
@@ -65,14 +65,14 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import store from "@/modules/store/store";
-import cursorPanel from "@/components/mapCanvas/toolsPanel/cursorPanel.vue";
-import brushPanel from "@/components/mapCanvas/toolsPanel/brushPanel.vue";
-import stampPanel from "@/components/mapCanvas/toolsPanel/stampPanel.vue";
-import shapePanel from "@/components/mapCanvas/toolsPanel/shapePanel.vue";
-import pathPanel from "@/components/mapCanvas/toolsPanel/pathPanel.vue";
-import textPanel from "@/components/mapCanvas/toolsPanel/textPanel.vue";
+import cursorPanel from "@/components/mapCanvas/toolsPanel/cursorPanel/cursorPanel.vue";
+import brushPanel from "@/components/mapCanvas/toolsPanel/brushPanel/brushPanel.vue";
+import stampPanel from "@/components/mapCanvas/toolsPanel/stampPanel/stampPanel.vue";
+import shapePanel from "@/components/mapCanvas/toolsPanel/shapePanel/shapePanel.vue";
+import pathPanel from "@/components/mapCanvas/toolsPanel/pathPanel/pathPanel.vue";
+import textPanel from "@/components/mapCanvas/toolsPanel/textPanel/textPanel.vue";
 import {mapGetters} from "vuex";
-import {getOptions} from "@/modules/api/toolsPanelMethods";
+import {getOptions} from "@/components/mapCanvas/toolsPanel/toolsPanelMethods";
 
 export default defineComponent({
   name: "ToolsPanel",
@@ -107,12 +107,11 @@ export default defineComponent({
       getOptions:getOptions,
   },
   computed:{
-    ...mapGetters('selection', ['getSelectedObject']),
-    selectedObject(){
-      return this.getSelectedObject
-    },
-    selectedObjectType(){
-      return this.selectedObject&&this.selectedObject.data?this.selectedObject.data.type:false
+    ...mapGetters({
+        selectedItem: 'selection/getSelectedItem'
+    }),
+    selectedItemType(){
+      return this.selectedItem&&this.selectedItem.data?this.selectedItem.data.type:false
     }
   },
   async mounted():Promise<void> {
@@ -123,74 +122,15 @@ export default defineComponent({
 
   watch: {
     tool(val:string) {
-      store.commit("selection/removeSelection")
+      store.commit("selection/removeSelectedItem")
       this.optionVisible = true
       this.$emit('toolChange', val)
     },
     optionVisible(val:boolean){
-      if(!val&&this.selectedObject){
-        store.commit("selection/removeSelection")
+      if(!val&&this.selectedItem){
+        store.commit("selection/removeSelectedItem")
       }
     }
-  /*  selectedObj: {
-      handler(val) {
-        if (val) {
-          this.optionVisible = false
-          if (val.data.type == "text") {
-            this.textOpt.content = selectedObj.content
-            this.textOpt.fontFamily = selectedObj.fontFamily
-            this.textOpt.fontSize = selectedObj.fontSize
-            this.textOpt.justification = selectedObj.justification
-             this.textOpt.opacity = selectedObj.opacity
-            this.textOpt.fillColor = selectedObj.data.isFill ? val.fillColor.toCSS(true) : "transparent"
-            this.textOpt.strokeColor = selectedObj.data.isBorder ? val.strokeColor.toCSS(true) : "transparent"
-            this.textOpt.strokeWidth = selectedObj.data.isBorder ? val.strokeWidth : 0
-            this.textOpt.shadowColor = selectedObj.data.isShadow ? val.shadowColor.toCSS(true) : "transparent"
-            this.textOpt.shadowBlur = selectedObj.data.isShadow ? val.shadowBlur : 0
-            this.textOpt.shOffsetX = selectedObj.data.shOffsetX
-            this.textOpt.shOffsetY = selectedObj.data.shOffsetY
-
-            this.textOpt.isBorder = selectedObj.data.isBorder
-            this.textOpt.isFill = selectedObj.data.isFill
-            this.textOpt.isShadow = selectedObj.data.isShadow
-          }
-          if (val.data.type == "shape") {
-            this.shapeOpt.strokeColor = val.data.isBorder ? val.strokeColor.toCSS(true) : "transparent"
-            this.shapeOpt.fillColor = val.data.isFill ? val.fillColor.toCSS(true) : "transparent"
-            this.shapeOpt.strokeWidth = val.data.isBorder ? val.strokeWidth : 0
-            this.shapeOpt.opacity = val.opacity
-            this.shapeOpt.isBorder = val.data.isBorder
-            this.shapeOpt.isFill = val.data.isFill
-          }
-          if (val.data.type == "stamp") {
-            this.stampOpt.size = val.size.width
-          }
-        }
-      }
-    },
-    rotation: {
-      handler(val) {
-        if (!val) return
-        switch (this.selectedObj.data.type) {
-          case "text":
-            this.textOpt.rotation = Math.round(val)
-            break
-          case "shape":
-            this.shapeOpt.rotation = Math.round(val)
-            break
-          case "stamp":
-            this.stampOpt.rotation = Math.round(val)
-            break
-        }
-      }
-    },
-    size: {
-      handler(val) {
-        console.log(val)
-        if (!val || this.selectedObj.data.type != "stamp") return
-        this.stampOpt.size = val
-      }
-    },*/
   }
 })
 </script>
@@ -260,7 +200,7 @@ export default defineComponent({
   outline: none
 
 .type-select-button.selected
-  background-color: #3d4551
+  background-color: Variables.$dark-color
 
 .type-select-button.selected img
   filter: invert(100%)

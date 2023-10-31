@@ -2,16 +2,18 @@ import paper from "paper";
 import store from "@/modules/store/store";
 export default class selectionLogic {
     constructor() {
-        this.selectedObject=undefined
-        this.selectionGroup=undefined
+        this.selectedObject=null
+        this.selectionGroup=null
         store.subscribe((mutation)=>{
-            if(mutation.type=="selection/removeSelection"){
+            if(mutation.type=="selection/removeSelectedItem"){
                 this.remove()
             }
             if(mutation.type=="selection/updateSelectedObject" && this.selectionGroup){
                 this.selectionGroup.removeChildren()
                 this.selectionGroup = this.build(new paper.Group(), this.selectedObject)
-                store.commit("selection/setSelectionGroup",this.selectionGroup)
+            }
+            if(mutation.type=="selection/setSelectedItem" && !this.selectedObject){
+                this.set(store.getters['selection/getSelectedItem'])
             }
         })
     }
@@ -21,7 +23,6 @@ export default class selectionLogic {
         this.selectionGroup = this.build(new paper.Group(), item)
         store.commit("selection/setSelectionGroup",this.selectionGroup)
         this.selectedObject = item
-        store.commit("selection/setSelectedObject",this.selectedObject)
     }
     remove() {
         if (!this.selectedObject) return
@@ -30,17 +31,19 @@ export default class selectionLogic {
         this.selectionGroup.remove()
         this.selectionGroup = undefined
         this.selectedObject=undefined
-        store.commit("selection/removeSelection")
         store.commit('cursorState/setCursorStyle', 'default')
     }
     build(group, item){
         if(!item) return
         if(item.applyMatrix)
         item.applyMatrix=false
+        let itemState = item.data?.type === 'stamp' ? 'stampOptions' :
+            item.data?.type === 'text' ? 'textOptions' :
+                item.data?.type === 'shape' ? 'shapeOptions' : '';
         let rotateStart, rotateEnd, angle = 0
         let boundRect = new paper.Path.Rectangle({
             rectangle: item.strokeBounds,
-            strokeColor: '#42aaff',
+            strokeColor: '#fda443',
             strokeWidth: 1,
             name: "rect"
         })
@@ -76,7 +79,7 @@ export default class selectionLogic {
                 width: 10,
                 height: 10,
                 position: boundRect.bounds[corner],
-                fillColor: "#42aaff",
+                fillColor: "#fda443",
                 name: (index + 1) + "corner"
             })
             boundSq.bringToFront()
@@ -160,35 +163,22 @@ export default class selectionLogic {
                 y: event.point.y - boundCircle.position.y
             })
         }
-        boundCircle.onMouseUp = () => {
-            angle = undefined
-            switch (item.data.type){
-                case "stamp":
-                    store.commit("stampOptions/updateRotation", item.rotation)
-                    break;
-                case "text":
-                    store.commit('textOptions/updateRotation',item.rotation)
-                    break;
-                case "shape":
-                    store.commit('shapeOptions/updateRotation', item.rotation)
-                    break
-            }
+        boundCircle.onMouseUp = () => angle = undefined
 
-        }
         boundCircle.onMouseDrag = (event) => {
             if (angle) {
                 item.rotation -= angle
+                group.rotation -= angle
                 item.position = boundRect.position
             }
             rotateEnd = new paper.Point({
                 x: event.point.x - boundCircle.position.x,
                 y: event.point.y - boundCircle.position.y
             })
-            angle = rotateStart.getDirectedAngle(rotateEnd)
+            angle = Math.round(rotateStart.getDirectedAngle(rotateEnd))
             item.rotation += angle
-            group.removeChildren()
-            group = this.build(group, item)
-            item.position = boundRect.position
+            group.rotation += angle
+            store.commit(`${itemState}/setRotation`, item.rotation)
         }
         item.onMouseDrag = (event) => {
             item.position.x += event.delta.x

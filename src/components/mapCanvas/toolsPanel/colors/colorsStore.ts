@@ -1,11 +1,7 @@
 import {Module} from "vuex";
 import store from "@/modules/store/store";
-interface colorsState{
-    lastColor: string|null,
-	recentColors: Array<string|null>,
-	paletteColors:Array<string|null>,
-}
-const ColorsState:Module<colorsState, any>={
+import iColors from "@/components/mapCanvas/toolsPanel/colors/iColors";
+const ColorsState:Module<iColors, any>={
     namespaced:true,
 	state:{
 	lastColor:null,

@@ -94,7 +94,7 @@
 						<input v-if="fillEnabled" ref="fillColor" v-model="fillColor" type="color"
 									 @input="this.$store.commit('colorsStore/updateLastColor', fillColor)">
 						<img v-if="!fillEnabled" alt="" class="none-color-placeholder"
-								 src="@/assets/images/Tools/Options/noColor.png">
+								 src="../../../../assets/images/Tools/Options/noColor.png">
 					</div>
 				</tr>
 			</table>
@@ -106,19 +106,19 @@
 			</transition>
 			<hr>
 			<div class="flex-row justify-between align-center" title="Размер шрифта">
-				<img alt="" height="20" src="@/assets/images/Tools/Options/font-size.png">
+				<img alt="" height="20" src="../../../../assets/images/Tools/Options/font-size.png">
 				<input v-model="fontSize" max="500" min="5" step="5" type="range">
 				<input v-model="fontSize" max="500" min="5" step="1" type="number">
 			</div>
 			<hr>
 			<div class="flex-row justify-between align-center" title="Непрозрачность текста">
-				<img alt="" height="20" src="@/assets/images/Tools/Options/opacity.png">
+				<img alt="" height="20" src="../../../../assets/images/Tools/Options/opacity.png">
 				<input v-model="opacity" max="1" min="0" step="0.1" type="range">
 				<input v-model="opacity" max="1" min="0" step="0.1" type="number">
 			</div>
 			<hr>
 			<div class="flex-row justify-between align-center" title="Поворот текста">
-				<img alt="" height="20" src="@/assets/images/Tools/Options/rotate.png">
+				<img alt="" height="20" src="../../../../assets/images/Tools/Options/rotate.png">
 				<input v-model="rotation" max="180" min="-180" step="1" type="range">
 				<input v-model="rotation" max="180" min="-180" step="1" type="number">
 			</div>
@@ -138,7 +138,7 @@
 						<input v-if="strokeEnabled" ref="strokeColor" v-model="strokeColor" type="color"
 									 @input="this.$store.commit('colorsStore/updateLastColor', strokeColor)">
 						<img v-if="!strokeEnabled" alt="" class="none-color-placeholder"
-								 src="@/assets/images/Tools/Options/noColor.png">
+								 src="../../../../assets/images/Tools/Options/noColor.png">
 					</div>
 				</tr>
 			</table>
@@ -149,7 +149,7 @@
 													@setTextStroke="color=>strokeColor=color"/>
 					<hr>
 					<div class="flex-row justify-between align-center" title="Толщина обводки">
-						<img alt="" height="20" src="@/assets/images/Tools/Options/thicknss.png">
+						<img alt="" height="20" src="../../../../assets/images/Tools/Options/thicknss.png">
 						<input v-model="strokeWidth" max="10" min="1" step="1" type="range">
 						<input v-model="strokeWidth" max="10" min="1" step="1" type="number">
 					</div>
@@ -170,7 +170,7 @@
 						<input v-if="shadowEnabled" ref="shadowColor" v-model="shadowColor" type="color"
 									 @input="this.$store.commit('colorsStore/updateLastColor', shadowColor)">
 						<img v-if="!shadowEnabled" alt="" class="none-color-placeholder"
-								 src="@/assets/images/Tools/Options/noColor.png">
+								 src="../../../../assets/images/Tools/Options/noColor.png">
 					</div>
 				</tr>
 			</table>
@@ -181,13 +181,13 @@
 													@setTextShadow="color=>shadowColor=color"/>
 					<hr>
 					<div class="flex-row justify-between align-center" title="Смещение тени по Х">
-						<img alt="" src="@/assets/images/Tools/Options/shadowOffsetX.png" width="20">
+						<img alt="" src="../../../../assets/images/Tools/Options/shadowOffsetX.png" width="20">
 						<input v-model="shadowOffsetX" max="10" min="-10" step="1" type="range">
 						<input v-model="shadowOffsetX" max="10" min="-10" step="1" type="number">
 					</div>
 					<hr>
 					<div class="flex-row justify-between align-center" title="Смещение тени по Y">
-						<img alt="" src="@/assets/images/Tools/Options/shadowOffsetY.png" width="20">
+						<img alt="" src="../../../../assets/images/Tools/Options/shadowOffsetY.png" width="20">
 						<input v-model="shadowOffsetY" max="10" min="-10" step="1" type="range">
 						<input v-model="shadowOffsetY" max="10" min="-10" step="1" type="number">
 					</div>
@@ -213,8 +213,8 @@
 	</div>
 </template>
 <script lang="ts">
-import ColorsPalette from "@/components/mapCanvas/toolsPanel/palette.vue";
-import RecentColors from "@/components/mapCanvas/toolsPanel/recentColors.vue";
+import ColorsPalette from "@/components/mapCanvas/toolsPanel/colors/palette.vue";
+import RecentColors from "@/components/mapCanvas/toolsPanel/colors/recentColors.vue";
 import {defineComponent} from "vue";
 
 export default defineComponent({
@@ -228,7 +228,7 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			fontsCollection: ["Cambria", "Roboto", "Neucha", "Comic Sans MS", "Consolas", "Mason Chronicles", "Linux Biolinum", "Aniron"] as string[],
+			fontsCollection: ["Cambria", "Roboto", "CharakternyC", "Comic Sans MS", "Consolas", "Mason Chronicles", "Linux Biolinum", "Aniron", ] as string[],
 			showFontsList: false as boolean,
 		}
 	},
@@ -369,7 +369,7 @@ export default defineComponent({
 		},
 		rotation: {
 			get(): number {
-				return this.$store.getters['textOptions/getRotation']
+				return  Math.round(this.$store.getters['textOptions/getRotation'])
 			},
 			set(value: number): void {
 				this.$store.commit('textOptions/setRotation', Number(value))
@@ -377,11 +377,10 @@ export default defineComponent({
 		},
 
 		textAreaStyle(){
-			const style={
+			return{
 				fontFamily: this.fontFamily,
 				borderColor: this.content.length>0? 'inherit':'red'
 			}
-			return style
 		}
 	}
 })

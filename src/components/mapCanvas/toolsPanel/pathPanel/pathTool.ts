@@ -2,15 +2,17 @@ import * as paper from "paper" ;
 import Clicker from "@/modules/logic/clicker";
 import store from "@/modules/store/store";
 import clean from "@/modules/services/canvasCleaner";
-
+import {iPath} from "@/components/mapCanvas/toolsPanel/pathPanel/iPath";
+import {pathStyles} from "@/components/mapCanvas/toolsPanel/pathPanel/iPath";
+import {pathTypes} from "@/components/mapCanvas/toolsPanel/pathPanel/iPath";
 const clicker = new Clicker()
-export default class pathTool {
+export default class pathTool implements iPath{
     size: number
     opacity: number
     color: string
-    pathType: string
+    pathType: pathTypes
     roundCap: boolean
-    pathStyle: string
+    pathStyle: pathStyles
     dashArray: number[]
     dotArray: number[]
     instance: paper.Tool
